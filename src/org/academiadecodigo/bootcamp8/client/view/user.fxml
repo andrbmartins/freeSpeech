@@ -22,21 +22,21 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2">
-        <tabs>
-          <Tab fx:id="lobbyTab" closable="false" onSelectionChanged="#onTabClicked" text="Lobby">
-               <content>
-                  <TextArea fx:id="lobbyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" />
-               </content>
-            </Tab>
-          <Tab fx:id="privateTab" onSelectionChanged="#onTabClicked" text="Private">
-               <content>
-                  <TextArea fx:id="privateTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" />
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-      <ListView fx:id="onlineUsersList" prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="2147483647" />
+       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2">
+           <tabs>
+               <Tab fx:id="lobbyTab" closable="false" onSelectionChanged="#onTabClicked" text="Lobby">
+                   <content>
+                       <TextArea fx:id="lobbyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" />
+                   </content>
+               </Tab>
+               <Tab fx:id="privateTab" onSelectionChanged="#onTabClicked" text="Private">
+                   <content>
+                       <TextArea fx:id="privateTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" />
+                   </content>
+               </Tab>
+           </tabs>
+       </TabPane>
+       <ListView fx:id="onlineUsersList" prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="3" />
       <TextField fx:id="textField" onKeyPressed="#onSendKey" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <Button fx:id="send" mnemonicParsing="false" onAction="#onSend" text="Send" GridPane.columnIndex="2" GridPane.rowIndex="2" />
    </children>

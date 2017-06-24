@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.client;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.academiadecodigo.bootcamp8.client.model.ClientService;
 import org.academiadecodigo.bootcamp8.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.client.utils.Values;
 
@@ -17,9 +18,7 @@ import java.net.Socket;
 
 public class Client extends Application {
 
-    private final String HOST = "localhost";
-    private final int SERVER_PORT = 1234;
-    private InetAddress address;
+
     private Socket clientSocket;
 
     public static void main(String[] args) {
@@ -28,12 +27,7 @@ public class Client extends Application {
 
     @Override
     public void init() throws Exception {
-        try {
-            //address = InetAddress.getByName(HOST);
-            clientSocket = new Socket(HOST, SERVER_PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
@@ -43,7 +37,10 @@ public class Client extends Application {
         //Navigation.getInstance().loadScreen(Values.START_SCREEN);
         //Navigation.getInstance().fetchController(Values.START_SCREEN).setClientSocket(clientSocket);
 
+        ClientService cs = new ClientService();
+        Navigation.getInstance().setClientService(cs);
         Navigation.getInstance().loadScreen("user");
-        Navigation.getInstance().fetchController("user").setClientSocket(clientSocket);
+
+
     }
 }

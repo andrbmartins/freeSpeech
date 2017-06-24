@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.controller.Controller;
+import org.academiadecodigo.bootcamp8.client.model.ClientService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,9 +23,10 @@ public class Navigation {
     private static Navigation instance = null;
 
     private Stage stage;
-    private Scene scene;
     private LinkedList<Scene> scenes = new LinkedList<>();
     private Map<String, Controller> controllers = new HashMap<>();
+
+    private ClientService clientService;
 
     private Navigation() {
     }
@@ -53,9 +55,10 @@ public class Navigation {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
             Parent root = loader.load();
-
             controllers.put(view, loader.getController());
             controllers.get(view).setStage(stage);
+            controllers.get(view).setClientService(clientService);
+            controllers.get(view).init();
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
             scenes.push(scene);
@@ -99,4 +102,7 @@ public class Navigation {
         return controllers.get(view);
     }
 
+    public void setClientService(ClientService clientService) {
+        this.clientService = clientService;
+    }
 }

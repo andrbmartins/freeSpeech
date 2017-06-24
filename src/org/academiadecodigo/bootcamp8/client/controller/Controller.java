@@ -2,7 +2,9 @@ package org.academiadecodigo.bootcamp8.client.controller;
 
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
+import org.academiadecodigo.bootcamp8.client.Client;
 import org.academiadecodigo.bootcamp8.client.InputHandler;
+import org.academiadecodigo.bootcamp8.client.model.ClientService;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,64 +17,53 @@ import java.util.ResourceBundle;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public abstract class Controller implements Initializable {
+public interface Controller extends Initializable {
 
     //TODO login/register - messageToSend
 
-    private Stage stage;
-    private Socket clientSocket;
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
+    //private Stage stage;
+    //private ClientService clientService;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    void initialize(URL location, ResourceBundle resources);
 
-        try {
-            setupStreams();
-            new Thread(new InputHandler(input, this)).start();
-            //TODO - invoke stuff
-            listen();
+    void listen();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close();
-        }
-    }
-
-    private void listen() {
+    /*private void listen() throws IOException, ClassNotFoundException {
 
         while (true) {
 
-            //TODO
+            System.out.println(clientService.getInput().readObject());
 
         }
-    }
+    }*/
 
-    private void setupStreams() throws IOException {
+    void setStage(Stage stage); /* {
+        this.stage = stage;
+    }*/
 
-        input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-        output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-    }
+    public ObjectOutputStream getOutput(); /* {
+        return clientService.getOutput();
+    }*/
 
-    private void close() {
+    public void setClientService(ClientService clientService);/* {
+        this.clientService = clientService;
+    }*/
+
+    public void init();/* {
         try {
-            clientSocket.close();
-        } catch (IOException e) {
+            System.out.println(clientService);
+            clientService.setupStreams();
+            new Thread(new InputHandler(clientService.getInput(), this)).start();
+            //TODO - invoke stuff
+            listen();
+
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-    public void setClientSocket(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-    }
-
-    public ObjectOutputStream getOutput() {
-        return output;
-    }
-
+        finally {
+            System.out.println("CLOSING");
+            clientService.close();
+        }
+    }*/
 }

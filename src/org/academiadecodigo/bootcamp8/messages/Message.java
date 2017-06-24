@@ -29,7 +29,7 @@ public class Message<T> implements Sendable {
         return null;
     }
 
-    protected enum Type {
+    public enum Type {
         DATA,
         LOGIN,
         COMMAND
