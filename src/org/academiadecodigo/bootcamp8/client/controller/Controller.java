@@ -4,9 +4,7 @@ import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.InputHandler;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -44,7 +42,7 @@ public abstract class Controller implements Initializable {
 
     private void listen() {
 
-        while(true){
+        while (true) {
 
             //TODO
 
@@ -52,8 +50,9 @@ public abstract class Controller implements Initializable {
     }
 
     private void setupStreams() throws IOException {
-        input = new ObjectInputStream(clientSocket.getInputStream());
-        output = new ObjectOutputStream(clientSocket.getOutputStream());
+
+        input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+        output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
     }
 
     private void close() {

@@ -8,34 +8,16 @@ import org.academiadecodigo.bootcamp8.client.utils.Values;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class Message implements Sendable {
+public class Message<T> implements Sendable {
 
     private static final long serialVersionUID = Values.UID_MESSAGE;
 
-    private String sender;
-    private String message;
-    private String destination;
-    private String password;
     private Type type;
+    private T content;
 
-    public Message(String sender, String message, String destination, Type type) {
-        this.sender = sender;
-        this.message = message;
-        this.destination = destination;
+    public Message(Type type, T content) {
+        this.content = content;
         this.type = type;
-    }
-
-    public Message(String sender, String password) {
-        this.sender = sender;
-        this.password = password;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public String getDestination() {
-        return destination;
     }
 
     public Type getType() {
@@ -43,13 +25,13 @@ public class Message implements Sendable {
     }
 
     @Override
-    public String toString() {
-        return this.message;
+    public T getContent() {
+        return null;
     }
 
-    private enum Type {
-        TEXT,
+    protected enum Type {
+        DATA,
         LOGIN,
-        CMD
+        COMMAND
     }
 }

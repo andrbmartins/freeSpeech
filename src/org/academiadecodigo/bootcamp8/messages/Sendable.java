@@ -12,9 +12,6 @@ public interface Sendable extends Serializable{
 
     //TODO write comments and
 
-
-
-
-
-
+    Message.Type getType();
+    <T> T getContent();
 }
