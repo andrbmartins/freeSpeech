@@ -7,4 +7,7 @@ package org.academiadecodigo.bootcamp8.server.utils;
  */
 
 public class UserHandler {
+
+    
+
 }
