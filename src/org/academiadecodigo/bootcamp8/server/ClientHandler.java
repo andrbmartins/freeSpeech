@@ -19,8 +19,8 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
     private String userName;
-    private BufferedWriter outputStream;
-    private BufferedReader inputStream;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public ClientHandler(Server server, Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -36,7 +36,9 @@ public class ClientHandler implements Runnable {
         try {
 
             buildBufferStreams();
+            System.out.println("oi");
             authenticateClient();
+            System.out.println("ble");
 
 
         } catch (IOException | ClassNotFoundException e) {
@@ -55,9 +57,10 @@ public class ClientHandler implements Runnable {
         String message = "";
 
         while (!exit) {
-
-            sendable = (Sendable) inputStream.readLine();
-
+            System.out.println("oioioi");
+            sendable = (Sendable) objectInputStream.readObject();
+            System.out.println(sendable.getType());
+            System.out.println("sdghdfkjhg");
             if (sendable.getType() == Type.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
@@ -78,7 +81,7 @@ public class ClientHandler implements Runnable {
 
             }
 
-            outputStream.writeObject(new Message(Type.REGISTER, message));
+            objectOutputStream.writeObject(new Message(Type.REGISTER, message));
         }
 
     }
@@ -128,7 +131,9 @@ public class ClientHandler implements Runnable {
 
     private void buildBufferStreams() throws IOException {
 
-        outputStream = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-        inputStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
+        objectOutputStream.flush();
+        objectInputStream = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+        System.out.println("blabas " + objectInputStream.read());
     }
 }

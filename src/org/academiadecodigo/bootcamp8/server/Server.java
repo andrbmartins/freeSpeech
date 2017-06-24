@@ -64,6 +64,7 @@ public class Server {
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println(Thread.currentThread().getName() + ": handshake");
                 cachedPool.submit(new ClientHandler(this, clientSocket));
             }
 
