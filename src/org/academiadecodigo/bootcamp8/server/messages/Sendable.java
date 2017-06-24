@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.messages;
+package org.academiadecodigo.bootcamp8.server.messages;
 
 import java.io.Serializable;
 
@@ -12,7 +12,7 @@ public interface Sendable extends Serializable{
 
     //TODO write comments and
 
-    Message.Type getType();
+    Type getType();
 
     <T> T getContent();
 }
