@@ -20,7 +20,15 @@ public class Message<T> implements Sendable {
         this.type = type;
     }
 
-    public Type getType() {
+    @Override
+    public String toString() {
+        return "Message{" +
+                "type=" + type +
+                ", content=" + content +
+                '}';
+    }
+
+    public Type getType1() {
         return type;
     }
 

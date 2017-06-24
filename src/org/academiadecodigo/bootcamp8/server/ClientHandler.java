@@ -58,10 +58,10 @@ public class ClientHandler implements Runnable {
 
         while (!exit) {
             System.out.println("oioioi");
-            sendable = (Sendable) objectInputStream.readObject();
-            System.out.println(sendable.getType());
+            System.out.println(objectInputStream.readObject());
             System.out.println("sdghdfkjhg");
-            if (sendable.getType() == Type.LOGIN) {
+            System.out.println(sendable.getType1());
+            if (sendable.getType1() == Type.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
@@ -71,7 +71,7 @@ public class ClientHandler implements Runnable {
 
             }
 
-            if (sendable.getType() == Type.REGISTER) {
+            if (sendable.getType1() == Type.REGISTER) {
 
                 if (exit = makeRegistry(sendable)) { //TODO: registry is enough to log in??
                     message = "OK";

@@ -12,7 +12,7 @@ public interface Sendable extends Serializable{
 
     //TODO write comments and
 
-    Type getType();
+    Type getType1();
 
     <T> T getContent();
 }
