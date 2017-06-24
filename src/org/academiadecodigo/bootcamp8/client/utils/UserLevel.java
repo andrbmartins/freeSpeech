@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.client;
+package org.academiadecodigo.bootcamp8.client.utils;
 
 /**
  * Developed @ <Academia de Código_>
@@ -9,6 +9,5 @@ package org.academiadecodigo.bootcamp8.client;
 public enum UserLevel {
 
     ROOT,
-    MODERATOR,
     USER
 }

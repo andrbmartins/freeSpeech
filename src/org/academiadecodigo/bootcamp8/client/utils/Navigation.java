@@ -1,5 +1,16 @@
 package org.academiadecodigo.bootcamp8.client.utils;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.academiadecodigo.bootcamp8.client.controller.Controller;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -7,4 +18,85 @@ package org.academiadecodigo.bootcamp8.client.utils;
  */
 
 public class Navigation {
+
+    private static Navigation instance = null;
+
+    private Stage stage;
+    private Scene scene;
+    private LinkedList<Scene> scenes = new LinkedList<>();
+    private Map<String, Controller> controllers = new HashMap<>();
+
+    private Navigation() {
+    }
+
+    /**
+     * Instantiates a singleton instance of this class and returns it.
+     *
+     * @return the instance.
+     */
+    public static Navigation getInstance() {
+
+        synchronized (Navigation.class) {
+            if (instance == null) {
+                instance = new Navigation();
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * Loads the interface corresponding to the specified element.
+     *
+     * @param view - the view to load.
+     */
+    public void loadScreen(String view) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
+            Parent root = loader.load();
+
+            controllers.put(view, loader.getController());
+            controllers.get(view).setStage(stage);
+
+            Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
+            scenes.push(scene);
+            setScene(scene);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the scene on stage to the previous one.
+     */
+    public void back() {
+        if (scenes.size() < 2) {
+            return;
+        }
+        scenes.pop();
+        setScene(scenes.peek());
+    }
+
+    private void setScene(Scene scene) {
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public void close() {
+        stage.close();
+    }
+
+    /**
+     * Returns the controller corresponding to the specified element.
+     * @param view - the element.
+     * @return the controller.
+     */
+    public Controller fetchController(String view) {
+        return controllers.get(view);
+    }
+
 }
