@@ -18,7 +18,7 @@ import java.net.Socket;
 public class Client extends Application {
 
     private final String HOST = "localhost";
-    private final int SERVER_PORT = 8080;
+    private final int SERVER_PORT = 1234;
     private InetAddress address;
     private Socket clientSocket;
 
@@ -29,8 +29,8 @@ public class Client extends Application {
     @Override
     public void init() throws Exception {
         try {
-            address = InetAddress.getByName(HOST);
-            clientSocket = new Socket(address, SERVER_PORT);
+            //address = InetAddress.getByName(HOST);
+            clientSocket = new Socket(HOST, SERVER_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,7 +39,11 @@ public class Client extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Navigation.getInstance().setStage(primaryStage);
-        Navigation.getInstance().loadScreen(Values.START_SCREEN);
-        Navigation.getInstance().fetchController(Values.START_SCREEN).setClientSocket(clientSocket);
+
+        //Navigation.getInstance().loadScreen(Values.START_SCREEN);
+        //Navigation.getInstance().fetchController(Values.START_SCREEN).setClientSocket(clientSocket);
+
+        Navigation.getInstance().loadScreen("user");
+        Navigation.getInstance().fetchController("user").setClientSocket(clientSocket);
     }
 }

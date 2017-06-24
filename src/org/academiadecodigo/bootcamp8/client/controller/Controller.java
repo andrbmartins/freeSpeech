@@ -70,4 +70,9 @@ public abstract class Controller implements Initializable {
     public void setClientSocket(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
+
+    public ObjectOutputStream getOutput() {
+        return output;
+    }
+
 }

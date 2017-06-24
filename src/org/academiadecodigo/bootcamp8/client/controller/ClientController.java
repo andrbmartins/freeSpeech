@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -44,7 +45,12 @@ public class ClientController extends Controller {
     @FXML
     void onSend(ActionEvent event) {
 
-        textField.getText();
+       String message =  textField.getText();
+        try {
+            super.getOutput().writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
