@@ -8,7 +8,7 @@ import org.academiadecodigo.bootcamp8.client.utils.Values;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class Message<T> implements Sendable {
+public class Message<T> implements Sendable<T> {
 
     private static final long serialVersionUID = Values.UID_MESSAGE;
 
@@ -34,4 +34,5 @@ public class Message<T> implements Sendable {
         LOGIN,
         COMMAND
     }
+
 }

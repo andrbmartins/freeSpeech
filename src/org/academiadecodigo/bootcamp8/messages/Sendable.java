@@ -8,10 +8,12 @@ import java.io.Serializable;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public interface Sendable extends Serializable{
+public interface Sendable<T> extends Serializable {
 
     //TODO write comments and
 
     Message.Type getType();
-    <T> T getContent();
+
+    T getContent();
+
 }
