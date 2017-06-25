@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.controller.Controller;
-import org.academiadecodigo.bootcamp8.client.model.ClientService;
+import org.academiadecodigo.bootcamp8.client.service.ClientService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,7 +56,7 @@ public class Navigation {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
             Parent root = loader.load();
             controllers.put(view, loader.getController());
-            controllers.get(view).setStage(stage);
+            //controllers.get(view).setStage(stage);
             controllers.get(view).setClientService(clientService);
             controllers.get(view).init();
 
@@ -80,21 +80,13 @@ public class Navigation {
         setScene(scenes.peek());
     }
 
-    private void setScene(Scene scene) {
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
     public void close() {
         stage.close();
     }
 
     /**
      * Returns the controller corresponding to the specified element.
+     *
      * @param view - the element.
      * @return the controller.
      */
@@ -104,5 +96,14 @@ public class Navigation {
 
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;
+    }
+
+    private void setScene(Scene scene) {
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 }

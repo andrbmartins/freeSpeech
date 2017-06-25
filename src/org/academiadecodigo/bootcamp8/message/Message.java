@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.messages;
+package org.academiadecodigo.bootcamp8.message;
 
 import org.academiadecodigo.bootcamp8.client.utils.Values;
 
@@ -26,12 +26,13 @@ public class Message<T> implements Sendable {
 
     @Override
     public T getContent() {
-        return null;
+        return content;
     }
 
     public enum Type {
         DATA,
         LOGIN,
+        REGISTER,
         COMMAND
     }
 }

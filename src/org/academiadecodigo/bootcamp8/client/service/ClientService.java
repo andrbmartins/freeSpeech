@@ -1,10 +1,10 @@
-package org.academiadecodigo.bootcamp8.client.model;
+package org.academiadecodigo.bootcamp8.client.service;
 
-import org.academiadecodigo.bootcamp8.messages.Message;
+import org.academiadecodigo.bootcamp8.client.utils.Values;
+import org.academiadecodigo.bootcamp8.message.Message;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
 
 /**
  * Developed @ <Academia de Código_>
@@ -17,45 +17,21 @@ public class ClientService {
     private Socket clientSocket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private final java.lang.String HOST = "192.168.1.19";
-    private final int SERVER_PORT = 4040;
 
     public ClientService() {
         try {
-            clientSocket = new Socket(HOST, SERVER_PORT);
+            clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setupStreams();
     }
 
     public void setupStreams() {
-
         try {
             output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-            //output.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-
-
-        HashMap<String, String> no = new HashMap<>();
-        no.put("username", "bqdjhv");
-        no.put("password", "nzxiucaiu");
-;
-        try {
-            output.writeObject(new Message<>(Message.Type.LOGIN, no));
-            output.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("HERE");
-
-        System.out.println(output);
-
-
-        try {
+            //THIS WAS SEPARATED - DOES IT NEED TO?
             input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,5 +55,23 @@ public class ClientService {
 
     public ObjectInputStream getInput() {
         return input;
+    }
+
+    public void writeObject(Message message){
+        try {
+            output.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Message readObject() {
+        Object serverMessage = null;
+        try {
+            serverMessage = input.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return (Message) serverMessage;
     }
 }
