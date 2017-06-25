@@ -12,21 +12,22 @@ public class Message<T> implements Sendable<T> {
 
     private static final long serialVersionUID = Values.UID_MESSAGE;
 
-    private Type type;
-    private T content;
+    private final Type type;
+    private final T content;
 
     public Message(Type type, T content) {
         this.content = content;
         this.type = type;
     }
 
+    @Override
     public Type getType() {
         return type;
     }
 
     @Override
     public T getContent() {
-        return null;
+        return content;
     }
 
     protected enum Type {
