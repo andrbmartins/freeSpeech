@@ -17,14 +17,16 @@ public class ClientService {
     private Socket clientSocket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
+    private boolean connectionServer;
 
     public ClientService() {
-        try {
+       /* try {
             clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setupStreams();
+        setupStreams();*/
     }
 
     public void setupStreams() {
@@ -44,8 +46,10 @@ public class ClientService {
     public void close() {
         try {
             clientSocket.close();
+            connectionServer = false;
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Disconnect from server not succeeded ");
         }
     }
 
@@ -62,7 +66,9 @@ public class ClientService {
             output.writeObject(message);
         } catch (IOException e) {
             e.printStackTrace();
+
         }
+
     }
 
     public Message readObject() {
@@ -73,5 +79,31 @@ public class ClientService {
             e.printStackTrace();
         }
         return (Message) serverMessage;
+    }
+
+
+    public void makeConnection(String server, int port){
+        try {
+            //clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
+            if(!connectionServer)
+                clientSocket = new Socket(server, port);
+            else{
+                System.out.println("Client already connected");
+            }
+
+        } catch (IOException e) {
+            //e.printStackTrace();
+            System.out.println("Connection to server not successful");
+            connectionServer = false;
+            return;
+        }
+        //setupStreams();
+        System.out.println("Connection to server successful");
+        connectionServer = true;
+    }
+
+
+    public boolean getConnectionServer(){
+        return connectionServer;
     }
 }
