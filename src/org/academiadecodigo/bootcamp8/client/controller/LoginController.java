@@ -92,35 +92,53 @@ public class LoginController implements Controller {
     @Override
     public void init() {
         hideLoginRegister();
-
     }
 
 
     @FXML
     void onLogin(ActionEvent event) {
 
-        readFields(Message.Type.LOGIN);
-
-        //TODO server response structure
-        if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("l ok"))) {
-            Navigation.getInstance().loadScreen(Values.USER_SCENE);
+        if (checkTextField()) {    //Check if fields are not empty
+            readFields(Message.Type.LOGIN);
+            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("l ok"))) {
+                Navigation.getInstance().loadScreen(Values.USER_SCENE);       // Opens the chat room
+            }
+            else {
+                serverMessageLabel.setVisible(true);
+                serverMessageLabel.setText("LOGIN FAILED");
+            }
+        }
+        else{
+            serverMessageLabel.setVisible(true);
+            serverMessageLabel.setText("INVALID FIELD LOGIN/PASSWORD ");
         }
     }
 
     @FXML
     void onRegister(ActionEvent event) {
-        readFields(Message.Type.REGISTER);
-        // TODO check if fields are ok
-        if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("r ok"))) {
+
+        if (checkTextField()) {
+            readFields(Message.Type.REGISTER);
+            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("r ok"))) {
+                serverMessageLabel.setVisible(true);
+                serverMessageLabel.setText("REGISTER OK");
+            } else {
+                serverMessageLabel.setVisible(true);
+                serverMessageLabel.setText("REGISTER FAILED");
+            }
+        }
+        else{
             serverMessageLabel.setVisible(true);
-            serverMessageLabel.setText("REGISTER OK");
+            serverMessageLabel.setText("INVALID FIELD LOGIN/PASSWORD ");
         }
     }
+
 
 
     private void readFields(Message.Type messageType) {
         // TODO check if fields are ok
         Map<String, String> messageContent = new HashMap<>();
+
         messageContent.put(Values.NAME_KEY, nameField.getText());
         messageContent.put(Values.PASSWORD_KEY, passwordField.getText());
 
@@ -150,8 +168,8 @@ public class LoginController implements Controller {
     @FXML
     void onConnectServer(ActionEvent event) {
 
-        if(!clientService.getConnectionServer() ){          // Checks flag of connection
-           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{1,10}$"))
+        if(!clientService.getConnectionServer() ){          // Checks flag of connection if is connected
+           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{1,10}$"))  // If not empty and only numbers (Port Field)
                 clientService.makeConnection(serverTextField.getText(), Integer.parseInt(portTextField.getText()));    // Makes connection to server
             System.out.println(clientService.getConnectionServer());
         }
@@ -161,7 +179,7 @@ public class LoginController implements Controller {
             return;
         }
 
-        if(clientService.getConnectionServer()) {               // Shows message if sucessded
+        if(clientService.getConnectionServer()) {               // Shows message if succeeded
             StatusCircle.setFill(Paint.valueOf("green"));
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CONNECTION TO SERVER SUCCESSFUL");
@@ -195,6 +213,14 @@ public class LoginController implements Controller {
         loginButton.setVisible(true);
         resgisterButton.setVisible(true);
     }
+
+    private boolean checkTextField(){
+        if (!nameField.getText().isEmpty() && !passwordField.getText().isEmpty())
+            return true;
+        else
+            return false;
+    }
+
     @Override
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;
