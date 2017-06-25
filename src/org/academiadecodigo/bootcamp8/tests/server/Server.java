@@ -2,8 +2,10 @@ package org.academiadecodigo.bootcamp8.tests.server;
 
 import org.academiadecodigo.bootcamp8.message.Message;
 import org.academiadecodigo.bootcamp8.message.Sendable;
+import org.academiadecodigo.bootcamp8.tests.Crypto;
 import org.academiadecodigo.bootcamp8.tests.utils.Converter;
 
+import javax.crypto.*;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -56,19 +58,28 @@ public class Server {
     private void write(Sendable message) {
 
         BufferedOutputStream out = null;
+        CipherOutputStream cout = null;
+        Crypto crypto = new Crypto(Cipher.ENCRYPT_MODE);
 
         try {
 
             out = new BufferedOutputStream(clientSocket.getOutputStream());
-            out.write(Converter.toBytes(message));
+            out.write(Converter.toBytes(crypto.getSecretKey()));
+            out.flush();
+
+            cout = new CipherOutputStream(clientSocket.getOutputStream(), crypto.getCipher());
+            cout.write(Converter.toBytes(message));
+            cout.flush();
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-
             try {
                 if (out != null) {
                     out.close();
+                }
+                if (cout != null) {
+                    cout.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

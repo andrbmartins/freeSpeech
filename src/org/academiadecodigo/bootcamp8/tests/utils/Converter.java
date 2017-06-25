@@ -12,7 +12,7 @@ import java.util.List;
  */
 public final class Converter {
 
-    public static byte[] toBytes(Sendable message) {
+    public static byte[] toBytes(Object message) {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out;
@@ -41,16 +41,16 @@ public final class Converter {
 
     }
 
-    public static Sendable toObject(byte[] bytes) {
+    public static Object toObject(byte[] bytes) {
 
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInput in = null;
-        Sendable object = null;
+        Object object = null;
 
         try {
 
             in = new ObjectInputStream(bis);
-            object = (Sendable) in.readObject();
+            object = in.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

@@ -30,6 +30,14 @@ public class Message<T> implements Sendable<T> {
         return content;
     }
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "type=" + type +
+                ", content=" + content +
+                '}';
+    }
+
     public enum Type {
         DATA,
         LOGIN,
