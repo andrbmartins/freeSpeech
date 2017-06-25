@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.controller.Controller;
+import org.academiadecodigo.bootcamp8.client.service.ClientService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,9 +23,10 @@ public class Navigation {
     private static Navigation instance = null;
 
     private Stage stage;
-    private Scene scene;
     private LinkedList<Scene> scenes = new LinkedList<>();
     private Map<String, Controller> controllers = new HashMap<>();
+
+    private ClientService clientService;
 
     private Navigation() {
     }
@@ -53,9 +55,10 @@ public class Navigation {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
             Parent root = loader.load();
-
             controllers.put(view, loader.getController());
-            controllers.get(view).setStage(stage);
+            //controllers.get(view).setStage(stage);
+            controllers.get(view).setClientService(clientService);
+            controllers.get(view).init();
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
             scenes.push(scene);
@@ -77,6 +80,24 @@ public class Navigation {
         setScene(scenes.peek());
     }
 
+    public void close() {
+        stage.close();
+    }
+
+    /**
+     * Returns the controller corresponding to the specified element.
+     *
+     * @param view - the element.
+     * @return the controller.
+     */
+    public Controller fetchController(String view) {
+        return controllers.get(view);
+    }
+
+    public void setClientService(ClientService clientService) {
+        this.clientService = clientService;
+    }
+
     private void setScene(Scene scene) {
         stage.setScene(scene);
         stage.show();
@@ -85,18 +106,4 @@ public class Navigation {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-
-    public void close() {
-        stage.close();
-    }
-
-    /**
-     * Returns the controller corresponding to the specified element.
-     * @param view - the element.
-     * @return the controller.
-     */
-    public Controller fetchController(String view) {
-        return controllers.get(view);
-    }
-
 }

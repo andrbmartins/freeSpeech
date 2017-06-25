@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.server.messages;
+package org.academiadecodigo.bootcamp8.message;
 
 import org.academiadecodigo.bootcamp8.client.utils.Values;
 
@@ -8,12 +8,12 @@ import org.academiadecodigo.bootcamp8.client.utils.Values;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class Message<T> implements Sendable {
+public class Message<T> implements Sendable<T> {
 
     private static final long serialVersionUID = Values.UID_MESSAGE;
 
-    private Type type;
-    private T content;
+    private final Type type;
+    private final T content;
 
     public Message(Type type, T content) {
         this.content = content;
@@ -21,20 +21,20 @@ public class Message<T> implements Sendable {
     }
 
     @Override
-    public String toString() {
-        return "Message{" +
-                "type=" + type +
-                ", content=" + content +
-                '}';
-    }
-
-    public Type getType1() {
+    public Type getType() {
         return type;
     }
 
     @Override
     public T getContent() {
-        return null;
+        return content;
+    }
+
+    public enum Type {
+        DATA,
+        LOGIN,
+        REGISTER,
+        COMMAND
     }
 
 }

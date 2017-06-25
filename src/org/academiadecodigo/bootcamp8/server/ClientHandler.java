@@ -1,10 +1,8 @@
 package org.academiadecodigo.bootcamp8.server;
 
-import org.academiadecodigo.bootcamp8.server.messages.Message;
-import org.academiadecodigo.bootcamp8.server.messages.Sendable;
-import org.academiadecodigo.bootcamp8.server.messages.Type;
+import org.academiadecodigo.bootcamp8.message.Message;
+import org.academiadecodigo.bootcamp8.message.Sendable;
 import org.academiadecodigo.bootcamp8.server.utils.User;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -58,10 +56,10 @@ public class ClientHandler implements Runnable {
 
         while (!exit) {
             System.out.println("oioioi");
-            System.out.println(objectInputStream.readObject());
+            sendable = (Sendable) objectInputStream.readObject();
             System.out.println("sdghdfkjhg");
-            System.out.println(sendable.getType1());
-            if (sendable.getType1() == Type.LOGIN) {
+            System.out.println(sendable.getType());
+            if (sendable.getType() == Message.Type.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
@@ -71,7 +69,7 @@ public class ClientHandler implements Runnable {
 
             }
 
-            if (sendable.getType1() == Type.REGISTER) {
+            if (sendable.getType() == Message.Type.REGISTER) {
 
                 if (exit = makeRegistry(sendable)) { //TODO: registry is enough to log in??
                     message = "OK";
@@ -81,14 +79,14 @@ public class ClientHandler implements Runnable {
 
             }
 
-            objectOutputStream.writeObject(new Message(Type.REGISTER, message));
+            objectOutputStream.writeObject(new Message(Message.Type.REGISTER, message));
         }
 
     }
 
     private boolean makeLogIn(Sendable sendable) {
 
-        HashMap<String, String> map = sendable.getContent();
+        HashMap<String, String> map = (HashMap<String, String>) sendable.getContent();
         String username = map.get("username");
         String password = map.get("password");
 
@@ -98,7 +96,7 @@ public class ClientHandler implements Runnable {
 
     private boolean makeRegistry(Sendable sendable) {
 
-        HashMap<String, String> mapR = sendable.getContent();
+        HashMap<String, String> mapR = (HashMap<String, String>) sendable.getContent();
         String username = mapR.get("username");
         boolean exit = false;
 

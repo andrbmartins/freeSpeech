@@ -1,11 +1,18 @@
 package org.academiadecodigo.bootcamp8.client.controller;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
+import org.academiadecodigo.bootcamp8.client.InputHandler;
+import org.academiadecodigo.bootcamp8.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.message.Message;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 /**
@@ -14,7 +21,7 @@ import java.util.ResourceBundle;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class ClientController extends Controller {
+public class ClientController implements Controller {
 
     @FXML
     private Tab lobbyTab;
@@ -31,21 +38,69 @@ public class ClientController extends Controller {
     @FXML
     private Button send;
 
+    private Stage stage;
+    private ClientService clientService;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    }
 
+    @Override
+    public void init() {
+
+        System.out.println(clientService);
+        //clientService.setupStreams();
+
+        //TESTING SERVER -----------------------------
+
+        HashMap<String, String> no = new HashMap<>();
+        no.put("username", "bqdjhv");
+
+        Message<HashMap> message = new Message(Message.Type.LOGIN, no);
+
+
+        clientService.writeObject(message);
+
+
+        //-----------------------------
+
+
+        new Thread(new InputHandler(clientService.getInput(), this)).start();
+        //TODO - invoke stuff
+        //listen();
+    }
+
+    public void listen() {
+        Message message;
+
+        while ((message = clientService.readObject()) != null) {
+            System.out.println(message);
+        }
+    }
+
+    @Override
+    public void setClientService(ClientService clientService) {
+        this.clientService = clientService;
     }
 
     @FXML
-    void onTabClicked(ActionEvent event) {
+    void onTabClicked(Event event) {
 
     }
 
     @FXML
     void onSend(ActionEvent event) {
 
-        textField.getText();
+        HashMap<String, String> no = new HashMap<>();
+        no.put("username", "bqdjhv");
 
+        Message<HashMap> message = new Message(Message.Type.LOGIN, no);
+
+        try {
+            clientService.getOutput().writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
