@@ -8,7 +8,7 @@ package org.academiadecodigo.bootcamp8.client.utils;
 
 public class Values {
 
-    public static final String HOST = "192.168.1.19";
+    public static final String HOST = "localhost";
     public static final int SERVER_PORT = 4040;
 
     public static final String VIEW = "../view";
