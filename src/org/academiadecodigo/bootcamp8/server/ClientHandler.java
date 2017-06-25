@@ -20,10 +20,12 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
+
     public ClientHandler(Server server, Socket clientSocket) {
         this.clientSocket = clientSocket;
         this.server = server;
     }
+
 
     @Override
     public void run() {
@@ -63,6 +65,7 @@ public class ClientHandler implements Runnable {
 
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
+                    server.addActiveUser(this);
                 } else {
                     message = "NOTOK";
                 }
@@ -133,5 +136,13 @@ public class ClientHandler implements Runnable {
         objectOutputStream.flush();
         objectInputStream = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
         System.out.println("blabas " + objectInputStream.read());
+    }
+
+    public void write(String username, String msg) {
+        try {
+            objectOutputStream.writeBytes(username + " wrote: " + msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,5 @@
 package org.academiadecodigo.bootcamp8.server.utils;
 
-import java.security.InvalidParameterException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,13 +50,14 @@ public class TempUserService implements UserService {
             }
         }
         return null;
-
     }
+
 
     @Override
     public int count() {
         return registeredUsers.size();
     }
+
 
     public static TempUserService getInstance(){
 

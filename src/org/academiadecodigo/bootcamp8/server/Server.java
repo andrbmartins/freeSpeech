@@ -6,6 +6,7 @@ import org.academiadecodigo.bootcamp8.server.utils.UserService;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,47 +21,24 @@ public class Server {
     private static int port;
     private static ServerSocket serverSocket = null;
     private ExecutorService cachedPool;
+    private CopyOnWriteArrayList<ClientHandler> loggedUsers;
 
 
-    private Server(int port) {
+    public Server(int port) {
         Server.port = port;
-    }
-
-    public static void main(String[] args) {
-
-        if (args.length < 1) {
-            System.out.println("Usage: ChatServer <port>");
-            System.exit(1);
-        }
-
-        Server server = new Server(Integer.parseInt(args[0]));
-
-        try {
-            server.init();
-            server.start();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        } finally {
-        server.closeServerSocket();
-
-        }
-
-
+        loggedUsers = new CopyOnWriteArrayList<>();
     }
 
 
 
-    private void init() throws IOException {
+    public void init() throws IOException {
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
         userService = TempUserService.getInstance();
-
-
     }
 
-    private void start() throws IOException {
+
+    public void start() throws IOException {
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -68,11 +46,10 @@ public class Server {
                 cachedPool.submit(new ClientHandler(this, clientSocket));
             }
 
-
     }
 
 
-    private void closeServerSocket() {
+    public void closeServerSocket() {
         if (serverSocket != null) {
             try {
                 serverSocket.close();
@@ -84,5 +61,22 @@ public class Server {
 
     public UserService getUserService() {
         return userService;
+    }
+
+    public void addActiveUser(ClientHandler client) {
+        loggedUsers.add(client);
+
+    }
+
+    public void logOutUser(ClientHandler client) {
+        loggedUsers.remove(client);
+
+    }
+
+    public void writeToAll(String username, String msg) {
+        for (ClientHandler c: loggedUsers) {
+            c.write(username, msg);
+
+        }
     }
 }
