@@ -16,12 +16,8 @@ import java.util.ResourceBundle;
 
 public interface Controller extends Initializable {
 
-    @Override
-    void initialize(URL location, ResourceBundle resources);
-
-    //ObjectOutputStream getOutput();
-
     void setClientService(ClientService clientService);
 
     void init();
+
 }
