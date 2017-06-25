@@ -44,5 +44,4 @@ public class Message<T> implements Sendable<T> {
         REGISTER,
         COMMAND
     }
-
 }

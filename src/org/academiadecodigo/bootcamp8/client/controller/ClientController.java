@@ -4,16 +4,18 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.InputHandler;
 import org.academiadecodigo.bootcamp8.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.message.Message;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Developed @ <Academia de Código_>
@@ -41,6 +43,10 @@ public class ClientController implements Controller {
     private Stage stage;
     private ClientService clientService;
 
+    //One input handler for each tab
+    private ExecutorService inputHandlerPool = Executors.newCachedThreadPool();
+    private TextArea currentRoom;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
@@ -48,35 +54,24 @@ public class ClientController implements Controller {
     @Override
     public void init() {
 
+        currentRoom = lobbyTextArea;
         System.out.println(clientService);
-        //clientService.setupStreams();
 
         //TESTING SERVER -----------------------------
-
+/*
         HashMap<String, String> no = new HashMap<>();
         no.put("username", "bqdjhv");
-
         Message<HashMap> message = new Message(Message.Type.LOGIN, no);
-
-
+        System.out.println("SENDING HARCODED");
         clientService.writeObject(message);
-
-
+        System.out.println("SENT HARDCODED");
+*/
         //-----------------------------
 
-
-        new Thread(new InputHandler(clientService.getInput(), this)).start();
-        //TODO - invoke stuff
-        //listen();
+        InputHandler inputHandler = new InputHandler(clientService.getInput(), this);
+        inputHandlerPool.submit(inputHandler);
     }
 
-    public void listen() {
-        Message message;
-
-        while ((message = clientService.readObject()) != null) {
-            System.out.println(message);
-        }
-    }
 
     @Override
     public void setClientService(ClientService clientService) {
@@ -90,21 +85,15 @@ public class ClientController implements Controller {
 
     @FXML
     void onSend(ActionEvent event) {
-
-        HashMap<String, String> no = new HashMap<>();
-        no.put("username", "bqdjhv");
-
-        Message<HashMap> message = new Message(Message.Type.LOGIN, no);
-
-        try {
-            clientService.getOutput().writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        clientService.sendUserText(textField);
     }
 
     @FXML
     void onSendKey(KeyEvent event) {
-
+        if (event.getCode() == KeyCode.ENTER) {
+            clientService.sendUserText(textField);
+        }
     }
+
+
 }

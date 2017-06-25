@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.client.service;
 
+import javafx.scene.control.TextField;
 import org.academiadecodigo.bootcamp8.client.utils.Values;
 import org.academiadecodigo.bootcamp8.message.Message;
 
@@ -30,15 +31,20 @@ public class ClientService {
     public void setupStreams() {
         try {
             output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-
-            //THIS WAS SEPARATED - DOES IT NEED TO?
             input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("output stream: " + output);
+        System.out.println("input stream: " + input);
+    }
 
-        System.out.println("o " + output);
-        System.out.println("i " + input);
+    public void sendUserText(TextField textField) {
+        Message<String> message = new Message(Message.Type.DATA, textField.getText());
+        writeObject(message);
+        System.out.println("SENT: " + message);
+        textField.clear();
+        textField.requestFocus();
     }
 
     public void close() {
@@ -47,10 +53,6 @@ public class ClientService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public ObjectOutputStream getOutput() {
-        return output;
     }
 
     public ObjectInputStream getInput() {

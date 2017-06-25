@@ -1,7 +1,12 @@
 package org.academiadecodigo.bootcamp8.client;
 
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.client.controller.Controller;
+import org.academiadecodigo.bootcamp8.message.Message;
 
+import javax.xml.soap.Text;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
@@ -22,6 +27,18 @@ public class InputHandler implements Runnable {
 
     @Override
     public void run() {
-        //TODO - get textField stuffs
+
+        do {
+            try {
+                Message message = (Message) input.readObject();
+                String content = (String) message.getContent();
+
+                //TODO text area etc
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+
+            }
+        } while (true); //TODO
     }
 }

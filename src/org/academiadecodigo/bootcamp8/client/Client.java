@@ -24,6 +24,6 @@ public class Client extends Application {
 
         Navigation.getInstance().setClientService(cs);
         Navigation.getInstance().setStage(primaryStage);
-        Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
+        Navigation.getInstance().loadScreen(Values.USER_SCENE);
     }
 }
