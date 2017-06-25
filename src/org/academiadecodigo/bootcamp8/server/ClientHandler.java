@@ -66,6 +66,7 @@ public class ClientHandler implements Runnable {
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
                     server.addActiveUser(this);
+                    //TODO initialize username property after login success
                 } else {
                     message = "NOTOK";
                 }
