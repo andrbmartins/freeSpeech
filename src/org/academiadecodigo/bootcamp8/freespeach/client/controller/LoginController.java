@@ -11,6 +11,7 @@ import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -63,24 +64,24 @@ public class LoginController implements Controller {
 
     @FXML
     void onLogin(ActionEvent event) {
-        readFields(Message.Type.LOGIN);
+        readFields(MessageType.LOGIN);
 
         //TODO server response structure
-        if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("l ok"))) {
+        if (clientService.readObject() == new Message(MessageType.LOGIN, new String("l ok"))) {
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
         }
     }
 
     @FXML
     void onRegister(ActionEvent event) {
-        readFields(Message.Type.REGISTER);
+        readFields(MessageType.REGISTER);
         ///TODO
-        if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("r ok"))) {
+        if (clientService.readObject() == new Message(MessageType.LOGIN, new String("r ok"))) {
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("REGISTER OK");
         }
     }
-    private void readFields(Message.Type messageType) {
+    private void readFields(MessageType messageType) {
         Map<String, String> messageContent = new HashMap<>();
         messageContent.put(Values.NAME_KEY, nameField.getText());
         messageContent.put(Values.PASSWORD_KEY, passwordField.getText());

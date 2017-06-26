@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.tests.client;
 
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
@@ -42,7 +43,7 @@ public class Client {
 
         try {
 
-            Message<String> message = new Message<>(Message.Type.DATA, "Hello in serial");
+            Message<String> message = new Message<>(MessageType.DATA, "Hello in serial");
 
             /*Key key = (Key) Stream.readObject(socket.getInputStream());
             System.out.println(key);

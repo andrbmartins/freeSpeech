@@ -64,15 +64,15 @@ public class Server {
         return userService;
     }
 
+
     public void addActiveUser(ClientHandler client) {
         loggedUsers.add(client);
-
     }
 
     public void logOutUser(ClientHandler client) {
         loggedUsers.remove(client);
-
     }
+
 
     public void writeToAll(Sendable sendable) {
         for (ClientHandler c: loggedUsers) {

@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.server.communication;
 
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
-
+import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 import java.io.*;
 import java.net.Socket;
 
@@ -11,53 +11,40 @@ import java.net.Socket;
  * <Code Cadet> PedroMAlves
  */
 public class CommunicationService implements Communication {
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
+    private OutputStream objectOutputStream;
+    private InputStream objectInputStream;
 
 
     @Override
     public void openInputChannel(Socket socket) {
         try {
-            objectInputStream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+            objectInputStream = socket.getInputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+
 
     @Override
     public void openOutputChannel(Socket socket) {
         try {
-            objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            objectOutputStream = socket.getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public void sendMessage(Sendable message) {
+        Stream.writeObject(objectOutputStream, message);
 
     }
+
 
     @Override
     public Sendable retrieveMessage() {
-        return null;
-    }
-}
-
-
-
-
-    private void buildBufferStreams() throws IOException {
-
-
-    }
-
-    public void write(String username, String msg) {
-        try {
-            objectOutputStream.writeBytes(username + " wrote: " + msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return (Sendable) Stream.readObject(objectInputStream);
     }
 }

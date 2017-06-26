@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communication;
+import org.academiadecodigo.bootcamp8.freespeach.server.communication.CommunicationService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
@@ -23,28 +24,36 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Server server, Socket clientSocket) {
         this.clientSocket = clientSocket;
         this.server = server;
+        communication = new CommunicationService();
     }
 
 
     @Override
     public void run() {
 
-        boolean logIn = false;
-
         try {
 
             buildBufferStreams();
             System.out.println("oi");
-            authenticateClient();
+            //authenticateClient();
             System.out.println("ble");
+            readFromClient();
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             closeSocket();
             return;
         }
 
     }
+
+
+    private void buildBufferStreams() throws IOException {
+
+        communication.openOutputChannel(clientSocket);
+        communication.openInputChannel(clientSocket);
+    }
+
 
     private void authenticateClient() throws IOException, ClassNotFoundException {
 
@@ -61,7 +70,6 @@ public class ClientHandler implements Runnable {
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
                     server.addActiveUser(this);
-                    //TODO initialize username property after login success
                 } else {
                     message = "NOTOK";
                 }
@@ -110,12 +118,17 @@ public class ClientHandler implements Runnable {
                 server.getUserService().notifyAll();
             }
         }
-
         return exit;
     }
 
-    private void closeSocket() {
+    private void readFromClient() {
+        while (true) {
+            server.writeToAll(communication.retrieveMessage());
 
+        }
+    }
+
+    private void closeSocket() {
         try {
             clientSocket.close();
 
@@ -126,11 +139,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void buildBufferStreams() throws IOException {
 
-        communication.openOutputChannel(clientSocket);
-        communication.openInputChannel(clientSocket);
-    }
 
     public void write(Sendable sendable) {
 

@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.InputHandler;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -56,7 +57,7 @@ public class ClientController implements Controller {
         HashMap<String, String> no = new HashMap<>();
         no.put("username", "bqdjhv");
 
-        Message<HashMap> message = new Message(Message.Type.LOGIN, no);
+        Message<HashMap> message = new Message(MessageType.LOGIN, no);
 
 
         clientService.writeObject(message);
@@ -94,7 +95,7 @@ public class ClientController implements Controller {
         HashMap<String, String> no = new HashMap<>();
         no.put("username", "bqdjhv");
 
-        Message<HashMap> message = new Message(Message.Type.LOGIN, no);
+        Message<HashMap> message = new Message(MessageType.LOGIN, no);
 
         try {
             clientService.getOutput().writeObject(message);
