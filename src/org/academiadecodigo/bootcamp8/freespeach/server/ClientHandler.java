@@ -35,9 +35,8 @@ public class ClientHandler implements Runnable {
         try {
 
             buildBufferStreams();
-            System.out.println("oi");
-            //authenticateClient();
-            System.out.println("ble");
+            //authenticateClient(); //temporarily off to test receiving and sending msg from client
+            server.addActiveUser(this); //to be removed after login gets activated
             readFromClient();
 
         } catch (IOException e) {
@@ -126,11 +125,10 @@ public class ClientHandler implements Runnable {
         Sendable msg;
         while ((msg = communication.retrieveMessage()) != null) {
 
-
-            System.out.println("sending message");
             server.writeToAll(msg);
 
         }
+
         closeSocket();
     }
 
@@ -148,7 +146,7 @@ public class ClientHandler implements Runnable {
 
 
     public void write(Sendable sendable) {
-        System.out.println("inside write method sending to client");
+        System.out.println(sendable);
         communication.sendMessage(sendable);
 
     }

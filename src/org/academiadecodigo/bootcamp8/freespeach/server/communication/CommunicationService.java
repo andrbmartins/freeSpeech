@@ -45,7 +45,6 @@ public class CommunicationService implements Communication {
 
     @Override
     public Sendable retrieveMessage() {
-        System.out.println("entering retrieve msg");
         return (Sendable) Stream.readObject(objectInputStream);
     }
 }
