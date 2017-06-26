@@ -4,17 +4,20 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.InputHandler;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
-import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Developed @ <Academia de Código_>
@@ -24,6 +27,8 @@ import java.util.ResourceBundle;
 
 public class ClientController implements Controller {
 
+    @FXML
+    private TabPane tabPane;
     @FXML
     private Tab lobbyTab;
     @FXML
@@ -35,48 +40,74 @@ public class ClientController implements Controller {
     @FXML
     private ListView<?> onlineUsersList;
     @FXML
-    private TextField textField;
-    @FXML
     private Button send;
+    @FXML
+    private TextArea inputTextArea;
 
     private Stage stage;
     private ClientService clientService;
+    private List<TextArea> rooms;
+    private ExecutorService inputHandlerPool;
+    private TextArea currentRoom;
+
+    public ClientController() {
+        inputHandlerPool = Executors.newCachedThreadPool();
+        rooms = new LinkedList<>();
+        rooms.add(lobbyTextArea);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        rooms.remove(0); //lobbyTextArea is null until this point
+        rooms.add(lobbyTextArea);
+        rooms.add(privateTextArea); //TODO REMOVE THIS WHEN WHISPER IS IMPLEMENTED
+        currentRoom = lobbyTextArea;
     }
 
+    /**
+     * Instantiates a new thread to handle server responses for the current room.
+     */
     @Override
     public void init() {
-
-        System.out.println(clientService);
-        //clientService.setupStreams();
-
-        //TESTING SERVER -----------------------------
-
-        HashMap<String, String> no = new HashMap<>();
-        no.put("username", "bqdjhv");
-
-        Message<HashMap> message = new Message(MessageType.LOGIN, no);
-
-
-        clientService.writeObject(message);
-
-
-        //-----------------------------
-
-
-        new Thread(new InputHandler(clientService.getInput(), this)).start();
-        //TODO - invoke stuff
-        //listen();
+        Runnable inputHandler;
+        try {
+            inputHandler = new InputHandler(clientService.getInput(), currentRoom);
+            inputHandlerPool.submit(inputHandler);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void listen() {
-        Message message;
+    @FXML
+    void onTabClicked(Event event) {
+        int tab = tabPane.getSelectionModel().getSelectedIndex();
+        currentRoom = rooms.get(tab);
+    }
 
-        while ((message = clientService.readObject()) != null) {
-            System.out.println(message);
+    @FXML
+    void onSend(ActionEvent event) {
+        clientService.sendUserText(inputTextArea);
+    }
+
+    @FXML
+    void onSendKey(KeyEvent event) {
+        if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
+            inputTextArea.setText(inputTextArea.getText() + "\n");
+            inputTextArea.positionCaret(inputTextArea.getText().length());
+            return;
         }
+        if (event.getCode() == KeyCode.ENTER) {
+            clientService.sendUserText(inputTextArea);
+            event.consume(); //nullifies enter key effect (new line)
+        }
+    }
+
+    public void add(String message, TextArea room) {
+        //TODO get responses - add to textArea
+    }
+
+    public TextArea getCurrentRoom() {
+        return currentRoom;
     }
 
     @Override
@@ -84,28 +115,4 @@ public class ClientController implements Controller {
         this.clientService = clientService;
     }
 
-    @FXML
-    void onTabClicked(Event event) {
-
-    }
-
-    @FXML
-    void onSend(ActionEvent event) {
-
-        HashMap<String, String> no = new HashMap<>();
-        no.put("username", "bqdjhv");
-
-        Message<HashMap> message = new Message(MessageType.LOGIN, no);
-
-        try {
-            clientService.getOutput().writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    void onSendKey(KeyEvent event) {
-
-    }
 }

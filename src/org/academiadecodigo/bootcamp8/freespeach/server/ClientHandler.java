@@ -5,6 +5,7 @@ import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communicat
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -131,6 +132,7 @@ public class ClientHandler implements Runnable {
                 closeSocket();
                 return;
             }
+            System.out.println("sending message");
             server.writeToAll(msg);
 
         }
@@ -150,7 +152,7 @@ public class ClientHandler implements Runnable {
 
 
     public void write(Sendable sendable) {
-
+        System.out.println("inside write method sending to client");
         communication.sendMessage(sendable);
 
     }

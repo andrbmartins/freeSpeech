@@ -6,5 +6,5 @@ package org.academiadecodigo.bootcamp8.freespeach.client.service;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class EncryptionHandler {
+public class EncryptionService {
 }

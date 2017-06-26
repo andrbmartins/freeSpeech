@@ -1,10 +1,11 @@
 package org.academiadecodigo.bootcamp8.freespeach.client.service;
 
-import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
+import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 
-import java.io.*;
-import java.net.Socket;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Developed @ <Academia de Código_>
@@ -12,66 +13,25 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class ClientService {
+public interface ClientService {
 
-    private Socket clientSocket;
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
+    /**
+     * Sends a Message instance containing the specified element's text.
+     *
+     * @param textField - the specified element
+     */
+    void sendUserText(TextArea textField);
 
-    public ClientService() {
-        try {
-            clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        setupStreams();
-    }
+    /**
+     * Sends an object to the server containing the specified element.
+     *
+     * @param message - the specified element.
+     */
+    void writeObject(Sendable message);
 
-    public void setupStreams() {
-        try {
-            output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
+    Message readObject();
 
-            //THIS WAS SEPARATED - DOES IT NEED TO?
-            input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    void closeClientSocket();
 
-        System.out.println("o " + output);
-        System.out.println("i " + input);
-    }
-
-    public void close() {
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public ObjectOutputStream getOutput() {
-        return output;
-    }
-
-    public ObjectInputStream getInput() {
-        return input;
-    }
-
-    public void writeObject(Message message){
-        try {
-            output.writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Message readObject() {
-        Object serverMessage = null;
-        try {
-            serverMessage = input.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return (Message) serverMessage;
-    }
+    InputStream getInput() throws IOException;
 }
