@@ -1,6 +1,6 @@
-package org.academiadecodigo.bootcamp8.message;
+package org.academiadecodigo.bootcamp8.shared.message;
 
-import org.academiadecodigo.bootcamp8.client.utils.Values;
+import org.academiadecodigo.bootcamp8.shared.Values;
 
 /**
  * Developed @ <Academia de Código_>

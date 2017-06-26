@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.client.utils;
+package org.academiadecodigo.bootcamp8.shared;
 
 /**
  * Developed @ <Academia de Código_>

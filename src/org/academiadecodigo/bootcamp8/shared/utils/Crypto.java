@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.tests;
+package org.academiadecodigo.bootcamp8.shared.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -20,10 +20,12 @@ public final class Crypto {
     public Crypto(int mode) {
 
         try {
+
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
             secretKey = keyGen.generateKey();
             cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             e.printStackTrace();
         }
@@ -33,9 +35,11 @@ public final class Crypto {
     public Crypto(int mode, SecretKey secretKey) {
 
         try {
+
             this.secretKey = secretKey;
             cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             e.printStackTrace();
         }

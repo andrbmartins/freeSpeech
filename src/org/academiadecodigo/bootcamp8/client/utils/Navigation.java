@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.controller.Controller;
 import org.academiadecodigo.bootcamp8.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.shared.Values;
 
 import java.io.IOException;
 import java.util.HashMap;

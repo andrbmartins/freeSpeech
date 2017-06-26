@@ -8,7 +8,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.InputHandler;
 import org.academiadecodigo.bootcamp8.client.service.ClientService;
-import org.academiadecodigo.bootcamp8.message.Message;
+import org.academiadecodigo.bootcamp8.shared.message.Message;
 
 import java.io.IOException;
 import java.net.URL;

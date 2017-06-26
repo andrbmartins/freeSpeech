@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.server;
 
-import org.academiadecodigo.bootcamp8.message.Message;
-import org.academiadecodigo.bootcamp8.message.Sendable;
+import org.academiadecodigo.bootcamp8.shared.message.Message;
+import org.academiadecodigo.bootcamp8.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.server.utils.User;
 import java.io.*;
 import java.net.Socket;
