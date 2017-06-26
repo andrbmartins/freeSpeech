@@ -16,23 +16,14 @@ public class CommunicationService implements Communication {
 
 
     @Override
-    public void openInputChannel(Socket socket) {
+    public void openStreams(Socket socket) {
         try {
+            objectOutputStream = socket.getOutputStream();
             objectInputStream = socket.getInputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-    }
-
-
-    @Override
-    public void openOutputChannel(Socket socket) {
-        try {
-            objectOutputStream = socket.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 

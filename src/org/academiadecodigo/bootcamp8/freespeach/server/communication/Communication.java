@@ -11,9 +11,7 @@ import java.net.Socket;
  */
 public interface Communication {
 
-    void openInputChannel(Socket socket);
-
-    void openOutputChannel(Socket socket);
+    void openStreams(Socket socket);
 
     void sendMessage(Sendable message);
 

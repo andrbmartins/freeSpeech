@@ -5,7 +5,6 @@ import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communicat
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -32,26 +31,11 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
 
-        try {
+        communication.openStreams(clientSocket);
+        //authenticateClient(); //temporarily off to test receiving and sending msg from client
+        server.addActiveUser(this); //to be removed after login gets activated
+        readFromClient();
 
-            buildBufferStreams();
-            //authenticateClient(); //temporarily off to test receiving and sending msg from client
-            server.addActiveUser(this); //to be removed after login gets activated
-            readFromClient();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            closeSocket();
-            return;
-        }
-
-    }
-
-
-    private void buildBufferStreams() throws IOException {
-
-        communication.openOutputChannel(clientSocket);
-        communication.openInputChannel(clientSocket);
     }
 
 
@@ -121,6 +105,7 @@ public class ClientHandler implements Runnable {
         return exit;
     }
 
+
     private void readFromClient() {
         Sendable msg;
         while ((msg = communication.retrieveMessage()) != null) {
@@ -128,9 +113,17 @@ public class ClientHandler implements Runnable {
             server.writeToAll(msg);
 
         }
-
+        server.logOutUser(this);
         closeSocket();
     }
+
+
+    public void write(Sendable sendable) {
+        System.out.println(sendable);
+        communication.sendMessage(sendable);
+
+    }
+
 
     private void closeSocket() {
         try {
@@ -141,14 +134,6 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
 
         }
-    }
-
-
-
-    public void write(Sendable sendable) {
-        System.out.println(sendable);
-        communication.sendMessage(sendable);
-
     }
 
     public void setCommunication(Communication communication) {
