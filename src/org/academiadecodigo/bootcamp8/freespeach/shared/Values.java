@@ -14,8 +14,9 @@ public class Values {
     public static final String VIEW = "../view";
     public static final String LOGIN_SCENE = "login";
     public static final String USER_SCENE = "user";
-    public static final Long UID_MESSAGE = 123456789L;
+    public static final Long UID_MESSAGE = 123456789988765432L;
 
     public static final String NAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+
 }

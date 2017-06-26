@@ -2,6 +2,8 @@ package org.academiadecodigo.bootcamp8.freespeach.shared.message;
 
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
+import java.io.Serializable;
+
 /**
  * Developed @ <Academia de Código_>
  * Created by

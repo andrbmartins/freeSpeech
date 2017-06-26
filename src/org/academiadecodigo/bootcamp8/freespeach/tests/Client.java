@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeach.tests.client;
+package org.academiadecodigo.bootcamp8.freespeach.tests;
 
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Crypto;
@@ -6,6 +6,7 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
+import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
 import java.io.*;
 import java.net.Socket;
@@ -42,29 +43,19 @@ public class Client {
 
         try {
 
-            Message<String> message = new Message<>(Message.Type.DATA, "Hello in serial");
+            Crypto crypto = Crypto.getInstance();
 
-            /*Key key = (Key) Stream.readObject(socket.getInputStream());
-            System.out.println(key);
-            Crypto crypto = new Crypto(Cipher.ENCRYPT_MODE, key);
+            Key key = (Key) Stream.readObject(socket.getInputStream());
+            crypto.setKey(key);
 
-            System.out.println(message);
-            Stream.writeObject(socket.getOutputStream(), crypto.getCipher(), message);*/
-
-            Stream.writeObject(socket.getOutputStream(), message);
+            SealedObject sealedObject = (SealedObject) Stream.readObject(socket.getInputStream());
+            Object object = crypto.decryptObject(sealedObject);
+            System.out.println(object);
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            Stream.close(socket);
         }
 
     }
