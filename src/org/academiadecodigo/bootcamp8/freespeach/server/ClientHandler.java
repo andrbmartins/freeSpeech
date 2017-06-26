@@ -122,8 +122,16 @@ public class ClientHandler implements Runnable {
     }
 
     private void readFromClient() {
+        Sendable msg;
         while (true) {
-            server.writeToAll(communication.retrieveMessage());
+            System.out.println("inside readfromclient loop");
+            msg = communication.retrieveMessage();
+            System.out.println("reading inputstream " + msg);
+            if (msg == null) {
+                closeSocket();
+                return;
+            }
+            server.writeToAll(msg);
 
         }
     }
