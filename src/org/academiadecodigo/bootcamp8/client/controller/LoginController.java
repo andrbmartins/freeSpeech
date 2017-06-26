@@ -185,7 +185,7 @@ public class LoginController implements Controller {
             serverMessageLabel.setText("CONNECTION TO SERVER SUCCESSFUL");
             showLoginRegister();                                // If connection ok client can make login or register
         }
-        else{                                                   // If not sucsseded
+        else{                                                   // If not succeeded
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CLIENT DISCONNECTED");
         }

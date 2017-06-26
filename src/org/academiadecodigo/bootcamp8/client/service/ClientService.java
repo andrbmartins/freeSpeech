@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp8.client.utils.Values;
 import org.academiadecodigo.bootcamp8.message.Message;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 
 /**
@@ -85,6 +86,9 @@ public class ClientService {
     public void makeConnection(String server, int port){
         try {
             //clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
+
+            InetAddress address = InetAddress.getByName(server);
+            System.out.println(address);
             if(!connectionServer)
                 clientSocket = new Socket(server, port);
             else{
