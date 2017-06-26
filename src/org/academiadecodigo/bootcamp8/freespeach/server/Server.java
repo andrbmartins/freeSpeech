@@ -75,6 +75,7 @@ public class Server {
 
 
     public void writeToAll(Sendable sendable) {
+        System.out.println("inside write to all");
         for (ClientHandler c: loggedUsers) {
             c.write(sendable);
 

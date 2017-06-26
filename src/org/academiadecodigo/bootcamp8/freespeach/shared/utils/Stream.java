@@ -18,8 +18,8 @@ public class Stream {
 
         try {
 
-            BufferedOutputStream bout = new BufferedOutputStream(out);
-            bout.write(Converter.toBytes(message));
+           ObjectOutputStream bout = new ObjectOutputStream(out);
+            bout.writeObject(message);
             bout.flush();
 
         } catch (IOException e) {
@@ -29,25 +29,30 @@ public class Stream {
     }
 
     public static Object readObject(InputStream in) {
-
+        System.out.println("entering read method of Stream Class");
         Object object = null;
 
         try {
 
-            BufferedInputStream bin = new BufferedInputStream(in);
+            ObjectInputStream bin = new ObjectInputStream(in);
+            System.out.println("just created buffered");
             List<Byte> list = new ArrayList<>();
 
-            byte b;
-            while ((b = (byte) bin.read()) != -1) {
+            //byte b;
+            /*while ((b = (byte) bin.read()) != -1) {
+
                 list.add(b);
-            }
+            }*/
 
-            object = Converter.toObject(Converter.toPrimitiveByteArray(list));
+            //object = Converter.toObject(Converter.toPrimitiveByteArray(list));
+            object = bin.readObject();
 
-        } catch (IOException e) {
+            System.out.println(object);
+
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
+        System.out.println("before returning read object");
         return object;
 
     }
