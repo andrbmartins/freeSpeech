@@ -2,7 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeach.client;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
@@ -20,7 +20,7 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ClientService cs = new ClientService();
+        TempClientService cs = new TempClientService();
 
         Navigation.getInstance().setClientService(cs);
         Navigation.getInstance().setStage(primaryStage);

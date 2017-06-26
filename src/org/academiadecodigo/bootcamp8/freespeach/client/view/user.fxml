@@ -35,7 +35,7 @@
                </Tab>
            </tabs>
        </TabPane>
-       <ListView fx:id="onlineUsersList" prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="3" />
+       <ListView fx:id="onlineUsersList" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="3" />
       <Button fx:id="send" mnemonicParsing="false" onAction="#onSend" text="Send" GridPane.columnIndex="2" GridPane.rowIndex="2" />
       <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    </children>

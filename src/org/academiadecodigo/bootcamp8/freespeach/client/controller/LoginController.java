@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
@@ -60,7 +61,6 @@ public class LoginController implements Controller {
     public void init() {
     }
 
-
     @FXML
     void onLogin(ActionEvent event) {
         readFields(Message.Type.LOGIN);
@@ -85,13 +85,13 @@ public class LoginController implements Controller {
         messageContent.put(Values.NAME_KEY, nameField.getText());
         messageContent.put(Values.PASSWORD_KEY, passwordField.getText());
 
-        Message<Map> message = new Message(messageType, messageContent);
+        Message message = new Message<>(messageType, messageContent);
         clientService.writeObject(message);
     }
 
     @FXML
     void onExitButton(ActionEvent event) {
-        clientService.close();
+        clientService.closeClientSocket();
         Navigation.getInstance().close();
     }
 

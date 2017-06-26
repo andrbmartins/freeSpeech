@@ -31,9 +31,6 @@ public class Stream {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            Stream.close(bout);
-            Stream.close(cout);
         }
 
     }
