@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.client.controller;
+package org.academiadecodigo.bootcamp8.freespeach.client.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,12 +9,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import org.academiadecodigo.bootcamp8.client.service.ClientService;
-import org.academiadecodigo.bootcamp8.client.utils.Navigation;
-import org.academiadecodigo.bootcamp8.client.utils.Values;
-import org.academiadecodigo.bootcamp8.message.Message;
 
-import java.net.Socket;
+
+import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
+import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,6 +90,7 @@ public class LoginController implements Controller {
     public void initialize(URL location, ResourceBundle resources) {
         serverMessageLabel.setVisible(false);
     }
+
 
     @Override
     public void init() {
@@ -223,6 +226,6 @@ public class LoginController implements Controller {
 
     @Override
     public void setClientService(ClientService clientService) {
-        this.clientService = clientService;
+        clientService = clientService;
     }
 }

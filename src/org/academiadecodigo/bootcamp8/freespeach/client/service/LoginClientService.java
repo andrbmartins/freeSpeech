@@ -1,11 +1,13 @@
-package org.academiadecodigo.bootcamp8.client.service;
+package org.academiadecodigo.bootcamp8.freespeach.client.service;
 
-import org.academiadecodigo.bootcamp8.client.utils.Values;
-import org.academiadecodigo.bootcamp8.message.Message;
+import javafx.scene.control.TextArea;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+
 
 /**
  * Developed @ <Academia de Código_>
@@ -13,14 +15,14 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class ClientService {
+public class LoginClientService implements ClientService{
 
     private Socket clientSocket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private boolean connectionServer;
 
-    public ClientService() {
+    public LoginClientService() {
        /* try {
             clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
 
@@ -62,6 +64,8 @@ public class ClientService {
         return input;
     }
 
+
+
     public void writeObject(Message message){
         try {
             output.writeObject(message);
@@ -69,6 +73,16 @@ public class ClientService {
             e.printStackTrace();
 
         }
+
+    }
+
+    @Override
+    public void sendUserText(TextArea textField) {
+
+    }
+
+    @Override
+    public void writeObject(Sendable message) {
 
     }
 
@@ -80,6 +94,11 @@ public class ClientService {
             e.printStackTrace();
         }
         return (Message) serverMessage;
+    }
+
+    @Override
+    public void closeClientSocket() {
+
     }
 
 

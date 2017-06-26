@@ -34,4 +34,13 @@ public interface ClientService {
     void closeClientSocket();
 
     InputStream getInput() throws IOException;
+
+    public boolean getConnectionServer();
+
+    public void makeConnection(String server, int port);
+
+    public void setupStreams();
+
+    public void close();
+
 }

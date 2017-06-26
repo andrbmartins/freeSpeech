@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.controller.Controller;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.LoginClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
@@ -27,7 +28,7 @@ public class Navigation {
     private LinkedList<Scene> scenes = new LinkedList<>();
     private Map<String, Controller> controllers = new HashMap<>();
 
-    private TempClientService clientService;
+    private LoginClientService loginClientService;
 
     private Navigation() {
     }
@@ -55,11 +56,12 @@ public class Navigation {
     public void loadScreen(String view) {
         try {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
-            //FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/login.fxml"));
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/login.fxml"));
+
             Parent root = loader.load();
             controllers.put(view, loader.getController());
-            controllers.get(view).setClientService(clientService);
+            controllers.get(view).setClientService(loginClientService);
             controllers.get(view).init();
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
@@ -96,8 +98,8 @@ public class Navigation {
         return controllers.get(view);
     }
 
-    public void setClientService(TempClientService clientService) {
-        this.clientService = clientService;
+    public void setClientService(LoginClientService clientService) {
+        this.loginClientService = clientService;
     }
 
     private void setScene(Scene scene) {
