@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeach.server;
 
+import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communication;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
@@ -17,8 +18,9 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
     private String userName;
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
+    private Communication communication;
+    //private ObjectOutputStream objectOutputStream;
+    //private ObjectInputStream objectInputStream;
 
 
     public ClientHandler(Server server, Socket clientSocket) {
@@ -57,10 +59,9 @@ public class ClientHandler implements Runnable {
         String message = "";
 
         while (!exit) {
-            System.out.println("oioioi");
-            sendable = (Sendable) objectInputStream.readObject();
-            System.out.println("sdghdfkjhg");
-            System.out.println(sendable.getType());
+
+            sendable = communication.retrieveMessage();
+
             if (sendable.getType() == Message.Type.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
@@ -82,9 +83,14 @@ public class ClientHandler implements Runnable {
                 }
 
             }
-
-            objectOutputStream.writeObject(new Message(Message.Type.REGISTER, message));
+            communication.sendMessage(createNewSendable(Message.Type.REGISTER, message));
         }
+
+    }
+
+    private <T> Sendable createNewSendable(Message.Type type, T content) {
+
+        throw new UnsupportedOperationException();
 
     }
 
@@ -133,17 +139,13 @@ public class ClientHandler implements Runnable {
 
     private void buildBufferStreams() throws IOException {
 
-        objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-        objectOutputStream.flush();
-        objectInputStream = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-        System.out.println("blabas " + objectInputStream.read());
+        communication.openOutputChannel(clientSocket);
+        communication.openInputChannel(clientSocket);
     }
 
-    public void write(String username, String msg) {
-        try {
-            objectOutputStream.writeBytes(username + " wrote: " + msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void write(Sendable sendable) {
+
+        communication.sendMessage(sendable);
+
     }
 }

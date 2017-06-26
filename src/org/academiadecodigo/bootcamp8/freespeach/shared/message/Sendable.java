@@ -16,4 +16,5 @@ public interface Sendable<T> extends Serializable {
 
     T getContent();
 
+
 }

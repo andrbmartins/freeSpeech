@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.UserService;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -73,9 +74,9 @@ public class Server {
 
     }
 
-    public void writeToAll(String username, String msg) {
+    public void writeToAll(Sendable sendable) {
         for (ClientHandler c: loggedUsers) {
-            c.write(username, msg);
+            c.write(sendable);
 
         }
     }
