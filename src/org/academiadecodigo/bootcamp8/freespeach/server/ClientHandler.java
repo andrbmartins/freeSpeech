@@ -17,7 +17,6 @@ import java.util.HashMap;
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
-    private String userName;
     private Communication communication;
 
 
@@ -137,5 +136,9 @@ public class ClientHandler implements Runnable {
 
         communication.sendMessage(sendable);
 
+    }
+
+    public void setCommunication(Communication communication) {
+        this.communication = communication;
     }
 }
