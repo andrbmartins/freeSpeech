@@ -1,7 +1,10 @@
 package org.academiadecodigo.bootcamp8.freespeach.client;
 
+import javafx.scene.control.TextArea;
+import org.academiadecodigo.bootcamp8.freespeach.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeach.client.controller.Controller;
 
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 
 /**
@@ -12,12 +15,12 @@ import java.io.ObjectInputStream;
 
 public class InputHandler implements Runnable {
 
-    private ObjectInputStream input;
-    private Controller controller;
+    private InputStream input;
+    private TextArea room;
 
-    public InputHandler(ObjectInputStream input, Controller controller) {
+    public InputHandler(InputStream input, TextArea room) {
         this.input = input;
-        this.controller = controller;
+        this.room = room;
     }
 
     @Override

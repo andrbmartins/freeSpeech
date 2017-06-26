@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.server;
 
-import org.academiadecodigo.bootcamp8.freespeach.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.UserService;
+import org.academiadecodigo.bootcamp8.freespeach.server.utils.TempUserService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
