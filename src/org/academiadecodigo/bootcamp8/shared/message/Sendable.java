@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.message;
+package org.academiadecodigo.bootcamp8.shared.message;
 
 import java.io.Serializable;
 

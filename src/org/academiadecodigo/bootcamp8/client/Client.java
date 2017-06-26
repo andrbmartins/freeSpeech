@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.client.utils.Navigation;
-import org.academiadecodigo.bootcamp8.client.utils.Values;
+import org.academiadecodigo.bootcamp8.shared.Values;
 
 /**
  * Developed @ <Academia de Código_>

@@ -1,19 +1,13 @@
 package org.academiadecodigo.bootcamp8.tests.client;
 
-import org.academiadecodigo.bootcamp8.message.Message;
-import org.academiadecodigo.bootcamp8.message.Sendable;
-import org.academiadecodigo.bootcamp8.tests.Crypto;
-import org.academiadecodigo.bootcamp8.tests.utils.Converter;
+import org.academiadecodigo.bootcamp8.shared.utils.Crypto;
+import org.academiadecodigo.bootcamp8.shared.utils.Stream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Socket;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author by André Martins <Code Cadet>
@@ -44,55 +38,25 @@ public class Client {
 
     private void init() {
 
-        BufferedInputStream in = null;
+        BufferedInputStream bin = null;
         CipherInputStream cin = null;
 
         try {
 
-            in = new BufferedInputStream(socket.getInputStream());
+            bin = new BufferedInputStream(socket.getInputStream());
+            SecretKey key = (SecretKey) Stream.readObject(bin);
+            System.out.println(key);
 
-            SecretKey key = (SecretKey) read(in);
             Crypto crypto = new Crypto(Cipher.DECRYPT_MODE, key);
-
             cin = new CipherInputStream(socket.getInputStream(), crypto.getCipher());
-            System.out.println(read(cin));
+            System.out.println(Stream.readObject(cin));
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-                if (cin != null) {
-                    cin.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Stream.close(bin);
+            Stream.close(cin);
         }
-    }
-
-    private Object read(InputStream in) {
-
-        byte[] bytes = null;
-
-        try {
-
-            List<Byte> list = new LinkedList<>();
-
-            byte b;
-            while ((b = (byte) in.read()) != -1) {
-                list.add(b);
-            }
-
-            bytes = Converter.toPrimitiveByteArray(list);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Converter.toObject(bytes);
 
     }
 

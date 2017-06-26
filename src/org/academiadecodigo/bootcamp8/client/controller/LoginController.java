@@ -9,8 +9,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.client.utils.Navigation;
-import org.academiadecodigo.bootcamp8.client.utils.Values;
-import org.academiadecodigo.bootcamp8.message.Message;
+import org.academiadecodigo.bootcamp8.shared.Values;
+import org.academiadecodigo.bootcamp8.shared.message.Message;
 
 import java.net.URL;
 import java.util.HashMap;

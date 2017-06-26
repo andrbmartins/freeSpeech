@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.client.service;
 
-import org.academiadecodigo.bootcamp8.client.utils.Values;
-import org.academiadecodigo.bootcamp8.message.Message;
+import org.academiadecodigo.bootcamp8.shared.Values;
+import org.academiadecodigo.bootcamp8.shared.message.Message;
 
 import java.io.*;
 import java.net.Socket;

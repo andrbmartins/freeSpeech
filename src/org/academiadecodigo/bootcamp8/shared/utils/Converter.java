@@ -1,6 +1,4 @@
-package org.academiadecodigo.bootcamp8.tests.utils;
-
-import org.academiadecodigo.bootcamp8.message.Sendable;
+package org.academiadecodigo.bootcamp8.shared.utils;
 
 import java.io.*;
 import java.util.List;
@@ -15,26 +13,21 @@ public final class Converter {
     public static byte[] toBytes(Object message) {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out;
+        ObjectOutputStream bout = null;
         byte[] bytes = null;
 
         try {
 
-            out = new ObjectOutputStream(bos);
-            out.writeObject(message);
-            out.flush();
+            bout = new ObjectOutputStream(bos);
+            bout.writeObject(message);
+            bout.flush();
             bytes = bos.toByteArray();
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-
-            try {
-                bos.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-
+            Stream.close(bos);
+            Stream.close(bout);
         }
 
         return bytes;
@@ -43,25 +36,20 @@ public final class Converter {
 
     public static Object toObject(byte[] bytes) {
 
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInput in = null;
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        ObjectInputStream bins = null;
         Object object = null;
 
         try {
 
-            in = new ObjectInputStream(bis);
-            object = in.readObject();
+            bins = new ObjectInputStream(bais);
+            object = bins.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
-
-            try {
-                bis.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-
+            Stream.close(bais);
+            Stream.close(bins);
         }
 
         return object;

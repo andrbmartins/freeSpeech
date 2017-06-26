@@ -1,12 +1,8 @@
 package org.academiadecodigo.bootcamp8.tests.server;
 
-import org.academiadecodigo.bootcamp8.message.Message;
-import org.academiadecodigo.bootcamp8.message.Sendable;
-import org.academiadecodigo.bootcamp8.tests.Crypto;
-import org.academiadecodigo.bootcamp8.tests.utils.Converter;
+import org.academiadecodigo.bootcamp8.shared.message.Message;
+import org.academiadecodigo.bootcamp8.shared.utils.Stream;
 
-import javax.crypto.*;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,12 +22,6 @@ public class Server {
         Server server = new Server();
         server.init();
 
-        String str = "Hello in serial";
-        Message<String> message = new Message<String>(Message.Type.DATA, str);
-        System.out.println(message);
-
-        server.write(message);
-
     }
 
     private Server() {
@@ -47,44 +37,17 @@ public class Server {
     private void init() {
 
         try {
+
             clientSocket = socket.accept();
             System.out.println("Client connected");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-    }
+            Message<String> message = new Message<>(Message.Type.DATA, "Hello in serial");
+            System.out.println(message);
 
-    private void write(Sendable message) {
-
-        BufferedOutputStream out = null;
-        CipherOutputStream cout = null;
-        Crypto crypto = new Crypto(Cipher.ENCRYPT_MODE);
-
-        try {
-
-            out = new BufferedOutputStream(clientSocket.getOutputStream());
-            out.write(Converter.toBytes(crypto.getSecretKey()));
-            out.flush();
-
-            cout = new CipherOutputStream(clientSocket.getOutputStream(), crypto.getCipher());
-            cout.write(Converter.toBytes(message));
-            cout.flush();
+            Stream.writeObject(clientSocket.getOutputStream(), message);
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-                if (cout != null) {
-                    cout.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
         }
 
     }
