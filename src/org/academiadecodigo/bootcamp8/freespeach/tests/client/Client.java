@@ -42,13 +42,16 @@ public class Client {
 
         try {
 
-            Key key = (Key) Stream.readObject(socket.getInputStream());
+            Message<String> message = new Message<>(Message.Type.DATA, "Hello in serial");
+
+            /*Key key = (Key) Stream.readObject(socket.getInputStream());
             System.out.println(key);
             Crypto crypto = new Crypto(Cipher.ENCRYPT_MODE, key);
 
-            Message<String> message = new Message<>(Message.Type.DATA, "Hello in serial");
             System.out.println(message);
-            Stream.writeObject(socket.getOutputStream(), crypto.getCipher());
+            Stream.writeObject(socket.getOutputStream(), crypto.getCipher(), message);*/
+
+            Stream.writeObject(socket.getOutputStream(), message);
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.tests.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
@@ -45,10 +46,14 @@ public class Server {
             clientSocket = socket.accept();
             System.out.println("Client connected");
 
-            Stream.writeObject(clientSocket.getOutputStream(), crypto.getPublicKey());
+            /*Stream.writeObject(clientSocket.getOutputStream(), crypto.getPublicKey());
 
             Object object = Stream.readObject(clientSocket.getInputStream(), crypto.getCipher());
-            System.out.println(object);
+            System.out.println(object);*/
+
+            Sendable message = (Sendable) Stream.readObject(clientSocket.getInputStream());
+            System.out.println(message.getType());
+            System.out.println(message.getContent());
 
         } catch (IOException e) {
             e.printStackTrace();
