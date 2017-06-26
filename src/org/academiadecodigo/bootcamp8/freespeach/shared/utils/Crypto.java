@@ -1,9 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.shared.utils;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
+import java.io.IOException;
 import java.security.*;
 
 /**
@@ -22,8 +20,7 @@ public final class Crypto {
 
         try {
 
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ENCRYPTION_ALGORITHM);
-            keyPair = keyPairGenerator.generateKeyPair();
+            keyPair = getKeyPair();
             cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
             cipher.init(mode, keyPair.getPrivate());
 
@@ -52,6 +49,42 @@ public final class Crypto {
 
     public Key getPublicKey() {
         return keyPair.getPublic();
+    }
+
+    public static KeyPair getKeyPair() {
+
+        KeyPairGenerator keyPairGenerator;
+        KeyPair keyPair = null;
+
+        try {
+            keyPairGenerator = KeyPairGenerator.getInstance(ENCRYPTION_ALGORITHM);
+            keyPair = keyPairGenerator.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return keyPair;
+
+    }
+
+    public static Object decrypt(SealedObject sealedObject, Key key) {
+
+        Object object = null;
+
+        try {
+            object = sealedObject.getObject(key);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return object;
+
     }
 
 }

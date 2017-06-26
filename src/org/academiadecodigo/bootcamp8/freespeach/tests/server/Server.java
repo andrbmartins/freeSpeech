@@ -6,9 +6,12 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
 import javax.crypto.Cipher;
+import javax.crypto.SealedObject;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 
 /**
  * @author by André Martins <Code Cadet>
@@ -46,14 +49,15 @@ public class Server {
             clientSocket = socket.accept();
             System.out.println("Client connected");
 
-            /*Stream.writeObject(clientSocket.getOutputStream(), crypto.getPublicKey());
+            /*KeyPair keyPair = Crypto.getKeyPair();
 
-            Object object = Stream.readObject(clientSocket.getInputStream(), crypto.getCipher());
-            System.out.println(object);*/
+            Stream.writeObject(clientSocket.getOutputStream(), keyPair.getPublic());*/
 
-            Sendable message = (Sendable) Stream.readObject(clientSocket.getInputStream());
+            SealedObject object = (SealedObject) Stream.readObject(clientSocket.getInputStream());
+            System.out.println(object);
+            /*Sendable message = (Sendable) Crypto.decrypt(object, keyPair.getPrivate());
             System.out.println(message.getType());
-            System.out.println(message.getContent());
+            System.out.println(message.getContent());*/
 
         } catch (IOException e) {
             e.printStackTrace();
