@@ -4,8 +4,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 
 /**
  * @author by André Martins <Code Cadet>
@@ -14,17 +13,19 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class Crypto {
 
-    private SecretKey secretKey;
+    private static final String ENCRYPTION_ALGORITHM = "RSA";
+
+    private KeyPair keyPair;
     private Cipher cipher;
 
     public Crypto(int mode) {
 
         try {
 
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            secretKey = keyGen.generateKey();
-            cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ENCRYPTION_ALGORITHM);
+            keyPair = keyPairGenerator.generateKeyPair();
+            cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+            cipher.init(mode, keyPair.getPrivate());
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             e.printStackTrace();
@@ -32,13 +33,12 @@ public final class Crypto {
 
     }
 
-    public Crypto(int mode, SecretKey secretKey) {
+    public Crypto(int mode, Key key) {
 
         try {
 
-            this.secretKey = secretKey;
-            cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+            cipher.init(mode, key);
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             e.printStackTrace();
@@ -50,8 +50,8 @@ public final class Crypto {
         return cipher;
     }
 
-    public SecretKey getSecretKey() {
-        return secretKey;
+    public Key getPublicKey() {
+        return keyPair.getPublic();
     }
 
 }
