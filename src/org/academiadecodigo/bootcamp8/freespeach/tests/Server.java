@@ -1,11 +1,10 @@
 package org.academiadecodigo.bootcamp8.freespeach.tests;
 
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
-import javax.crypto.Cipher;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -48,7 +47,7 @@ public class Server {
 
             Stream.writeObject(clientSocket.getOutputStream(), crypto.getKey());
 
-            Message<String> message = new Message<>(Message.Type.DATA, "Hello serial");
+            Message<String> message = new Message<>(MessageType.DATA, "Hello serial");
             Stream.writeObject(clientSocket.getOutputStream(), crypto.encryptObject(message));
 
         } catch (IOException e) {
