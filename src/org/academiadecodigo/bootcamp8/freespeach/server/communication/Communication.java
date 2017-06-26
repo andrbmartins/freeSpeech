@@ -5,7 +5,9 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import java.net.Socket;
 
 /**
- * Created by codecadet on 26/06/17.
+ * Developed @ <Academia de Código_>
+ * Created by
+ * <Code Cadet> Fábio Fernandes
  */
 public interface Communication {
 
