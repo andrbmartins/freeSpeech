@@ -3,6 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;

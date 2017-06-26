@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeach.client.service;
 
+import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 
@@ -13,6 +14,8 @@ import java.net.Socket;
  */
 
 public class ClientService {
+
+    //TODO Make this an interface
 
     private Socket clientSocket;
     private ObjectOutputStream output;
@@ -30,15 +33,25 @@ public class ClientService {
     public void setupStreams() {
         try {
             output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-
-            //THIS WAS SEPARATED - DOES IT NEED TO?
             input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("output stream: " + output);
+        System.out.println("input stream: " + input);
+    }
 
-        System.out.println("o " + output);
-        System.out.println("i " + input);
+    public void sendUserText(TextArea textField) {
+
+        if (textField.getText().isEmpty()) {
+            return;
+        }
+
+        Message<String> message = new Message(Message.Type.DATA, textField.getText());
+        writeObject(message);
+        System.out.println("SENT: " + message);
+        textField.clear();
+        textField.requestFocus();
     }
 
     public void close() {
@@ -49,15 +62,11 @@ public class ClientService {
         }
     }
 
-    public ObjectOutputStream getOutput() {
-        return output;
-    }
-
     public ObjectInputStream getInput() {
         return input;
     }
 
-    public void writeObject(Message message){
+    public void writeObject(Message message) {
         try {
             output.writeObject(message);
         } catch (IOException e) {
