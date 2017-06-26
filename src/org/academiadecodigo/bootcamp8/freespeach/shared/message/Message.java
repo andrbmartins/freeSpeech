@@ -10,20 +10,20 @@ import java.io.Serializable;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class Message<T> implements Sendable<T> {
+public class Message<T> implements Sendable<T>, Serializable {
 
     private static final long serialVersionUID = Values.UID_MESSAGE;
 
-    private final Type type;
+    private final MessageType type;
     private final T content;
 
-    public Message(Type type, T content) {
+    public Message(MessageType type, T content) {
         this.content = content;
         this.type = type;
     }
 
     @Override
-    public Type getType() {
+    public MessageType getType() {
         return type;
     }
 
@@ -33,18 +33,16 @@ public class Message<T> implements Sendable<T> {
     }
 
     @Override
+    public Sendable<T> updateMessage(MessageType type, T content) {
+        return new Message<>(type,content);
+    }
+
+    @Override
     public String toString() {
         return "Message{" +
                 "type=" + type +
                 ", content=" + content +
                 '}';
-    }
-
-    public enum Type {
-        DATA,
-        LOGIN,
-        REGISTER,
-        COMMAND
     }
 
 }
