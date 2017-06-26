@@ -8,6 +8,7 @@ import org.academiadecodigo.bootcamp8.freespeach.client.controller.Controller;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ public class Navigation {
     private Stage stage;
     private LinkedList<Scene> scenes = new LinkedList<>();
     private Map<String, Controller> controllers = new HashMap<>();
+    private File css = new File(Values.STYLESHEET);
 
     private TempClientService clientService;
 
@@ -61,6 +63,8 @@ public class Navigation {
             controllers.get(view).init();
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(css.toURI().toString());
             scenes.push(scene);
             setScene(scene);
 

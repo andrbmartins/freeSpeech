@@ -6,6 +6,8 @@ import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientServic
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
+import java.io.File;
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -15,11 +17,13 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 public class Client extends Application {
 
     public static void main(String[] args) {
+
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         TempClientService cs = new TempClientService();
 
         Navigation.getInstance().setClientService(cs);

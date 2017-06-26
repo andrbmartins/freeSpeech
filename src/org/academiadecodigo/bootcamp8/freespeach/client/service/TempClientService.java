@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.client.service;
 
 import javafx.scene.control.TextArea;
+import org.academiadecodigo.bootcamp8.freespeach.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
@@ -52,20 +53,19 @@ public class TempClientService implements ClientService {
 
     /**
      * @see ClientService#sendUserText(TextArea)
-     * @param textField
+     * @param textArea
      */
     @Override
-    public void sendUserText(TextArea textField) {
+    public void sendUserText(TextArea textArea) {
 
-        if (textField.getText().isEmpty()) {
+        if (textArea.getText().isEmpty()) {
             return;
         }
-
-        Message<String> message = new Message<>(MessageType.DATA, textField.getText());
+        String text = ClientController.USERNAME + ": "+ textArea.getText();
+        Message<String> message = new Message<>(MessageType.DATA, text);
         writeObject(message);
-        System.out.println("SENT: " + message);
-        textField.clear();
-        textField.requestFocus();
+        textArea.clear();
+        textArea.requestFocus();
     }
 
     @Override

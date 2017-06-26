@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class Stream {
 
+    //TODO não seria melhor passar uma object stream como argumento
+    // e não instanciar uma sempre que um dos método é invocado?
+
     public static void writeObject(OutputStream out, Object message) {
 
         try {

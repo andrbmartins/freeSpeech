@@ -18,4 +18,6 @@ public class Values {
 
     public static final String NAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+
+    public static final String STYLESHEET = "resources/stylesheet.css";
 }

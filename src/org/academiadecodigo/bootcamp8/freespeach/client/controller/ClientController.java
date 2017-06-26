@@ -27,6 +27,9 @@ import java.util.concurrent.Executors;
 
 public class ClientController implements Controller {
 
+    //TODO TEST
+    public static final String USERNAME = "test-user";
+
     @FXML
     private TabPane tabPane;
     @FXML
