@@ -121,7 +121,11 @@ public final class Crypto {
     }
 
     public void setKey(Key key) {
-        this.key = key;
+
+        if (key != null) {
+            this.key = key;
+        }
+
     }
 
 }
