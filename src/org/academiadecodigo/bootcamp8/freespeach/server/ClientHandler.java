@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communication;
-import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
 import java.io.*;
@@ -19,8 +19,6 @@ public class ClientHandler implements Runnable {
     private final Server server;
     private String userName;
     private Communication communication;
-    //private ObjectOutputStream objectOutputStream;
-    //private ObjectInputStream objectInputStream;
 
 
     public ClientHandler(Server server, Socket clientSocket) {
@@ -34,7 +32,6 @@ public class ClientHandler implements Runnable {
 
         boolean logIn = false;
 
-
         try {
 
             buildBufferStreams();
@@ -42,13 +39,11 @@ public class ClientHandler implements Runnable {
             authenticateClient();
             System.out.println("ble");
 
-
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             closeSocket();
             return;
         }
-
 
     }
 
@@ -62,7 +57,7 @@ public class ClientHandler implements Runnable {
 
             sendable = communication.retrieveMessage();
 
-            if (sendable.getType() == Message.Type.LOGIN) {
+            if (sendable.getType() == MessageType.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
@@ -74,7 +69,7 @@ public class ClientHandler implements Runnable {
 
             }
 
-            if (sendable.getType() == Message.Type.REGISTER) {
+            if (sendable.getType() == MessageType.REGISTER) {
 
                 if (exit = makeRegistry(sendable)) { //TODO: registry is enough to log in??
                     message = "OK";
@@ -83,14 +78,9 @@ public class ClientHandler implements Runnable {
                 }
 
             }
-            communication.sendMessage(createNewSendable(Message.Type.REGISTER, message));
+
+            communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
-
-    }
-
-    private <T> Sendable createNewSendable(Message.Type type, T content) {
-
-        throw new UnsupportedOperationException();
 
     }
 
