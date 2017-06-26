@@ -2,13 +2,15 @@ package org.academiadecodigo.bootcamp8.freespeach.shared.message;
 
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
+import java.io.Serializable;
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class Message<T> implements Sendable<T> {
+public class Message<T> implements Sendable<T>, Serializable {
 
     private static final long serialVersionUID = Values.UID_MESSAGE;
 
