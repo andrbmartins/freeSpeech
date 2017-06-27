@@ -1,103 +1,109 @@
 package org.academiadecodigo.bootcamp8.freespeach.shared.utils;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author by André Martins <Code Cadet>
  *         Project freeSpeach (26/06/17)
  *         <Academia de Código_>
  */
-public class Stream {
+public final class Stream {
 
+    /**
+     * Write an object to stream, given an object stream
+     * @param out destination object stream
+     * @param message object to send
+     */
+    public static void writeObject(ObjectOutputStream out, Object message) {
+
+        try {
+
+            out.writeObject(message);
+            out.flush();
+
+        } catch (IOException e) {
+            System.err.println("Error on trying to open stream.\n" + e.getMessage());
+        }
+
+    }
+
+    /**
+     * Write an object to stream
+     * @param out destination stream
+     * @param message object to send
+     */
     public static void writeObject(OutputStream out, Object message) {
 
         try {
 
-            BufferedOutputStream bout = new BufferedOutputStream(out);
-            bout.write(Converter.toBytes(message));
-            bout.flush();
+            ObjectOutputStream bout = new ObjectOutputStream(out);
+            writeObject(bout, message);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error on trying to open stream.\n" + e.getMessage());
         }
 
     }
 
+    /**
+     * Read an object from the stream, given an object stream
+     * @param in source object stream
+     * @return the received object
+     */
+    public static Object readObject(ObjectInputStream in) {
+
+        Object object = null;
+
+        try {
+
+            object = in.readObject();
+
+        } catch (IOException e) {
+            System.err.println("Error on trying to open object stream.\n" + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("Class not found.\n" + e.getMessage());
+        }
+
+        return object;
+
+    }
+
+    /**
+     * Read an object from the stream
+     * @param in source stream
+     * @return the received object
+     */
     public static Object readObject(InputStream in) {
-        System.out.println("Dentro do Stream ReadObject");
-        System.out.println("Receives InputStream" + in.toString());
-        Object object = null;
-
-        try {
-
-            BufferedInputStream bin = new BufferedInputStream(in);
-            List<Byte> list = new ArrayList<>();
-
-            byte b;
-            while ((b = (byte) bin.read()) != -1) {
-                list.add(b);
-            }
-
-            object = Converter.toObject(Converter.toPrimitiveByteArray(list));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Saida do Stream ReadObject" + object.toString());
-        return object;
-
-    }
-
-    public static void writeObject(OutputStream out, Cipher cipher, Object message) {
-
-        try {
-
-            CipherOutputStream cout = new CipherOutputStream(out, cipher);
-            cout.write(Converter.toBytes(message));
-            cout.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Object readObject(InputStream in, Cipher cipher) {
 
         Object object = null;
 
         try {
 
-            CipherInputStream cin = new CipherInputStream(in, cipher);
-            List<Byte> list = new ArrayList<>();
-
-            byte b;
-            while ((b = (byte) cin.read()) != -1) {
-                list.add(b);
-            }
-
-            object = Converter.toObject(Converter.toPrimitiveByteArray(list));
+            ObjectInputStream bin = new ObjectInputStream(in);
+            object = readObject(bin);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error on trying to open object stream.\n" + e.getMessage());
         }
 
         return object;
 
     }
 
+    /**
+     * Close the stream
+     * @param stream to close
+     */
     public static void close(Closeable stream) {
 
         try {
+
             if (stream != null) {
                 stream.close();
             }
+
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error on trying to close stream.\n" + e.getMessage());
         }
 
     }

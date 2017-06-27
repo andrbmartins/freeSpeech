@@ -179,13 +179,13 @@ public class LoginClientService implements ClientService{
     @Override
     public Message readObject() {
         Object serverMessage = null;
-        System.out.println("dentro do readobject");
+        System.out.println("Dentro do ReadObject");
         try {
             //TODO util Stream class
             //serverMessage = input.readObject();
             System.out.println("Client socket" + clientSocket.toString());
-            SealedObject object = (SealedObject) Stream.readObject(clientSocket.getInputStream());
-            //serverMessage = Stream.readObject(clientSocket.getInputStream());
+            //SealedObject object = (SealedObject) Stream.readObject(clientSocket.getInputStream());
+            serverMessage = Stream.readObject(clientSocket.getInputStream());
             System.out.println("Read response from server" + serverMessage.toString());
         } catch (IOException e) {
             e.printStackTrace();
