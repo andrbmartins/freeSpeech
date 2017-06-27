@@ -1,3 +1,41 @@
 .root {
-    -fx-background-color: yellow;
+    -fx-background-color: black;
+    -fx-font-weight: bold;
+}
+
+.list-view {
+    -fx-background-color: green;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: tomato;
+}
+
+.tab {
+    -fx-background-color: lightskyblue;
+}
+
+.tab:selected {
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-background-color: red;
+}
+
+.text-area {
+    -fx-control-inner-background: hotpink;
+}
+
+#inputTextArea {
+    -fx-control-inner-background: firebrick;
+}
+
+.text-area .scroll-bar .increment-button,
+.text-area .scroll-bar .decrement-button {
+    -fx-pref-height: 0; /*hides button*/
+}
+
+.text-area .scroll-bar .track {
+    -fx-background-color: maroon;
 }

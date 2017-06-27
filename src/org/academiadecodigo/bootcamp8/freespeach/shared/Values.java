@@ -20,4 +20,5 @@ public class Values {
     public static final String PASSWORD_KEY = "password";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
+    public static final String TITLE = "Free Speach";
 }

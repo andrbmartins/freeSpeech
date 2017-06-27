@@ -19,8 +19,6 @@ import java.net.Socket;
 
 public class TempClientService implements ClientService {
 
-    //TODO Make this an interface
-
     private Socket clientSocket;
     //private ObjectOutputStream output;
     //private ObjectInputStream input;
@@ -29,7 +27,10 @@ public class TempClientService implements ClientService {
         try {
             clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
         } catch (IOException e) {
+            //TODO load login with no connection error
             e.printStackTrace();
+            System.out.println("NO CONNECTION");
+            System.exit(1);
         }
         //setupStreams();
     }
@@ -89,7 +90,6 @@ public class TempClientService implements ClientService {
     @Override
     public void writeObject(Sendable message) {
         try {
-            //TODO util Stream class
             //output.writeObject(message);
             Stream.writeObject(clientSocket.getOutputStream(), message);
         } catch (IOException e) {
@@ -101,7 +101,6 @@ public class TempClientService implements ClientService {
     public Message readObject() {
         Object serverMessage = null;
         try {
-            //TODO util Stream class
             //serverMessage = input.readObject();
             serverMessage = Stream.readObject(clientSocket.getInputStream());
         } catch (IOException e) {

@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.controller.Controller;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
@@ -27,9 +28,10 @@ public class Navigation {
     private Stage stage;
     private LinkedList<Scene> scenes = new LinkedList<>();
     private Map<String, Controller> controllers = new HashMap<>();
-    private File css = new File(Values.STYLESHEET);
+    private String css;
 
-    private TempClientService clientService;
+
+    private ClientService clientService;
 
     private Navigation() {
     }
@@ -64,7 +66,7 @@ public class Navigation {
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
             scene.getStylesheets().clear();
-            scene.getStylesheets().add(css.toURI().toString());
+            scene.getStylesheets().add(css);
             scenes.push(scene);
             setScene(scene);
 
@@ -98,7 +100,7 @@ public class Navigation {
         return controllers.get(view);
     }
 
-    public void setClientService(TempClientService clientService) {
+    public void setClientService(ClientService clientService) {
         this.clientService = clientService;
     }
 
@@ -109,5 +111,9 @@ public class Navigation {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void setCss(String css) {
+        this.css = css;
     }
 }

@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.InputHandler;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
@@ -64,6 +65,7 @@ public class ClientController implements Controller {
         rooms.remove(0); //lobbyTextArea is null until this point
         rooms.add(lobbyTextArea);
         rooms.add(privateTextArea); //TODO REMOVE THIS WHEN WHISPER IS IMPLEMENTED
+
         currentRoom = lobbyTextArea;
     }
 
@@ -103,10 +105,6 @@ public class ClientController implements Controller {
             clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
         }
-    }
-
-    public void add(String message, TextArea room) {
-        //TODO get responses - add to textArea
     }
 
     public TextArea getCurrentRoom() {

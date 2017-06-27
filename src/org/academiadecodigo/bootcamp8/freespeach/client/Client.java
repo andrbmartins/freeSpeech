@@ -8,6 +8,7 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
 import java.io.File;
 
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -24,10 +25,16 @@ public class Client extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        TempClientService cs = new TempClientService();
-
-        Navigation.getInstance().setClientService(cs);
         Navigation.getInstance().setStage(primaryStage);
+
+        TempClientService cs = new TempClientService();
+        Navigation.getInstance().setClientService(cs);
+
+        String css = new File(Values.STYLESHEET).toURI().toString();
+        Navigation.getInstance().setCss(css);
+        primaryStage.setTitle(Values.TITLE);
+
+        //TODO login
         Navigation.getInstance().loadScreen(Values.USER_SCENE);
     }
 }
