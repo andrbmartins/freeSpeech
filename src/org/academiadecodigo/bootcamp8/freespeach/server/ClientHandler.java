@@ -83,7 +83,7 @@ public class ClientHandler implements Runnable {
                 }
 
             }
-
+            System.out.println("Result of authentication" + message);
             objectOutputStream.writeObject(new Message(Message.Type.REGISTER, message));
         }
 

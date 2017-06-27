@@ -15,8 +15,8 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class TempClientService implements ClientService {
-
+//public abstract class TempClientService implements ClientService {
+public class TempClientService  {
     //TODO Make this an interface
 
     private Socket clientSocket;
@@ -53,7 +53,7 @@ public class TempClientService implements ClientService {
      * @see ClientService#sendUserText(TextArea)
      * @param textField
      */
-    @Override
+    //@Override
     public void sendUserText(TextArea textField) {
 
         if (textField.getText().isEmpty()) {
@@ -67,7 +67,7 @@ public class TempClientService implements ClientService {
         textField.requestFocus();
     }
 
-    @Override
+    //@Override
     public void closeClientSocket() {
         try {
             clientSocket.close();
@@ -76,7 +76,7 @@ public class TempClientService implements ClientService {
         }
     }
 
-    @Override
+    //@Override
     public InputStream getInput() throws IOException {
         return clientSocket.getInputStream();
     }
@@ -85,7 +85,7 @@ public class TempClientService implements ClientService {
      * @see ClientService#writeObject(Sendable)
      * @param message
      */
-    @Override
+    //@Override
     public void writeObject(Sendable message) {
         try {
             //TODO util Stream class
@@ -96,7 +96,7 @@ public class TempClientService implements ClientService {
         }
     }
 
-    @Override
+    //@Override
     public Message readObject() {
         Object serverMessage = null;
         try {

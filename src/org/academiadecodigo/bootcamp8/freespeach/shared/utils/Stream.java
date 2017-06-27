@@ -29,7 +29,8 @@ public class Stream {
     }
 
     public static Object readObject(InputStream in) {
-
+        System.out.println("Dentro do Stream ReadObject");
+        System.out.println("Receives InputStream" + in.toString());
         Object object = null;
 
         try {
@@ -47,7 +48,7 @@ public class Stream {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        System.out.println("Saida do Stream ReadObject" + object.toString());
         return object;
 
     }

@@ -103,7 +103,9 @@ public class LoginController implements Controller {
 
         if (checkTextField()) {    //Check if fields are not empty
             readFields(Message.Type.LOGIN);
-            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("l ok"))) {
+            System.out.println("depois do readfileds");
+
+            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("OK"))) {
                 Navigation.getInstance().loadScreen(Values.USER_SCENE);       // Opens the chat room
             }
             else {
@@ -122,7 +124,7 @@ public class LoginController implements Controller {
 
         if (checkTextField()) {
             readFields(Message.Type.REGISTER);
-            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("r ok"))) {
+            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("OK"))) {
                 serverMessageLabel.setVisible(true);
                 serverMessageLabel.setText("REGISTER OK");
             } else {
@@ -137,7 +139,6 @@ public class LoginController implements Controller {
     }
 
 
-
     private void readFields(Message.Type messageType) {
         // TODO check if fields are ok
         Map<String, String> messageContent = new HashMap<>();
@@ -146,7 +147,9 @@ public class LoginController implements Controller {
         messageContent.put(Values.PASSWORD_KEY, passwordField.getText());
 
         Message<Map> message = new Message(messageType, messageContent);
+
         clientService.writeObject(message);
+        System.out.println("Message sended to server");
     }
 
     @FXML
@@ -187,6 +190,7 @@ public class LoginController implements Controller {
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CONNECTION TO SERVER SUCCESSFUL");
             showLoginRegister();                                // If connection ok client can make login or register
+            //clientService.setupStreams();
         }
         else{                                                   // If not succeeded
             serverMessageLabel.setVisible(true);
@@ -224,8 +228,9 @@ public class LoginController implements Controller {
             return false;
     }
 
+
     @Override
     public void setClientService(ClientService clientService) {
-        clientService = clientService;
+        this.clientService = clientService;
     }
 }

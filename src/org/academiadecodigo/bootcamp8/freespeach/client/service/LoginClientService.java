@@ -3,7 +3,9 @@ package org.academiadecodigo.bootcamp8.freespeach.client.service;
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
+import javax.crypto.SealedObject;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -28,8 +30,8 @@ public class LoginClientService implements ClientService{
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        setupStreams();*/
+        }*/
+        //setupStreams();
     }
 
     public void setupStreams() {
@@ -60,13 +62,14 @@ public class LoginClientService implements ClientService{
         return output;
     }
 
-    public ObjectInputStream getInput() {
-        return input;
-    }
+    /*public ObjectInputStream getInput() throws IOException {
+      return input;
+
+    }*/
 
 
 
-    public void writeObject(Message message){
+    /*public void writeObject(Message message){
         try {
             output.writeObject(message);
         } catch (IOException e) {
@@ -99,7 +102,7 @@ public class LoginClientService implements ClientService{
     @Override
     public void closeClientSocket() {
 
-    }
+    }*/
 
 
     public void makeConnection(String server, int port){
@@ -120,7 +123,7 @@ public class LoginClientService implements ClientService{
             connectionServer = false;
             return;
         }
-        //setupStreams();
+
         System.out.println("Connection to server successful");
         connectionServer = true;
     }
@@ -129,4 +132,66 @@ public class LoginClientService implements ClientService{
     public boolean getConnectionServer(){
         return connectionServer;
     }
+
+    @Override
+    public void sendUserText(TextArea textField) {
+
+        if (textField.getText().isEmpty()) {
+            return;
+        }
+
+        Message<String> message = new Message<>(Message.Type.DATA, textField.getText());
+        writeObject(message);
+        System.out.println("SENT: " + message);
+        textField.clear();
+        textField.requestFocus();
+    }
+
+    @Override
+    public void closeClientSocket() {
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public InputStream getInput() throws IOException {
+        return clientSocket.getInputStream();
+    }
+
+    /**
+     * @see ClientService#writeObject(Sendable)
+     * @param message
+     */
+    @Override
+    public void writeObject(Sendable message) {
+        try {
+            //TODO util Stream class
+            //output.writeObject(message);
+            Stream.writeObject(clientSocket.getOutputStream(), message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Message readObject() {
+        Object serverMessage = null;
+        System.out.println("dentro do readobject");
+        try {
+            //TODO util Stream class
+            //serverMessage = input.readObject();
+            System.out.println("Client socket" + clientSocket.toString());
+            SealedObject object = (SealedObject) Stream.readObject(clientSocket.getInputStream());
+            //serverMessage = Stream.readObject(clientSocket.getInputStream());
+            System.out.println("Read response from server" + serverMessage.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("saindo do readobject");
+        return (Message) serverMessage;
+    }
+
 }

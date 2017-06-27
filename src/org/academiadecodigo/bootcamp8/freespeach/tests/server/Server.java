@@ -51,6 +51,7 @@ public class Server {
 
             /*KeyPair keyPair = Crypto.getKeyPair();
 
+
             Stream.writeObject(clientSocket.getOutputStream(), keyPair.getPublic());*/
 
             SealedObject object = (SealedObject) Stream.readObject(clientSocket.getInputStream());
