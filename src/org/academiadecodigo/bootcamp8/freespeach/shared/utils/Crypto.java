@@ -1,7 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeach.shared.utils;
 
-import org.academiadecodigo.bootcamp8.freespeach.tests.SealedTest;
-
 import javax.crypto.*;
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,15 +13,15 @@ import java.security.*;
 public final class Crypto {
 
     private static Crypto instance;
+
     private Key key;
+    private Cipher cipher;
 
     private Crypto() {
-        // generate secret key using DES algorithm same for encryption and decryption
-        try {
-            key = KeyGenerator.getInstance("DES").generateKey();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+
+        key = createKey();
+        cipher = createCipher(Cipher.ENCRYPT_MODE);
+
     }
 
     /**
@@ -45,17 +43,39 @@ public final class Crypto {
     }
 
     /**
-     * getCipherObject method is responsible for creating Cipher object for encryption and decryption
+     * Generate secret key using an algorithm
+     * @return the secret key
+     */
+    private Key createKey() {
+
+        Key key = null;
+
+        try {
+
+            key = KeyGenerator.getInstance("DES").generateKey();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return key;
+
+    }
+
+    /**
+     * createCipher method is responsible for creating Cipher object for encryption and decryption
      * @param mode of cipher
      * @return the initialized cipher
      */
-    public Cipher getCipherObject(int mode) {
+    private Cipher createCipher(int mode) {
 
         Cipher cipher = null;
 
         try {
+
             cipher = Cipher.getInstance("DES");
             cipher.init(mode, key);
+
         } catch (NoSuchPaddingException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -78,7 +98,9 @@ public final class Crypto {
         SealedObject sealed = null;
 
         try {
-            sealed = new SealedObject(object, getCipherObject(Cipher.ENCRYPT_MODE));
+
+            sealed = new SealedObject(object, cipher);
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
@@ -92,23 +114,24 @@ public final class Crypto {
     /**
      * This method is responsible for decrypt the object
      * @param sealed the object to decrypt
+     * @param key the key to decrypt
      * @return an object
      */
-    public Object decryptObject(SealedObject sealed) {
+    public Object decryptObject(SealedObject sealed, Key key) {
 
         Object object = null;
 
         try {
 
-            object = sealed.getObject(getCipherObject(Cipher.DECRYPT_MODE));
+            object = sealed.getObject(key);
 
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
             e.printStackTrace();
         }
 
@@ -118,14 +141,6 @@ public final class Crypto {
 
     public Key getKey() {
         return key;
-    }
-
-    public void setKey(Key key) {
-
-        if (key != null) {
-            this.key = key;
-        }
-
     }
 
 }

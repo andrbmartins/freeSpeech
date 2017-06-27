@@ -46,10 +46,10 @@ public class Client {
             Crypto crypto = Crypto.getInstance();
 
             Key key = (Key) Stream.readObject(socket.getInputStream());
-            crypto.setKey(key);
 
             SealedObject sealedObject = (SealedObject) Stream.readObject(socket.getInputStream());
-            Object object = crypto.decryptObject(sealedObject);
+            System.out.println(sealedObject);
+            Object object = crypto.decryptObject(sealedObject, key);
             System.out.println(object);
 
         } catch (IOException e) {

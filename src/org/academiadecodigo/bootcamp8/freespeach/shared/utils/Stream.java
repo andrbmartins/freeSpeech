@@ -10,6 +10,24 @@ import java.io.*;
 public final class Stream {
 
     /**
+     * Write an object to stream, given an object stream
+     * @param out destination object stream
+     * @param message object to send
+     */
+    public static void writeObject(ObjectOutputStream out, Object message) {
+
+        try {
+
+            out.writeObject(message);
+            out.flush();
+
+        } catch (IOException e) {
+            System.err.println("Error on trying to open stream.\n" + e.getMessage());
+        }
+
+    }
+
+    /**
      * Write an object to stream
      * @param out destination stream
      * @param message object to send
@@ -19,12 +37,34 @@ public final class Stream {
         try {
 
             ObjectOutputStream bout = new ObjectOutputStream(out);
-            bout.writeObject(message);
-            bout.flush();
+            writeObject(bout, message);
 
         } catch (IOException e) {
             System.err.println("Error on trying to open stream.\n" + e.getMessage());
         }
+
+    }
+
+    /**
+     * Read an object from the stream, given an object stream
+     * @param in source object stream
+     * @return the received object
+     */
+    public static Object readObject(ObjectInputStream in) {
+
+        Object object = null;
+
+        try {
+
+            object = in.readObject();
+
+        } catch (IOException e) {
+            System.err.println("Error on trying to open object stream.\n" + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("Class not found.\n" + e.getMessage());
+        }
+
+        return object;
 
     }
 
@@ -40,13 +80,10 @@ public final class Stream {
         try {
 
             ObjectInputStream bin = new ObjectInputStream(in);
-
-            object = bin.readObject();
+            object = readObject(bin);
 
         } catch (IOException e) {
             System.err.println("Error on trying to open object stream.\n" + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class not found.\n" + e.getMessage());
         }
 
         return object;
@@ -60,9 +97,11 @@ public final class Stream {
     public static void close(Closeable stream) {
 
         try {
+
             if (stream != null) {
                 stream.close();
             }
+
         } catch (IOException e) {
             System.err.println("Error on trying to close stream.\n" + e.getMessage());
         }
