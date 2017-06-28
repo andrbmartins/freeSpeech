@@ -3,6 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
+import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,8 +19,8 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
     private String userName;
-    private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
+    /*private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;*/
 
 
     public ClientHandler(Server server, Socket clientSocket) {
@@ -36,7 +37,7 @@ public class ClientHandler implements Runnable {
 
         try {
 
-            buildBufferStreams();
+            //buildBufferStreams();
             System.out.println("oi");
             authenticateClient();
             System.out.println("ble");
@@ -59,7 +60,7 @@ public class ClientHandler implements Runnable {
 
         while (!exit) {
             System.out.println("oioioi");
-            sendable = (Sendable) objectInputStream.readObject();
+            sendable = (Sendable) Stream.readObject(clientSocket.getInputStream());
             System.out.println("sdghdfkjhg");
             System.out.println(sendable.getType());
             if (sendable.getType() == Message.Type.LOGIN) {
@@ -84,7 +85,7 @@ public class ClientHandler implements Runnable {
 
             }
             System.out.println("Result of authentication" + message);
-            objectOutputStream.writeObject(new Message(Message.Type.REGISTER, message));
+            Stream.writeObject(clientSocket.getOutputStream(),new Message(Message.Type.REGISTER, message));
         }
 
     }
@@ -132,7 +133,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void buildBufferStreams() throws IOException {
+    /*private void buildBufferStreams() throws IOException {
 
         objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
         objectOutputStream.flush();
@@ -140,11 +141,11 @@ public class ClientHandler implements Runnable {
         System.out.println("blabas " + objectInputStream.read());
     }
 
-    public void write(String username, String msg) {
+    /*public void write(String username, String msg) {
         try {
             objectOutputStream.writeBytes(username + " wrote: " + msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

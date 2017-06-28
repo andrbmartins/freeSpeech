@@ -73,10 +73,10 @@ public class Server {
 
     }
 
-    public void writeToAll(String username, String msg) {
+    /*public void writeToAll(String username, String msg) {
         for (ClientHandler c: loggedUsers) {
             c.write(username, msg);
 
         }
-    }
+    }*/
 }
