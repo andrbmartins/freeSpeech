@@ -21,9 +21,7 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        LoginClientService cs = new LoginClientService();
 
-        Navigation.getInstance().setClientService(cs);
         Navigation.getInstance().setStage(primaryStage);
         Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
     }

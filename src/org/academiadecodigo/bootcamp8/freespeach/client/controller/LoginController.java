@@ -12,10 +12,12 @@ import javafx.stage.Stage;
 
 
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.Services;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 
 
 import java.net.URL;
@@ -26,7 +28,7 @@ import java.util.ResourceBundle;
 /**
  * Developed @ <Academia de Código_>
  * Created by
- * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> Filipe Santos Sá, PedroMAlves
  */
 
 public class LoginController implements Controller {
@@ -90,6 +92,7 @@ public class LoginController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         serverMessageLabel.setVisible(false);
+        clientService = Services.getLoginService();
     }
 
 
@@ -102,45 +105,47 @@ public class LoginController implements Controller {
     @FXML
     void onLogin(ActionEvent event) {
 
-        if (checkTextField()) {    //Check if fields are not empty
-            readFields(MessageType.LOGIN);
-            System.out.println("depois do readfileds");
-
-            if (clientService.readObject() == new Message(MessageType.LOGIN, new String("OK"))) {
-                Navigation.getInstance().loadScreen(Values.USER_SCENE);       // Opens the chat room
-            }
-            else {
-                serverMessageLabel.setVisible(true);
-                serverMessageLabel.setText("LOGIN FAILED");
-            }
-        }
-        else{
+        if (fieldsAreEmpty()) {
             serverMessageLabel.setVisible(true);
-            serverMessageLabel.setText("INVALID FIELD LOGIN/PASSWORD ");
+            serverMessageLabel.setText(Values.EMPTY_FIELDS);
+            return;
+        }
+
+        sendMsg(MessageType.LOGIN);
+        Sendable serverMsg = clientService.readObject();
+        if (serverMsg.getContent().equals(Values.LOGIN_OK)) {
+            Navigation.getInstance().loadScreen(Values.USER_SCENE);
+
+        } else {
+            serverMessageLabel.setVisible(true);
+            serverMessageLabel.setText((String) serverMsg.getContent());
         }
     }
+
+
 
     @FXML
     void onRegister(ActionEvent event) {
 
-        if (checkTextField()) {
-            readFields(MessageType.REGISTER);
-            if (clientService.readObject() == new Message(MessageType.LOGIN, new String("OK"))) {
-                serverMessageLabel.setVisible(true);
-                serverMessageLabel.setText("REGISTER OK");
-            } else {
-                serverMessageLabel.setVisible(true);
-                serverMessageLabel.setText("REGISTER FAILED");
-            }
-        }
-        else{
+        if (fieldsAreEmpty()) {
             serverMessageLabel.setVisible(true);
-            serverMessageLabel.setText("INVALID FIELD LOGIN/PASSWORD ");
+            serverMessageLabel.setText(Values.EMPTY_FIELDS);
+            return;
+        }
+
+        sendMsg(MessageType.REGISTER);
+
+        if (clientService.readObject().getContent().equals(Values.REGISTER_OK)) {
+            serverMessageLabel.setVisible(true);
+            serverMessageLabel.setText(Values.REGISTER_OK);
+        } else {
+            serverMessageLabel.setVisible(true);
+            serverMessageLabel.setText(Values.USER_TAKEN);
         }
     }
 
 
-    private void readFields(MessageType messageType) {
+    private void sendMsg(MessageType messageType) {
         // TODO check if fields are ok
         Map<String, String> messageContent = new HashMap<>();
 
@@ -150,50 +155,47 @@ public class LoginController implements Controller {
         Message<Map> message = new Message(messageType, messageContent);
 
         clientService.writeObject(message);
-        System.out.println("Message sended to server");
     }
 
     @FXML
     void onExitButton(ActionEvent event) {
         if(clientService.getConnectionServer())
-            clientService.close();
+            clientService.closeClientSocket();
         Navigation.getInstance().close();
     }
 
     @FXML
-    void OnDisconnetServer(ActionEvent event) {             // Disconnect from server
-        if(clientService.getConnectionServer()) {           // If is connected
-            clientService.close();
+    void OnDisconnetServer(ActionEvent event) {
+        if(clientService.getConnectionServer()) {
+            clientService.closeClientSocket();
         }
-        if(!clientService.getConnectionServer()) {          // Checks if disconnect went ok
+        if(!clientService.getConnectionServer()) {
             StatusCircle.setFill(Paint.valueOf("red"));
             serverMessageLabel.setText("DISCONNECTED FROM SERVER");
-            hideLoginRegister();                            // If is disconnected from server hides fields
+            hideLoginRegister();
         }
     }
 
     @FXML
     void onConnectServer(ActionEvent event) {
 
-        if(!clientService.getConnectionServer() ){          // Checks flag of connection if is connected
-           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{1,10}$"))  // If not empty and only numbers (Port Field)
-                clientService.makeConnection(serverTextField.getText(), Integer.parseInt(portTextField.getText()));    // Makes connection to server
-            System.out.println(clientService.getConnectionServer());
+        if(!clientService.getConnectionServer()) {
+           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{1,10}$"));
+                clientService.makeConnection(serverTextField.getText(), Integer.parseInt(portTextField.getText()));
         }
-        else{                                               // If client is already connected to the server
+        else {
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("ALREADY CONNECTED");
             return;
         }
 
-        if(clientService.getConnectionServer()) {               // Shows message if succeeded
+        if(clientService.getConnectionServer()) {
             StatusCircle.setFill(Paint.valueOf("green"));
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CONNECTION TO SERVER SUCCESSFUL");
-            showLoginRegister();                                // If connection ok client can make login or register
-            //clientService.setupStreams();
+            showLoginRegister();
         }
-        else{                                                   // If not succeeded
+        else{
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CLIENT DISCONNECTED");
         }
@@ -222,16 +224,9 @@ public class LoginController implements Controller {
         resgisterButton.setVisible(true);
     }
 
-    private boolean checkTextField(){
-        if (!nameField.getText().isEmpty() && !passwordField.getText().isEmpty())
-            return true;
-        else
-            return false;
+    private boolean fieldsAreEmpty(){
+        return nameField.getText().isEmpty() || passwordField.getText().isEmpty();
+
     }
 
-
-    @Override
-    public void setClientService(ClientService clientService) {
-        this.clientService = clientService;
-    }
 }

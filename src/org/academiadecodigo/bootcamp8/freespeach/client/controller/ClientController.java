@@ -11,6 +11,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.InputHandler;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.Services;
 
 import java.io.IOException;
 import java.net.URL;
@@ -54,6 +55,8 @@ public class ClientController implements Controller {
         inputHandlerPool = Executors.newCachedThreadPool();
         rooms = new LinkedList<>();
         rooms.add(lobbyTextArea);
+        clientService = Services.getLoginService();
+
     }
 
     @Override
@@ -108,11 +111,6 @@ public class ClientController implements Controller {
 
     public TextArea getCurrentRoom() {
         return currentRoom;
-    }
-
-    @Override
-    public void setClientService(ClientService clientService) {
-        this.clientService = clientService;
     }
 
 }

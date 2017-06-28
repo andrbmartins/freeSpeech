@@ -6,7 +6,6 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
-import javax.crypto.SealedObject;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -15,7 +14,7 @@ import java.net.Socket;
 /**
  * Developed @ <Academia de Código_>
  * Created by
- * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> Filipe Santos Sá, PedroMAlves
  */
 
 public class LoginClientService implements ClientService{
@@ -49,15 +48,6 @@ public class LoginClientService implements ClientService{
         System.out.println("i " + input);
     }*/
 
-    public void close() {
-        try {
-            clientSocket.close();
-            connectionServer = false;
-        } catch (IOException e) {
-            //e.printStackTrace();
-            System.out.println("Disconnect from server not succeeded ");
-        }
-    }
 
     //public ObjectOutputStream getOutput() {return output;}
 
@@ -146,14 +136,6 @@ public class LoginClientService implements ClientService{
         textField.requestFocus();
     }
 
-    @Override
-    public void closeClientSocket() {
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public InputStream getInput() throws IOException {
@@ -193,4 +175,12 @@ public class LoginClientService implements ClientService{
         return (Message) serverMessage;
     }
 
+    @Override
+    public void closeClientSocket() {
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

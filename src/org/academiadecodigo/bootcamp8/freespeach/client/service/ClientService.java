@@ -41,6 +41,5 @@ public interface ClientService {
 
     //public void setupStreams();
 
-    public void close();
 
 }

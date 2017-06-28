@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communication;
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.CommunicationService;
+import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
@@ -32,83 +33,72 @@ public class ClientHandler implements Runnable {
     public void run() {
 
         communication.openStreams(clientSocket);
-        try {
-            authenticateClient(); //temporarily off to test receiving and sending msg from client
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        server.addActiveUser(this); //to be removed after login gets activated
+        authenticateClient();
         readFromClient();
 
     }
 
 
-    private void authenticateClient() throws IOException, ClassNotFoundException {
+    private void authenticateClient() {
 
-        Sendable sendable = null;
+        Sendable sendable;
         boolean exit = false;
         String message = "";
 
         while (!exit) {
-
             sendable = communication.retrieveMessage();
+
 
             if (sendable.getType() == MessageType.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
-                    message = "OK";
+                    message = Values.LOGIN_OK;
                     server.addActiveUser(this);
+                    exit = true;
                 } else {
-                    message = "NOTOK";
+                    message = Values.LOGIN_FAIL;
                 }
 
             }
 
             if (sendable.getType() == MessageType.REGISTER) {
 
-                if (exit = makeRegistry(sendable)) { //TODO: registry is enough to log in??
-                    message = "OK";
+                if (makeRegistry(sendable)) { //TODO: registry is enough to log in??
+                    message = Values.REGISTER_OK;
                 } else {
-                    message = "NOTOK";
+                    message = Values.USER_TAKEN;
                 }
-
             }
-
             communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
 
     }
 
     private boolean makeLogIn(Sendable sendable) {
-
         HashMap<String, String> map = (HashMap<String, String>) sendable.getContent();
-        String username = map.get("username");
-        String password = map.get("password");
+        String username = map.get(Values.NAME_KEY);
+        String password = map.get(Values.PASSWORD_KEY);
 
         return server.getUserService().authenticate(username,password);
-
     }
 
     private boolean makeRegistry(Sendable sendable) {
 
         HashMap<String, String> mapR = (HashMap<String, String>) sendable.getContent();
-        String username = mapR.get("username");
-        boolean exit = false;
+        String username = mapR.get(Values.NAME_KEY);
 
         synchronized (server.getUserService()) {
 
             if (server.getUserService().getUser(username) == null) {
 
-                server.getUserService().addUser(new User(mapR.get("username"), mapR.get("password")));
+                server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
                 server.getUserService().notifyAll();
-                exit = true;
+                return true;
             } else {
                 server.getUserService().notifyAll();
             }
         }
-        return exit;
+        return false;
     }
 
 
@@ -125,9 +115,8 @@ public class ClientHandler implements Runnable {
 
 
     public void write(Sendable sendable) {
-        System.out.println(sendable);
+        System.out.println(sendable); //to remove after tests completed
         communication.sendMessage(sendable);
-
     }
 
 
@@ -136,13 +125,9 @@ public class ClientHandler implements Runnable {
             clientSocket.close();
 
         } catch (IOException e) {
-            System.out.println(Thread.currentThread().getName() + ": Olha, fudeu!");
+            System.out.println(Thread.currentThread().getName() + ": could not close socket");
             e.printStackTrace();
 
         }
-    }
-
-    public void setCommunication(Communication communication) {
-        this.communication = communication;
     }
 }
