@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeach.server;
 
+import org.academiadecodigo.bootcamp8.freespeach.client.service.LoginClientService;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.UserService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
@@ -35,6 +36,7 @@ public class Server {
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
         userService = TempUserService.getInstance();
+
     }
 
 

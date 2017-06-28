@@ -32,7 +32,13 @@ public class ClientHandler implements Runnable {
     public void run() {
 
         communication.openStreams(clientSocket);
-        //authenticateClient(); //temporarily off to test receiving and sending msg from client
+        try {
+            authenticateClient(); //temporarily off to test receiving and sending msg from client
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         server.addActiveUser(this); //to be removed after login gets activated
         readFromClient();
 

@@ -21,8 +21,8 @@ import java.net.Socket;
 public class LoginClientService implements ClientService{
 
     private Socket clientSocket;
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
+    //private ObjectOutputStream output;
+    //private ObjectInputStream input;
     private boolean connectionServer;
 
     public LoginClientService() {
@@ -35,7 +35,7 @@ public class LoginClientService implements ClientService{
         //setupStreams();
     }
 
-    public void setupStreams() {
+    /*public void setupStreams() {
         try {
             output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
 
@@ -47,7 +47,7 @@ public class LoginClientService implements ClientService{
 
         System.out.println("o " + output);
         System.out.println("i " + input);
-    }
+    }*/
 
     public void close() {
         try {
@@ -59,9 +59,7 @@ public class LoginClientService implements ClientService{
         }
     }
 
-    public ObjectOutputStream getOutput() {
-        return output;
-    }
+    //public ObjectOutputStream getOutput() {return output;}
 
     /*public ObjectInputStream getInput() throws IOException {
       return input;

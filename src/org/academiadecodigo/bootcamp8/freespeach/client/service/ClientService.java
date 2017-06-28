@@ -39,7 +39,7 @@ public interface ClientService {
 
     public void makeConnection(String server, int port);
 
-    public void setupStreams();
+    //public void setupStreams();
 
     public void close();
 
