@@ -57,7 +57,7 @@ public class LoginController implements Controller {
     private Label serverMessageLabel;
 
     @FXML
-    private Button resgisterButton;
+    private Button registerButton;
 
     @FXML
     private Label serverLabel;
@@ -198,7 +198,7 @@ public class LoginController implements Controller {
         emailLabel.setVisible(false);
         emailField.setVisible(false);
         loginButton.setVisible(false);
-        resgisterButton.setVisible(false);
+        registerButton.setVisible(false);
     }
 
     private void showLoginRegister() {
@@ -209,7 +209,7 @@ public class LoginController implements Controller {
         emailLabel.setVisible(true);
         emailField.setVisible(true);
         loginButton.setVisible(true);
-        resgisterButton.setVisible(true);
+        registerButton.setVisible(true);
     }
 
     private boolean checkTextField() {

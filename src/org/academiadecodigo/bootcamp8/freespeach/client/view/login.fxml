@@ -33,7 +33,7 @@
       <TextField fx:id="emailField" styleClass="text-field" GridPane.columnIndex="2" GridPane.rowIndex="3" />
       <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" text="Login" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
       <Label fx:id="serverMessageLabel" alignment="CENTER" text="server message" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-      <Button fx:id="resgisterButton" mnemonicParsing="false" onAction="#onRegister" text="Register" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+      <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onRegister" text="Register" GridPane.columnIndex="2" GridPane.rowIndex="4" />
       <HBox prefHeight="45.0" prefWidth="600.0" GridPane.columnSpan="2147483647">
          <children>
             <Label fx:id="serverLabel" prefHeight="26.0" prefWidth="43.0" text="SERVER:" />
@@ -41,7 +41,7 @@
             <Label fx:id="portLabel" prefHeight="25.0" prefWidth="32.0" text="PORT:" />
             <TextField fx:id="portTextField" />
             <Button fx:id="connectButton" mnemonicParsing="false" onAction="#onConnectServer" text="CONNECT" />
-            <Button fx:id="disconnectButton" mnemonicParsing="false" onAction="#OnDisconnetServer" text="DISCONNET" />
+            <Button fx:id="disconnectButton" mnemonicParsing="false" onAction="#OnDisconnectServer" text="DISCONNECT" />
             <Circle fx:id="StatusCircle" fill="#ff1f1f" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
             <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExitButton" prefHeight="25.0" prefWidth="48.0" text="EXIT" />
          </children>
