@@ -4,6 +4,7 @@ import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,8 +40,7 @@ public interface ClientService {
 
     public void makeConnection(String server, int port);
 
-    //public void setupStreams();
-
     public void close();
 
+    void sendUserData(File file);
 }

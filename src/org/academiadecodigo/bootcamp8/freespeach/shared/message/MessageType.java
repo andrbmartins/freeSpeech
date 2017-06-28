@@ -8,6 +8,7 @@ public enum MessageType {
     DATA,
     LOGIN,
     REGISTER,
+    TEXT,
     COMMAND
 
 }
