@@ -53,12 +53,10 @@ public final class Stream {
     public static Object readObject(ObjectInputStream in) {
 
         Object object = null;
-        System.out.println("Read Object ObjectInput Stream" + in.toString());
+
         try {
-            object = (Object) in.readObject();
-                System.out.println(object.toString());
 
-
+            object = in.readObject();
 
         } catch (IOException e) {
             System.err.println("Error on trying to open object stream.\n" + e.getMessage());
@@ -76,7 +74,7 @@ public final class Stream {
      * @return the received object
      */
     public static Object readObject(InputStream in) {
-        System.out.println("Read Object Input Stream");
+
         Object object = null;
 
         try {

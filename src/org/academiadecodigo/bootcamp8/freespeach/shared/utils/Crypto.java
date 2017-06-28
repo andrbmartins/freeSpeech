@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeach.shared.utils;
 
 import javax.crypto.*;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.*;
 
 /**
@@ -11,80 +12,135 @@ import java.security.*;
  */
 public final class Crypto {
 
-    private static final String ENCRYPTION_ALGORITHM = "RSA";
+    private static Crypto instance;
 
-    private KeyPair keyPair;
+    private Key key;
     private Cipher cipher;
 
-    public Crypto(int mode) {
+    private Crypto() {
 
-        try {
+        key = createKey();
+        cipher = createCipher(Cipher.ENCRYPT_MODE);
 
-            keyPair = getKeyPair();
-            cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-            cipher.init(mode, keyPair.getPrivate());
+    }
 
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-            e.printStackTrace();
+    /**
+     * Singleton method
+     * @return an instance of crypto
+     */
+    public static Crypto getInstance() {
+
+        synchronized (Crypto.class) {
+
+            if (instance == null) {
+                instance = new Crypto();
+            }
+
         }
 
+        return instance;
+
     }
 
-    public Crypto(int mode, Key key) {
+    /**
+     * Generate secret key using an algorithm
+     * @return the secret key
+     */
+    private Key createKey() {
+
+        Key key = null;
 
         try {
 
-            cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-            cipher.init(mode, key);
+            key = KeyGenerator.getInstance("DES").generateKey();
 
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public Cipher getCipher() {
-        return cipher;
-    }
-
-    public Key getPublicKey() {
-        return keyPair.getPublic();
-    }
-
-    public static KeyPair getKeyPair() {
-
-        KeyPairGenerator keyPairGenerator;
-        KeyPair keyPair = null;
-
-        try {
-            keyPairGenerator = KeyPairGenerator.getInstance(ENCRYPTION_ALGORITHM);
-            keyPair = keyPairGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 
-        return keyPair;
+        return key;
 
     }
 
-    public static Object decrypt(SealedObject sealedObject, Key key) {
+    /**
+     * createCipher method is responsible for creating Cipher object for encryption and decryption
+     * @param mode of cipher
+     * @return the initialized cipher
+     */
+    private Cipher createCipher(int mode) {
+
+        Cipher cipher = null;
+
+        try {
+
+            cipher = Cipher.getInstance("DES");
+            cipher.init(mode, key);
+
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+
+        return cipher;
+
+    }
+
+    /**
+     * This method is responsible for encrypt the object
+     * @param object to encrypt
+     * @return an encrypt (sealed) object
+     */
+    public SealedObject encryptObject(Serializable object) {
+
+        SealedObject sealed = null;
+
+        try {
+
+            sealed = new SealedObject(object, cipher);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
+        return sealed;
+
+    }
+
+    /**
+     * This method is responsible for decrypt the object
+     * @param sealed the object to decrypt
+     * @param key the key to decrypt
+     * @return an object
+     */
+    public Object decryptObject(SealedObject sealed, Key key) {
 
         Object object = null;
 
         try {
-            object = sealedObject.getObject(key);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+
+            object = sealed.getObject(key);
+
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
             e.printStackTrace();
         }
 
         return object;
 
+    }
+
+    public Key getKey() {
+        return key;
     }
 
 }

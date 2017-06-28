@@ -1,10 +1,10 @@
 package org.academiadecodigo.bootcamp8.freespeach.server;
 
-import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communication;
+import org.academiadecodigo.bootcamp8.freespeach.server.communication.CommunicationService;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
-import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -18,39 +18,26 @@ import java.util.HashMap;
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
-    private String userName;
-    /*private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;*/
+    private Communication communication;
 
 
     public ClientHandler(Server server, Socket clientSocket) {
         this.clientSocket = clientSocket;
         this.server = server;
+        communication = new CommunicationService();
     }
 
 
     @Override
     public void run() {
 
-        boolean logIn = false;
-
-
-        try {
-
-            //buildBufferStreams();
-            System.out.println("oi");
-            authenticateClient();
-            System.out.println("ble");
-
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            closeSocket();
-            return;
-        }
-
+        communication.openStreams(clientSocket);
+        //authenticateClient(); //temporarily off to test receiving and sending msg from client
+        server.addActiveUser(this); //to be removed after login gets activated
+        readFromClient();
 
     }
+
 
     private void authenticateClient() throws IOException, ClassNotFoundException {
 
@@ -59,23 +46,21 @@ public class ClientHandler implements Runnable {
         String message = "";
 
         while (!exit) {
-            System.out.println("oioioi");
-            sendable = (Sendable) Stream.readObject(clientSocket.getInputStream());
-            System.out.println("sdghdfkjhg");
-            System.out.println(sendable.getType());
-            if (sendable.getType() == Message.Type.LOGIN) {
+
+            sendable = communication.retrieveMessage();
+
+            if (sendable.getType() == MessageType.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
                     server.addActiveUser(this);
-                    //TODO initialize username property after login success
                 } else {
                     message = "NOTOK";
                 }
 
             }
 
-            if (sendable.getType() == Message.Type.REGISTER) {
+            if (sendable.getType() == MessageType.REGISTER) {
 
                 if (exit = makeRegistry(sendable)) { //TODO: registry is enough to log in??
                     message = "OK";
@@ -84,8 +69,8 @@ public class ClientHandler implements Runnable {
                 }
 
             }
-            System.out.println("Result of authentication" + message);
-            Stream.writeObject(clientSocket.getOutputStream(),new Message(Message.Type.REGISTER, message));
+
+            communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
 
     }
@@ -117,12 +102,30 @@ public class ClientHandler implements Runnable {
                 server.getUserService().notifyAll();
             }
         }
-
         return exit;
     }
 
-    private void closeSocket() {
 
+    private void readFromClient() {
+        Sendable msg;
+        while ((msg = communication.retrieveMessage()) != null) {
+
+            server.writeToAll(msg);
+
+        }
+        server.logOutUser(this);
+        closeSocket();
+    }
+
+
+    public void write(Sendable sendable) {
+        System.out.println(sendable);
+        communication.sendMessage(sendable);
+
+    }
+
+
+    private void closeSocket() {
         try {
             clientSocket.close();
 
@@ -133,19 +136,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /*private void buildBufferStreams() throws IOException {
-
-        objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-        objectOutputStream.flush();
-        objectInputStream = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-        System.out.println("blabas " + objectInputStream.read());
+    public void setCommunication(Communication communication) {
+        this.communication = communication;
     }
-
-    /*public void write(String username, String msg) {
-        try {
-            objectOutputStream.writeBytes(username + " wrote: " + msg);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 }

@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeach.client.service;
 
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
@@ -140,7 +141,7 @@ public class LoginClientService implements ClientService{
             return;
         }
 
-        Message<String> message = new Message<>(Message.Type.DATA, textField.getText());
+        Message<String> message = new Message<>(MessageType.DATA, textField.getText());
         writeObject(message);
         System.out.println("SENT: " + message);
         textField.clear();

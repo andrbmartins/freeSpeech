@@ -15,6 +15,7 @@ import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 
 
 import java.net.URL;
@@ -102,10 +103,10 @@ public class LoginController implements Controller {
     void onLogin(ActionEvent event) {
 
         if (checkTextField()) {    //Check if fields are not empty
-            readFields(Message.Type.LOGIN);
+            readFields(MessageType.LOGIN);
             System.out.println("depois do readfileds");
 
-            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("OK"))) {
+            if (clientService.readObject() == new Message(MessageType.LOGIN, new String("OK"))) {
                 Navigation.getInstance().loadScreen(Values.USER_SCENE);       // Opens the chat room
             }
             else {
@@ -123,8 +124,8 @@ public class LoginController implements Controller {
     void onRegister(ActionEvent event) {
 
         if (checkTextField()) {
-            readFields(Message.Type.REGISTER);
-            if (clientService.readObject() == new Message(Message.Type.LOGIN, new String("OK"))) {
+            readFields(MessageType.REGISTER);
+            if (clientService.readObject() == new Message(MessageType.LOGIN, new String("OK"))) {
                 serverMessageLabel.setVisible(true);
                 serverMessageLabel.setText("REGISTER OK");
             } else {
@@ -139,7 +140,7 @@ public class LoginController implements Controller {
     }
 
 
-    private void readFields(Message.Type messageType) {
+    private void readFields(MessageType messageType) {
         // TODO check if fields are ok
         Map<String, String> messageContent = new HashMap<>();
 
