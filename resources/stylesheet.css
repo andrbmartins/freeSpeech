@@ -4,32 +4,34 @@
     -fx-border-width: 5px;
     -fx-cursor: default;
     -fx-background-color: #000000;
-    -fx-hgap: 1px;
-    -fx-vgap: 1px;
     -fx-background-radius: 0;
 }
 
 /* //TODO add a custom bar top? draggable? */
 
-
 .list-view {
-    -fx-background-color: hotpink;
+    -fx-background-color: #FF0000;
+    -fx-opacity: 0.9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
 }
 
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: green;
+    -fx-background-color: #690504;
 }
 
 .tab {
-    -fx-background-color: lightskyblue;
+    -fx-background-color: #D3D3D3;
     -fx-background-radius: 0;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+
 }
 
 .tab:selected {
     -fx-background-color: white;
-
+    -fx-font-weight: bold;
+    -fx-background-insets: 0 1 0 -1;
 }
 
 .button {
@@ -50,15 +52,14 @@
 }
 
 #inputTextArea {
-    -fx-background-color: firebrick;
+    -fx-background-color: #D3D3D3;
 }
 
 #inputTextArea .content {
-    -fx-background-color: papayawhip;
+    -fx-background-color: #D3D3D3;
 }
 
 #inputTextArea:focused {
-    -fx-background-color: black;
     -fx-background-insets: 0;
 }
 
