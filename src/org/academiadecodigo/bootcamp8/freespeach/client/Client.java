@@ -36,6 +36,7 @@ public class Client extends Application {
         primaryStage.setTitle(Values.TITLE);
 
         //TODO login
-        Navigation.getInstance().loadScreen(Values.USER_SCENE);
+        Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
+
     }
 }

@@ -22,8 +22,6 @@ import java.util.List;
 public class TempClientService implements ClientService {
 
     private Socket clientSocket;
-    //private ObjectOutputStream output;
-    //private ObjectInputStream input;
 
     public TempClientService() {
         try {
@@ -34,7 +32,6 @@ public class TempClientService implements ClientService {
             System.out.println("NO CONNECTION");
             System.exit(1);
         }
-        //setupStreams();
     }
 
     /**
@@ -158,4 +155,23 @@ public class TempClientService implements ClientService {
         }
         return (Message) serverMessage;
     }
+
+    @Override
+    public boolean getConnectionServer() {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void makeConnection(String server, int port) {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void close() {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
 }

@@ -10,13 +10,11 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
-
 
 import java.net.URL;
 import java.util.HashMap;
@@ -92,29 +90,24 @@ public class LoginController implements Controller {
         serverMessageLabel.setVisible(false);
     }
 
-
     @Override
     public void init() {
         hideLoginRegister();
     }
 
-
     @FXML
     void onLogin(ActionEvent event) {
 
-        if (checkTextField()) {    //Check if fields are not empty
+        if (checkTextField()) { // Check if fields are not empty
             readFields(MessageType.LOGIN);
-            System.out.println("depois do readfileds");
 
-            if (clientService.readObject() == new Message(MessageType.LOGIN, new String("OK"))) {
-                Navigation.getInstance().loadScreen(Values.USER_SCENE);       // Opens the chat room
-            }
-            else {
+            if (clientService.readObject() == new Message<>(MessageType.LOGIN, "OK")) {
+                Navigation.getInstance().loadScreen(Values.USER_SCENE); // Opens the chat room
+            } else {
                 serverMessageLabel.setVisible(true);
                 serverMessageLabel.setText("LOGIN FAILED");
             }
-        }
-        else{
+        } else {
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("INVALID FIELD LOGIN/PASSWORD ");
         }
@@ -125,20 +118,19 @@ public class LoginController implements Controller {
 
         if (checkTextField()) {
             readFields(MessageType.REGISTER);
-            if (clientService.readObject() == new Message(MessageType.LOGIN, new String("OK"))) {
+            if (clientService.readObject() == new Message<>(MessageType.LOGIN, "OK")) {
                 serverMessageLabel.setVisible(true);
                 serverMessageLabel.setText("REGISTER OK");
             } else {
                 serverMessageLabel.setVisible(true);
                 serverMessageLabel.setText("REGISTER FAILED");
             }
-        }
-        else{
+        } else {
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("INVALID FIELD LOGIN/PASSWORD ");
         }
-    }
 
+    }
 
     private void readFields(MessageType messageType) {
         // TODO check if fields are ok
@@ -147,7 +139,7 @@ public class LoginController implements Controller {
         messageContent.put(Values.NAME_KEY, nameField.getText());
         messageContent.put(Values.PASSWORD_KEY, passwordField.getText());
 
-        Message<Map> message = new Message(messageType, messageContent);
+        Message<Map> message = new Message<>(messageType, messageContent);
 
         clientService.writeObject(message);
         System.out.println("Message sended to server");
@@ -155,17 +147,17 @@ public class LoginController implements Controller {
 
     @FXML
     void onExitButton(ActionEvent event) {
-        if(clientService.getConnectionServer())
+        if (clientService.getConnectionServer())
             clientService.close();
         Navigation.getInstance().close();
     }
 
     @FXML
-    void OnDisconnetServer(ActionEvent event) {             // Disconnect from server
-        if(clientService.getConnectionServer()) {           // If is connected
+    void OnDisconnectServer(ActionEvent event) {             // Disconnect from server
+        if (clientService.getConnectionServer()) {           // If is connected
             clientService.close();
         }
-        if(!clientService.getConnectionServer()) {          // Checks if disconnect went ok
+        if (!clientService.getConnectionServer()) {          // Checks if disconnect went ok
             StatusCircle.setFill(Paint.valueOf("red"));
             serverMessageLabel.setText("DISCONNECTED FROM SERVER");
             hideLoginRegister();                            // If is disconnected from server hides fields
@@ -175,32 +167,30 @@ public class LoginController implements Controller {
     @FXML
     void onConnectServer(ActionEvent event) {
 
-        if(!clientService.getConnectionServer() ){          // Checks flag of connection if is connected
-           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{1,10}$"))  // If not empty and only numbers (Port Field)
+        if (!clientService.getConnectionServer()) {          // Checks flag of connection if is connected
+            if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{1,10}$"))  // If not empty and only numbers (Port Field)
                 clientService.makeConnection(serverTextField.getText(), Integer.parseInt(portTextField.getText()));    // Makes connection to server
             System.out.println(clientService.getConnectionServer());
-        }
-        else{                                               // If client is already connected to the server
+        } else {                                               // If client is already connected to the server
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("ALREADY CONNECTED");
             return;
         }
 
-        if(clientService.getConnectionServer()) {               // Shows message if succeeded
+        if (clientService.getConnectionServer()) {               // Shows message if succeeded
             StatusCircle.setFill(Paint.valueOf("green"));
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CONNECTION TO SERVER SUCCESSFUL");
             showLoginRegister();                                // If connection ok client can make login or register
             //clientService.setupStreams();
-        }
-        else{                                                   // If not succeeded
+        } else {                                                   // If not succeeded
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CLIENT DISCONNECTED");
         }
 
     }
 
-    private void hideLoginRegister(){
+    private void hideLoginRegister() {
         nameLabel.setVisible(false);
         nameField.setVisible(false);
         passwordLabel.setVisible(false);
@@ -211,7 +201,7 @@ public class LoginController implements Controller {
         resgisterButton.setVisible(false);
     }
 
-    private void showLoginRegister(){
+    private void showLoginRegister() {
         nameLabel.setVisible(true);
         nameField.setVisible(true);
         passwordLabel.setVisible(true);
@@ -222,16 +212,13 @@ public class LoginController implements Controller {
         resgisterButton.setVisible(true);
     }
 
-    private boolean checkTextField(){
-        if (!nameField.getText().isEmpty() && !passwordField.getText().isEmpty())
-            return true;
-        else
-            return false;
+    private boolean checkTextField() {
+        return !nameField.getText().isEmpty() && !passwordField.getText().isEmpty();
     }
-
 
     @Override
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;
     }
+
 }

@@ -18,7 +18,7 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class LoginClientService implements ClientService{
+public class LoginClientService implements ClientService {
 
     private Socket clientSocket;
     //private ObjectOutputStream output;
@@ -104,15 +104,15 @@ public class LoginClientService implements ClientService{
     }*/
 
 
-    public void makeConnection(String server, int port){
+    public void makeConnection(String server, int port) {
         try {
             //clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
 
             InetAddress address = InetAddress.getByName(server);
             System.out.println(address);
-            if(!connectionServer)
+            if (!connectionServer)
                 clientSocket = new Socket(server, port);
-            else{
+            else {
                 System.out.println("Client already connected");
             }
 
@@ -128,7 +128,7 @@ public class LoginClientService implements ClientService{
     }
 
 
-    public boolean getConnectionServer(){
+    public boolean getConnectionServer() {
         return connectionServer;
     }
 
@@ -161,8 +161,8 @@ public class LoginClientService implements ClientService{
     }
 
     /**
-     * @see ClientService#writeObject(Sendable)
      * @param message
+     * @see ClientService#writeObject(Sendable)
      */
     @Override
     public void writeObject(Sendable message) {
@@ -191,6 +191,12 @@ public class LoginClientService implements ClientService{
         }
         System.out.println("saindo do readobject");
         return (Message) serverMessage;
+    }
+
+    @Override
+    public void sendUserData(File file) {
+        // TODO implement method
+        throw new UnsupportedOperationException();
     }
 
 }
