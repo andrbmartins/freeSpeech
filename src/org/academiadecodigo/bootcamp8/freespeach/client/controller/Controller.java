@@ -14,4 +14,5 @@ public interface Controller extends Initializable {
     void setClientService(ClientService clientService);
 
     void init();
+
 }

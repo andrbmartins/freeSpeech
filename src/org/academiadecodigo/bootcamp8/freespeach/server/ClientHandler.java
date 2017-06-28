@@ -76,6 +76,7 @@ public class ClientHandler implements Runnable {
 
             }
 
+            // TODO use correct interface Sendable<TYPE>
             communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
 
@@ -83,6 +84,7 @@ public class ClientHandler implements Runnable {
 
     private boolean makeLogIn(Sendable sendable) {
 
+        // TODO use correct interface Sendable<TYPE>
         HashMap<String, String> map = (HashMap<String, String>) sendable.getContent();
         String username = map.get("username");
         String password = map.get("password");
@@ -93,6 +95,7 @@ public class ClientHandler implements Runnable {
 
     private boolean makeRegistry(Sendable sendable) {
 
+        // TODO use correct interface Sendable<TYPE>
         HashMap<String, String> mapR = (HashMap<String, String>) sendable.getContent();
         String username = mapR.get("username");
         boolean exit = false;

@@ -35,23 +35,6 @@ public class TempClientService implements ClientService {
     }
 
     /**
-     * Instantiates an ObjectOutputStream and an ObjectInputStream from and to the client socket.
-     */
-    /*
-    public void setupStreams() {
-        try {
-            output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-            input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("output stream: " + output);
-        System.out.println("input stream: " + input);
-    }
-    */
-
-    /**
      * @param textArea
      * @see ClientService#sendUserText(TextArea)
      */
