@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.client.service;
 
 import javafx.scene.control.TextArea;
+import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
@@ -9,6 +10,8 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Developed @ <Academia de Código_>
@@ -16,59 +19,85 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-//public abstract class TempClientService implements ClientService {
-public class TempClientService  {
-    //TODO Make this an interface
+public class TempClientService implements ClientService {
 
     private Socket clientSocket;
-    //private ObjectOutputStream output;
-    //private ObjectInputStream input;
 
     public TempClientService() {
         try {
             clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
         } catch (IOException e) {
+            //TODO load login with no connection error
             e.printStackTrace();
+            System.out.println("NO CONNECTION");
+            System.exit(1);
         }
-        //setupStreams();
     }
 
     /**
-     * Instantiates an ObjectOutputStream and an ObjectInputStream from and to the client socket.
+     * @param textArea
+     * @see ClientService#sendUserText(TextArea)
      */
-    /*
-    public void setupStreams() {
-        try {
-            output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-            input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+    @Override
+    public void sendUserText(TextArea textArea) {
 
+        if (textArea.getText().isEmpty()) {
+            return;
+        }
+        String text = Navigation.USERNAME + ": " + textArea.getText();
+        Message<String> message = new Message<>(MessageType.TEXT, text);
+        writeObject(message);
+        textArea.clear();
+        textArea.requestFocus();
+    }
+
+    @Override
+    public void sendUserData(File file) {
+
+        byte[] buffer = fileToByteArray(file);
+        List<Byte> byteList = byteArrayToList(buffer);
+
+        System.out.println(byteList);
+
+        Message<List> message = new Message<>(MessageType.DATA, byteList);
+        writeObject(message);
+    }
+
+    /**
+     * Converts a byte array into a byte list.
+     * @param buffer - the byte array.
+     * @return the byte list.
+     */
+    private List<Byte> byteArrayToList(byte[] buffer) {
+
+        List<Byte> byteList = new ArrayList<>();
+
+        for (byte b : buffer) {
+            byteList.add(b);
+        }
+        return byteList;
+    }
+
+    /**
+     * Converts a file into a byte array.
+     * @param file - the file.
+     * @return the byte array.
+     */
+    private byte[] fileToByteArray(File file) {
+
+        byte[] buffer = null;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            buffer = new byte[(int) file.length()];
+            fileInputStream.read(buffer);
+            fileInputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("output stream: " + output);
-        System.out.println("input stream: " + input);
-    }
-    */
-
-    /**
-     * @see ClientService#sendUserText(TextArea)
-     * @param textField
-     */
-    //@Override
-    public void sendUserText(TextArea textField) {
-
-        if (textField.getText().isEmpty()) {
-            return;
-        }
-
-        Message<String> message = new Message<>(MessageType.DATA, textField.getText());
-        writeObject(message);
-        System.out.println("SENT: " + message);
-        textField.clear();
-        textField.requestFocus();
+        return buffer;
     }
 
-    //@Override
+    @Override
     public void closeClientSocket() {
         try {
             clientSocket.close();
@@ -77,19 +106,18 @@ public class TempClientService  {
         }
     }
 
-    //@Override
+    @Override
     public InputStream getInput() throws IOException {
         return clientSocket.getInputStream();
     }
 
     /**
-     * @see ClientService#writeObject(Sendable)
      * @param message
+     * @see ClientService#writeObject(Sendable)
      */
-    //@Override
+    @Override
     public void writeObject(Sendable message) {
         try {
-            //TODO util Stream class
             //output.writeObject(message);
             Stream.writeObject(clientSocket.getOutputStream(), message);
         } catch (IOException e) {
@@ -97,11 +125,12 @@ public class TempClientService  {
         }
     }
 
-    //@Override
+    @Override
     public Message readObject() {
+
+        //TODO only reading strings
         Object serverMessage = null;
         try {
-            //TODO util Stream class
             //serverMessage = input.readObject();
             serverMessage = Stream.readObject(clientSocket.getInputStream());
         } catch (IOException e) {
@@ -109,4 +138,18 @@ public class TempClientService  {
         }
         return (Message) serverMessage;
     }
+
+    @Override
+    public boolean getConnectionServer() {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void makeConnection(String server, int port) {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
+
 }

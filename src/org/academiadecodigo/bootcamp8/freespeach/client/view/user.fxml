@@ -9,11 +9,12 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeach.client.controller.ClientController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="854.0" prefHeight="480.0" prefWidth="854.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeach.client.controller.ClientController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -21,22 +22,23 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-       <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowSpan="2">
+       <ListView fx:id="onlineUsersList" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="3" />
+       <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="2">
            <tabs>
                <Tab fx:id="lobbyTab" closable="false" onSelectionChanged="#onTabClicked" text="Lobby">
-                   <content>
-                       <TextArea fx:id="lobbyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" />
-                   </content>
+               <content>
+                  <TextArea fx:id="lobbyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
+               </content>
                </Tab>
                <Tab fx:id="privateTab" onSelectionChanged="#onTabClicked" text="Private">
                    <content>
-                       <TextArea fx:id="privateTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" />
+                       <TextArea fx:id="privateTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" wrapText="true" />
                    </content>
                </Tab>
            </tabs>
        </TabPane>
-       <ListView fx:id="onlineUsersList" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="3" />
+      <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <Button fx:id="send" mnemonicParsing="false" onAction="#onSend" text="Send" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Button fx:id="file" mnemonicParsing="false" onAction="#onFile" text="File" GridPane.columnIndex="3" GridPane.rowIndex="2" />
    </children>
 </GridPane>

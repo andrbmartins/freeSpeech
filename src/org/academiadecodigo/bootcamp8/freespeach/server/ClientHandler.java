@@ -69,12 +69,16 @@ public class ClientHandler implements Runnable {
                     message = Values.USER_TAKEN;
                 }
             }
+
+            // TODO use correct interface Sendable<TYPE>
             communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
 
     }
 
     private boolean makeLogIn(Sendable sendable) {
+
+        // TODO use correct interface Sendable<TYPE>
         HashMap<String, String> map = (HashMap<String, String>) sendable.getContent();
         String username = map.get(Values.NAME_KEY);
         String password = map.get(Values.PASSWORD_KEY);
@@ -84,6 +88,7 @@ public class ClientHandler implements Runnable {
 
     private boolean makeRegistry(Sendable sendable) {
 
+        // TODO use correct interface Sendable<TYPE>
         HashMap<String, String> mapR = (HashMap<String, String>) sendable.getContent();
         String username = mapR.get(Values.NAME_KEY);
 

@@ -17,92 +17,22 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá, PedroMAlves
  */
 
-public class LoginClientService implements ClientService{
+public class LoginClientService implements ClientService {
 
     private Socket clientSocket;
-    //private ObjectOutputStream output;
-    //private ObjectInputStream input;
     private boolean connectionServer;
 
-    public LoginClientService() {
-       /* try {
-            clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        //setupStreams();
-    }
+    public void makeConnection(String server, int port) {
 
-    /*public void setupStreams() {
         try {
-            output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-
-            //THIS WAS SEPARATED - DOES IT NEED TO?
-            input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("o " + output);
-        System.out.println("i " + input);
-    }*/
-
-
-    //public ObjectOutputStream getOutput() {return output;}
-
-    /*public ObjectInputStream getInput() throws IOException {
-      return input;
-
-    }*/
-
-
-
-    /*public void writeObject(Message message){
-        try {
-            output.writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-
-    }
-
-    @Override
-    public void sendUserText(TextArea textField) {
-
-    }
-
-    @Override
-    public void writeObject(Sendable message) {
-
-    }
-
-    public Message readObject() {
-        Object serverMessage = null;
-        try {
-            serverMessage = input.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return (Message) serverMessage;
-    }
-
-    @Override
-    public void closeClientSocket() {
-
-    }*/
-
-
-    public void makeConnection(String server, int port){
-        try {
-            //clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
 
             InetAddress address = InetAddress.getByName(server);
             System.out.println(address);
-            if(!connectionServer)
+
+            if (!connectionServer)
                 clientSocket = new Socket(server, port);
-            else{
+            else {
                 System.out.println("Client already connected");
             }
 
@@ -115,10 +45,11 @@ public class LoginClientService implements ClientService{
 
         System.out.println("Connection to server successful");
         connectionServer = true;
+
     }
 
 
-    public boolean getConnectionServer(){
+    public boolean getConnectionServer() {
         return connectionServer;
     }
 
@@ -143,8 +74,8 @@ public class LoginClientService implements ClientService{
     }
 
     /**
-     * @see ClientService#writeObject(Sendable)
      * @param message
+     * @see ClientService#writeObject(Sendable)
      */
     @Override
     public void writeObject(Sendable message) {
@@ -183,4 +114,10 @@ public class LoginClientService implements ClientService{
             e.printStackTrace();
         }
     }
+    @Override
+    public void sendUserData(File file) {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
 }

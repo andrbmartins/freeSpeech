@@ -30,7 +30,7 @@
          <children>
             <AnchorPane prefHeight="410.0" prefWidth="408.0">
                <children>
-                  <Button fx:id="resgisterButton" layoutX="276.0" layoutY="245.0" mnemonicParsing="false" onAction="#onRegister" text="Register" />
+                  <Button fx:id="registerButton" layoutX="276.0" layoutY="245.0" mnemonicParsing="false" onAction="#onRegister" text="Register" />
                   <Label fx:id="serverMessageLabel" alignment="CENTER" layoutX="33.0" layoutY="359.0" text="server message" />
                   <TextField fx:id="passwordField" layoutX="182.0" layoutY="157.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" />
                   <Label fx:id="passwordLabel" alignment="CENTER" layoutX="95.0" layoutY="111.0" text="password_" />

@@ -12,9 +12,6 @@ public class Services {
         return loginService;
     }
 
-    public static EncryptionService getEncryptionService() {
-        return new EncryptionService();
-    }
 
     public static TempClientService getTempClientService() {
         return new TempClientService();

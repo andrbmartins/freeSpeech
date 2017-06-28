@@ -19,6 +19,9 @@ public class Values {
     public static final String NAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
 
+    public static final String STYLESHEET = "resources/stylesheet.css";
+    public static final String TITLE = "Free Speach";
+
     public static final String LOGIN_OK = "ok";
     public static final String LOGIN_FAIL = "Unable to login";
     public static final String REGISTER_OK = "Successfully registered user";

@@ -10,7 +10,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.Services;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
@@ -18,7 +17,6 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
-
 
 import java.net.URL;
 import java.util.HashMap;
@@ -61,7 +59,7 @@ public class LoginController implements Controller {
     private Label serverMessageLabel;
 
     @FXML
-    private Button resgisterButton;
+    private Button registerButton;
 
     @FXML
     private Label serverLabel;
@@ -95,12 +93,10 @@ public class LoginController implements Controller {
         clientService = Services.getLoginService();
     }
 
-
     @Override
     public void init() {
         hideLoginRegister();
     }
-
 
     @FXML
     void onLogin(ActionEvent event) {
@@ -142,8 +138,8 @@ public class LoginController implements Controller {
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText(Values.USER_TAKEN);
         }
-    }
 
+    }
 
     private void sendMsg(MessageType messageType) {
         // TODO check if fields are ok
@@ -152,7 +148,7 @@ public class LoginController implements Controller {
         messageContent.put(Values.NAME_KEY, nameField.getText());
         messageContent.put(Values.PASSWORD_KEY, passwordField.getText());
 
-        Message<Map> message = new Message(messageType, messageContent);
+        Message<Map> message = new Message<>(messageType, messageContent);
 
         clientService.writeObject(message);
     }
@@ -180,7 +176,7 @@ public class LoginController implements Controller {
     void onConnectServer(ActionEvent event) {
 
         if(!clientService.getConnectionServer()) {
-           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{1,10}$"));
+           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{0,9}$"));
                 clientService.makeConnection(serverTextField.getText(), Integer.parseInt(portTextField.getText()));
         }
         else {
@@ -202,7 +198,7 @@ public class LoginController implements Controller {
 
     }
 
-    private void hideLoginRegister(){
+    private void hideLoginRegister() {
         nameLabel.setVisible(false);
         nameField.setVisible(false);
         passwordLabel.setVisible(false);
@@ -210,10 +206,10 @@ public class LoginController implements Controller {
         emailLabel.setVisible(false);
         emailField.setVisible(false);
         loginButton.setVisible(false);
-        resgisterButton.setVisible(false);
+        registerButton.setVisible(false);
     }
 
-    private void showLoginRegister(){
+    private void showLoginRegister() {
         nameLabel.setVisible(true);
         nameField.setVisible(true);
         passwordLabel.setVisible(true);
@@ -221,7 +217,7 @@ public class LoginController implements Controller {
         emailLabel.setVisible(true);
         emailField.setVisible(true);
         loginButton.setVisible(true);
-        resgisterButton.setVisible(true);
+        registerButton.setVisible(true);
     }
 
     private boolean fieldsAreEmpty(){

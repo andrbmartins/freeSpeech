@@ -12,4 +12,5 @@ import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 public interface Controller extends Initializable {
 
     void init();
+
 }
