@@ -8,11 +8,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import org.academiadecodigo.bootcamp8.freespeach.client.InputHandler;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import sun.security.krb5.internal.crypto.Des;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -27,9 +32,6 @@ import java.util.concurrent.Executors;
  */
 
 public class ClientController implements Controller {
-
-    //TODO TEST
-    public static final String USERNAME = "test-user";
 
     @FXML
     private TabPane tabPane;
@@ -47,17 +49,21 @@ public class ClientController implements Controller {
     private Button send;
     @FXML
     private TextArea inputTextArea;
+    @FXML
+    private Button file;
 
     private Stage stage;
     private ClientService clientService;
     private List<TextArea> rooms;
     private ExecutorService inputHandlerPool;
     private TextArea currentRoom;
+    private FileChooser fileChooser;
 
     public ClientController() {
         inputHandlerPool = Executors.newCachedThreadPool();
         rooms = new LinkedList<>();
         rooms.add(lobbyTextArea);
+        fileChooser = new FileChooser();
     }
 
     @Override
@@ -65,6 +71,7 @@ public class ClientController implements Controller {
         rooms.remove(0); //lobbyTextArea is null until this point
         rooms.add(lobbyTextArea);
         rooms.add(privateTextArea); //TODO REMOVE THIS WHEN WHISPER IS IMPLEMENTED
+
 
         currentRoom = lobbyTextArea;
     }
@@ -105,6 +112,16 @@ public class ClientController implements Controller {
             clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
         }
+    }
+
+    @FXML
+    void onFile(ActionEvent event) {
+
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+           clientService.sendUserData(file);
+        }
+
     }
 
     public TextArea getCurrentRoom() {

@@ -26,7 +26,7 @@ public class InputHandler implements Runnable {
     public void run() {
         while (!room.isDisabled()) {
             String text = ((Message<String>) Stream.readObject(input)).getContent();
-            room.appendText("\n" + text);
+            room.appendText(text + "\n");
         }
     }
 }

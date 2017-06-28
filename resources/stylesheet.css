@@ -1,38 +1,69 @@
 .root {
-    -fx-background-color: black;
-    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-border-color: #000000;
+    -fx-border-width: 5px;
+    -fx-cursor: default;
+    -fx-background-color: #000000;
+    -fx-hgap: 1px;
+    -fx-vgap: 1px;
+    -fx-background-radius: 0;
 }
 
+/* //TODO add a custom bar top? draggable? */
+
+
 .list-view {
-    -fx-background-color: green;
+    -fx-background-color: hotpink;
 }
 
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: tomato;
+    -fx-background-color: green;
 }
 
 .tab {
     -fx-background-color: lightskyblue;
+    -fx-background-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .tab:selected {
     -fx-background-color: white;
+
 }
 
 .button {
     -fx-background-color: red;
+    -fx-background-radius: 0;
 }
 
-.text-area {
-    -fx-control-inner-background: hotpink;
+.text-area,
+.text-area:focused .content {
+    -fx-background-radius: 0;
+    -fx-background-color: white;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 #inputTextArea {
-    -fx-control-inner-background: firebrick;
+    -fx-background-color: firebrick;
 }
 
-.text-area .scroll-bar .increment-button,
-.text-area .scroll-bar .decrement-button {
+#inputTextArea .content {
+    -fx-background-color: papayawhip;
+}
+
+#inputTextArea:focused {
+    -fx-background-color: black;
+    -fx-background-insets: 0;
+}
+
+.increment-button,
+.decrement-button {
     -fx-pref-height: 0; /*hides button*/
 }
 
