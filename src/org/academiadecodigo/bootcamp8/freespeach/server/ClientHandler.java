@@ -5,6 +5,7 @@ import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communicat
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.HashMap;
  */
 
 public class ClientHandler implements Runnable {
+    private String cypherName;
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
@@ -54,8 +56,11 @@ public class ClientHandler implements Runnable {
                 if(exit = makeLogIn(sendable)){
                     message = "OK";
                     server.addActiveUser(this);
+                    updateUsername(sendable);
+
                 } else {
                     message = "NOTOK";
+
                 }
 
             }
@@ -64,15 +69,21 @@ public class ClientHandler implements Runnable {
 
                 if (exit = makeRegistry(sendable)) { //TODO: registry is enough to log in??
                     message = "OK";
+                    updateUsername(sendable);
+
                 } else {
                     message = "NOTOK";
                 }
-
             }
 
             communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
+    }
 
+    private void updateUsername(Sendable sendable) {
+
+        HashMap<String,String> content = (HashMap<String,String>) sendable.getContent();
+        cypherName = content.get("username");
     }
 
     private boolean makeLogIn(Sendable sendable) {
@@ -108,13 +119,38 @@ public class ClientHandler implements Runnable {
 
     private void readFromClient() {
         Sendable msg;
+
         while ((msg = communication.retrieveMessage()) != null) {
 
-            server.writeToAll(msg);
+            handleMessage(msg);
 
         }
         server.logOutUser(this);
         closeSocket();
+    }
+
+    private void handleMessage(Sendable msg) {
+
+        MessageType type = msg.getType();
+
+        switch (type){
+
+            case DATA:
+                server.writeToAll(msg);
+                break;
+            case REQUEST_INFO_SERVER:
+                server.handleRequest(msg);
+                break;
+            case REQUEST_CHANNEL:
+                server.requestPrivateChannel(msg,this );
+            case NOTIFICATION:
+                throw new UnsupportedOperationException("not implemented yet");
+                //break;
+            case LOGIN:
+                throw new IllegalArgumentException("You've already Logged In");
+        }
+
+
     }
 
 
@@ -138,5 +174,9 @@ public class ClientHandler implements Runnable {
 
     public void setCommunication(Communication communication) {
         this.communication = communication;
+    }
+
+    public String getName() {
+        return cypherName;
     }
 }

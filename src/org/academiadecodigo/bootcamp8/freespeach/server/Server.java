@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.UserService;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 
 import java.io.IOException;
@@ -40,11 +41,11 @@ public class Server {
 
     public void start() throws IOException {
 
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println(Thread.currentThread().getName() + ": handshake");
-                cachedPool.submit(new ClientHandler(this, clientSocket));
-            }
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
+            System.out.println(Thread.currentThread().getName() + ": handshake");
+            cachedPool.submit(new ClientHandler(this, clientSocket));
+        }
 
     }
 
@@ -74,9 +75,47 @@ public class Server {
 
 
     public void writeToAll(Sendable sendable) {
-        for (ClientHandler c: loggedUsers) {
+        for (ClientHandler c : loggedUsers) {
             c.write(sendable);
 
         }
+    }
+
+    public void handleRequest(Sendable message) {
+
+
+    }
+
+    public void requestPrivateChannel(Sendable message, ClientHandler clientHandler) {
+        try {
+
+            notifyRequestClient(message, clientHandler.getName());
+
+        }catch (Exception e){
+
+            e.printStackTrace();
+            message.updateMessage(MessageType.NOTIFICATION, "Client that you wanted to chat is unavailable.");
+            write(clientHandler,message);
+            return;
+        }
+
+    }
+
+    private void notifyRequestClient(Sendable message, String name) {
+
+        String username = (String) message.getContent();
+
+        for (ClientHandler c : loggedUsers){
+
+            if(c.getName().equals(username)){
+
+                Sendable chatNotification = message.updateMessage(MessageType.NOTIFICATION,name);
+            }
+        }
+    }
+
+    private void write(ClientHandler clientHandler, Sendable message) {
+
+        clientHandler.write(message);
     }
 }

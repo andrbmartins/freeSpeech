@@ -8,6 +8,9 @@ public enum MessageType {
     DATA,
     LOGIN,
     REGISTER,
+    REQUEST_INFO_SERVER,
+    REQUEST_CHANNEL,
+    NOTIFICATION,
     COMMAND
 
 }
