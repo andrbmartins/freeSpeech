@@ -37,7 +37,6 @@ public class LoginClientService implements ClientService {
             }
 
         } catch (IOException e) {
-            //e.printStackTrace();
             System.out.println("Connection to server not successful");
             connectionServer = false;
             return;
