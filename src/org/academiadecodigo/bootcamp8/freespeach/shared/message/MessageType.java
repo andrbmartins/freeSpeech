@@ -12,7 +12,6 @@ public enum MessageType {
     LOGIN,
     REGISTER,
     REQUEST_INFO_SERVER,
-    REQUEST_CHANNEL,
     NOTIFICATION,
     COMMAND
 

@@ -1,17 +1,25 @@
 package org.academiadecodigo.bootcamp8.freespeach.client.controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import org.academiadecodigo.bootcamp8.freespeach.client.InputHandler;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.Services;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -27,33 +35,26 @@ import java.util.concurrent.Executors;
 
 public class ClientController implements Controller {
 
-    @FXML
-    private TabPane tabPane;
-    @FXML
-    private Tab lobbyTab;
-    @FXML
-    private TextArea lobbyTextArea;
-    @FXML
-    private Tab privateTab;
-    @FXML
-    private TextArea privateTextArea;
-    @FXML
-    private ListView<?> onlineUsersList;
-    @FXML
-    private Button send;
-    @FXML
-    private TextArea inputTextArea;
+    @FXML private TabPane tabPane;
+    @FXML private GridPane topBar;
+    @FXML private TextArea lobbyTextArea;
+    @FXML private TextArea privateTextArea;
+    @FXML private TextArea inputTextArea;
 
     private Stage stage;
     private ClientService clientService;
     private List<TextArea> rooms;
     private ExecutorService inputHandlerPool;
     private TextArea currentRoom;
+    private double[] position;
 
     public ClientController() {
         inputHandlerPool = Executors.newCachedThreadPool();
         rooms = new LinkedList<>();
         rooms.add(lobbyTextArea);
+        position = new double[2];
+        clientService = Services.getTempClientService();
+
     }
 
     @Override
@@ -61,7 +62,37 @@ public class ClientController implements Controller {
         rooms.remove(0); //lobbyTextArea is null until this point
         rooms.add(lobbyTextArea);
         rooms.add(privateTextArea); //TODO REMOVE THIS WHEN WHISPER IS IMPLEMENTED
+        setDraggableTopBar();
+        focusUserInput();
         currentRoom = lobbyTextArea;
+    }
+
+    private void focusUserInput() {
+        Platform.runLater(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inputTextArea.requestFocus();
+                    }
+                });
+    }
+
+    private void setDraggableTopBar() {
+        topBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                position[0] = event.getSceneX();
+                position[1] = event.getSceneY();
+            }
+        });
+
+        topBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() - position[0]);
+                stage.setY(event.getScreenY() - position[1]);
+            }
+        });
     }
 
     /**
@@ -76,6 +107,7 @@ public class ClientController implements Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     @FXML
@@ -102,8 +134,15 @@ public class ClientController implements Controller {
         }
     }
 
-    public void add(String message, TextArea room) {
-        //TODO get responses - add to textArea
+    @FXML
+    void onFile(ActionEvent event) {
+
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+           clientService.sendUserData(file);
+        }
+
     }
 
     public TextArea getCurrentRoom() {
@@ -111,8 +150,8 @@ public class ClientController implements Controller {
     }
 
     @Override
-    public void setClientService(ClientService clientService) {
-        this.clientService = clientService;
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
 }

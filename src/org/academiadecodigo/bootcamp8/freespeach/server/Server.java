@@ -37,6 +37,7 @@ public class Server {
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
         userService = TempUserService.getInstance();
+
     }
 
 

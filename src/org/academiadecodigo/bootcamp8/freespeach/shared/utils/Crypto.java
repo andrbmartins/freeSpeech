@@ -48,9 +48,14 @@ public final class Crypto {
      */
     private Key createKey() {
 
+
         Key key = null;
 
         try {
+
+            /*KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+            keyGen.initialize(1024, random);*/
 
             key = KeyGenerator.getInstance("DES").generateKey();
 

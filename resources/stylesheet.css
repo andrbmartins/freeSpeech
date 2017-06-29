@@ -1,0 +1,78 @@
+.root {
+    -fx-alignment: center;
+    -fx-border-color: #000000;
+    -fx-border-width: 5px;
+    -fx-cursor: default;
+    -fx-background-color: #000000;
+    -fx-background-radius: 0;
+}
+
+#topBar {
+    -fx-background-color: #FFFFFF;
+}
+
+/* //TODO add a custom bar top? draggable? */
+
+.list-view {
+    -fx-background-color: #FF0000;
+    -fx-opacity: 0.9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #690504;
+}
+
+.tab {
+    -fx-background-color: #D3D3D3;
+    -fx-background-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
+}
+
+.tab:selected {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+    -fx-background-insets: 0 1 0 -1;
+}
+
+.button {
+    -fx-background-color: red;
+    -fx-background-radius: 0;
+}
+
+.text-area,
+.text-area:focused .content {
+    -fx-text-fill: #000000;
+    -fx-background-radius: 0;
+    -fx-background-color: white;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+#inputTextArea {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea .content {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea:focused {
+    -fx-background-insets: 0;
+}
+
+.increment-button,
+.decrement-button {
+    -fx-pref-height: 0; /*hides button*/
+}
+
+.text-area .scroll-bar .track {
+    -fx-background-color: maroon;
+}

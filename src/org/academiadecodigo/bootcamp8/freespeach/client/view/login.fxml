@@ -1,37 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.gluonhq.charm.glisten.control.TextField?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 
 <GridPane fx:id="root" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeach.client.controller.LoginController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="288.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="288.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="400.0" minWidth="10.0" prefWidth="312.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="62.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="164.0" minHeight="10.0" prefHeight="164.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExitButton" text="exit" GridPane.columnIndex="1" />
-      <Label fx:id="nameLabel" alignment="CENTER" text="name" GridPane.rowIndex="1" />
-      <Label fx:id="passwordLabel" alignment="CENTER" text="pass" GridPane.rowIndex="2" />
-      <Label fx:id="emailLabel" alignment="CENTER" text="email" GridPane.rowIndex="3" />
-      <TextField fx:id="nameField" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <TextField fx:id="passwordField" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <TextField fx:id="emailField" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" text="login" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-      <Label fx:id="serverMessageLabel" alignment="CENTER" text="server message" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-      <Button fx:id="resgisterButton" mnemonicParsing="false" onAction="#onRegister" text="register" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+         <children>
+            <AnchorPane prefHeight="410.0" prefWidth="408.0">
+               <children>
+                  <Button fx:id="registerButton" layoutX="276.0" layoutY="245.0" mnemonicParsing="false" onAction="#onRegister" text="Register" visible="false" />
+                  <Label fx:id="serverMessageLabel" alignment="CENTER" layoutX="33.0" layoutY="359.0" text="server message" visible="false" />
+                  <TextField fx:id="passwordField" layoutX="182.0" layoutY="157.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
+                  <Label fx:id="passwordLabel" alignment="CENTER" layoutX="95.0" layoutY="111.0" text="password_" visible="false" />
+                  <Label fx:id="nameLabel" alignment="CENTER" layoutX="95.0" layoutY="59.0" text="username_" visible="false" />
+                  <Label fx:id="emailLabel" alignment="CENTER" layoutX="119.0" layoutY="165.0" text="email_" visible="false" />
+                  <TextField fx:id="nameField" layoutX="183.0" layoutY="54.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
+                  <TextField fx:id="emailField" layoutX="182.0" layoutY="105.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
+                  <Button fx:id="loginButton" layoutX="202.0" layoutY="245.0" mnemonicParsing="false" onAction="#onLogin" text="Login" visible="false" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+      <VBox prefHeight="263.0" prefWidth="192.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+         <children>
+            <AnchorPane prefHeight="321.0" prefWidth="192.0">
+               <children>
+                  <TextField fx:id="portTextField" alignment="CENTER" layoutX="12.0" layoutY="122.0" prefHeight="26.0" prefWidth="165.0" />
+                  <Button fx:id="connectButton" layoutX="94.0" layoutY="239.0" mnemonicParsing="false" onAction="#onConnectServer" text="CONNECT" />
+                  <Label fx:id="portLabel" alignment="CENTER" layoutX="76.0" layoutY="92.0" prefHeight="25.0" prefWidth="38.0" text="PORT" textAlignment="CENTER" />
+                  <Button fx:id="disconnectButton" layoutX="89.0" layoutY="276.0" mnemonicParsing="false" onAction="#OnDisconnetServer" text="DISCONNET" />
+                  <Circle fx:id="StatusCircle" fill="#ff1f1f" layoutX="47.0" layoutY="250.0" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Button fx:id="exitButton" layoutX="22.0" layoutY="276.0" mnemonicParsing="false" onAction="#onExitButton" prefHeight="25.0" prefWidth="48.0" text="EXIT" />
+                  <Label fx:id="serverLabel" alignment="CENTER" layoutX="67.0" layoutY="13.0" prefHeight="26.0" prefWidth="54.0" text="SERVER" textAlignment="CENTER" />
+                  <TextField fx:id="serverTextField" alignment="CENTER" layoutX="12.0" layoutY="42.0" prefHeight="26.0" prefWidth="165.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
    </children>
    <cursor>
       <Cursor fx:constant="DEFAULT" />

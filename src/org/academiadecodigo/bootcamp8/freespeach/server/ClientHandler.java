@@ -2,10 +2,10 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communication;
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.CommunicationService;
+import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -34,99 +34,75 @@ public class ClientHandler implements Runnable {
     public void run() {
 
         communication.openStreams(clientSocket);
-        //authenticateClient(); //temporarily off to test receiving and sending msg from client
-        server.addActiveUser(this); //to be removed after login gets activated
+        authenticateClient();
         readFromClient();
 
     }
 
-    /**
-     *
-     * @throws IOException
-     * @throws ClassNotFoundException if the object recieved does not exist (message wrongly created)
-     *
-     * It validates if the client is registered in the server.
-     *
-     */
-    private void authenticateClient() throws IOException, ClassNotFoundException {
+    private void authenticateClient() {
 
-        Sendable sendable = null;
+        Sendable sendable;
         boolean exit = false;
         String message = "";
 
         while (!exit) {
-
             sendable = communication.retrieveMessage();
 
             if (sendable.getType() == MessageType.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
-                    message = "OK";
+                    message = Values.LOGIN_OK;
                     server.addActiveUser(this);
-                    updateUsername(sendable);
-
+                    exit = true;
                 } else {
-                    message = "NOTOK";
-
+                    message = Values.LOGIN_FAIL;
                 }
 
             }
 
             if (sendable.getType() == MessageType.REGISTER) {
 
-                if (exit = makeRegistry(sendable)) { //TODO: registry is enough to log in??
-                    message = "OK";
-                    updateUsername(sendable);
-
+                if (makeRegistry(sendable)) { //TODO: registry is enough to log in??
+                    message = Values.REGISTER_OK;
                 } else {
-                    message = "NOTOK";
+                    message = Values.USER_TAKEN;
                 }
             }
 
+            // TODO use correct interface Sendable<TYPE>
             communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
-    }
 
-
-    /***
-     *
-     * @param sendable
-     */
-
-    private void updateUsername(Sendable sendable) {
-
-        HashMap<String,String> content = (HashMap<String,String>) sendable.getContent();
-        cypherName = content.get("username");
     }
 
     private boolean makeLogIn(Sendable sendable) {
 
+        // TODO use correct interface Sendable<TYPE>
         HashMap<String, String> map = (HashMap<String, String>) sendable.getContent();
-        String username = map.get("username");
-        String password = map.get("password");
+        String username = map.get(Values.NAME_KEY);
+        String password = map.get(Values.PASSWORD_KEY);
 
         return server.getUserService().authenticate(username,password);
-
     }
 
     private boolean makeRegistry(Sendable sendable) {
 
+        // TODO use correct interface Sendable<TYPE>
         HashMap<String, String> mapR = (HashMap<String, String>) sendable.getContent();
-        String username = mapR.get("username");
-        boolean exit = false;
+        String username = mapR.get(Values.NAME_KEY);
 
         synchronized (server.getUserService()) {
 
             if (server.getUserService().getUser(username) == null) {
 
-                server.getUserService().addUser(new User(mapR.get("username"), mapR.get("password")));
+                server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
                 server.getUserService().notifyAll();
-                exit = true;
+                return true;
             } else {
                 server.getUserService().notifyAll();
             }
         }
-        return exit;
+        return false;
     }
 
 
@@ -135,41 +111,17 @@ public class ClientHandler implements Runnable {
 
         while ((msg = communication.retrieveMessage()) != null) {
 
-            handleMessage(msg);
+            server.writeToAll(msg);
 
         }
         server.logOutUser(this);
         closeSocket();
     }
 
-    private void handleMessage(Sendable msg) {
-
-        MessageType type = msg.getType();
-
-        switch (type){
-
-            case DATA:
-            case TEXT:
-                server.writeToAll(msg);
-                break;
-            case LOGIN:
-                throw new IllegalArgumentException("You've already Logged In");
-            case REGISTER:
-                throw new IllegalArgumentException("You've already Register");
-            case PRIVATE_DATA:
-            case PRIVATE_TEXT:
-                server.write(msg);
-                break;
-        }
-
-
-    }
-
 
     public void write(Sendable sendable) {
-        System.out.println(sendable);
+        System.out.println(sendable); //to remove after tests completed
         communication.sendMessage(sendable);
-
     }
 
 
@@ -178,7 +130,7 @@ public class ClientHandler implements Runnable {
             clientSocket.close();
 
         } catch (IOException e) {
-            System.out.println(Thread.currentThread().getName() + ": Olha, fudeu!");
+            System.out.println(Thread.currentThread().getName() + ": could not close socket");
             e.printStackTrace();
 
         }

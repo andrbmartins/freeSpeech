@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeach.client.controller;
 
 import javafx.fxml.Initializable;
+import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 
 /**
@@ -11,7 +12,8 @@ import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 
 public interface Controller extends Initializable {
 
-    void setClientService(ClientService clientService);
-
     void init();
+
+    void setStage(Stage stage);
+
 }

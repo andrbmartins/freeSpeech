@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeach.client.controller.Controller;
-import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
 import java.io.IOException;
@@ -26,8 +26,12 @@ public class Navigation {
     private Stage stage;
     private LinkedList<Scene> scenes = new LinkedList<>();
     private Map<String, Controller> controllers = new HashMap<>();
+    private String css;
 
-    private TempClientService clientService;
+    //TODO TEST
+    public static final String USERNAME = "test-user";
+
+    private ClientService clientService;
 
     private Navigation() {
     }
@@ -54,13 +58,15 @@ public class Navigation {
      */
     public void loadScreen(String view) {
         try {
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
             Parent root = loader.load();
             controllers.put(view, loader.getController());
-            controllers.get(view).setClientService(clientService);
+            controllers.get(view).setStage(stage);
             controllers.get(view).init();
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
+            scene.getStylesheets().add(css);
             scenes.push(scene);
             setScene(scene);
 
@@ -94,7 +100,7 @@ public class Navigation {
         return controllers.get(view);
     }
 
-    public void setClientService(TempClientService clientService) {
+    public void setClientService(ClientService clientService) {
         this.clientService = clientService;
     }
 
@@ -105,5 +111,9 @@ public class Navigation {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void setCss(String css) {
+        this.css = css;
     }
 }
