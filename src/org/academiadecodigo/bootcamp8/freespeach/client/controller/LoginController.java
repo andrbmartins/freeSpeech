@@ -114,6 +114,7 @@ public class LoginController implements Controller {
         sendMsg(MessageType.LOGIN);
         Sendable serverMsg = clientService.readObject();
         if (serverMsg.getContent().equals(Values.LOGIN_OK)) {
+            Service.setUsername(nameField.getText());
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
 
         } else {

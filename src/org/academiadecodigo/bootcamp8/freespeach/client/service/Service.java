@@ -9,6 +9,7 @@ import java.net.Socket;
  */
 public class Service {
     private static Socket clientSocket;
+    private static String username;
     private static ClientService loginService = new LoginClientService();
 
     public static ClientService getLoginService() {
@@ -24,4 +25,11 @@ public class Service {
         Service.clientSocket = clientSocket;
     }
 
+    public static void setUsername(String username) {
+        Service.username = username;
+    }
+
+    public static String getUsername() {
+        return username;
+    }
 }
