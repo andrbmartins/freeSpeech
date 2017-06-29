@@ -1,14 +1,41 @@
 .root {
     -fx-alignment: center;
-    -fx-border-color: #000000;
-    -fx-border-width: 5px;
     -fx-cursor: default;
-    -fx-background-color: #000000;
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, #FF0000 0%, #690504 100%);
     -fx-background-radius: 0;
+}
+
+#buttonBox {
+    -fx-alignment: center;
+    -fx-spacing: 30;
+}
+
+#nameLabel,
+#emailLabel,
+#passwordLabel {
+    -fx-padding: 40 0 0 0;
+}
+
+.menu-button {
+    -fx-background-radius: 20 20 20 20;
+}
+
+.menu-button .context-menu {
+    -fx-text-fill: #000000;
+}
+
+.menu-item .label {
+    -fx-text-fill: #000000;
+}
+
+.text-field {
+    -fx-max-width: 20em;
+    -fx-background-radius: 20 20 20 20;
 }
 
 .label {
     -fx-text-fill: #FFFFFF;
+    -fx-font: 10pt Helvetica;
 }
 
 #topBar {
@@ -44,7 +71,8 @@
 
 .button {
     -fx-background-color: red;
-    -fx-background-radius: 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 20 20 20 20;
 }
 
 .text-area,

@@ -2,11 +2,11 @@ package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -33,6 +33,11 @@ import java.util.ResourceBundle;
  */
 
 public class LoginController implements Controller {
+
+
+
+    @FXML
+    private HBox buttonBox;
 
     @FXML
     private Label nameLabel;
@@ -87,9 +92,26 @@ public class LoginController implements Controller {
     private Stage stage;
     private LoginService clientService;
 
+    @FXML
+    private GridPane loginPane;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         clientService = RegisterService.getInstance().get(LoginService.class);
+
+        //TODO para testar - Filipe
+        clientService.makeConnection("127.0.0.1", 4040);
+        loginPane.setPrefSize(350, 450);
+    }
+
+    @FXML
+    private MenuButton serverSelection;
+
+    @FXML
+    private MenuItem freeSpeechOption;
+    @FXML
+    void freeSpeechSelected(ActionEvent event) {
+
     }
 
 
