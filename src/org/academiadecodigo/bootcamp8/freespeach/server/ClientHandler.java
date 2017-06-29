@@ -136,18 +136,17 @@ public class ClientHandler implements Runnable {
         switch (type){
 
             case DATA:
+            case TEXT:
                 server.writeToAll(msg);
                 break;
-            case REQUEST_INFO_SERVER:
-                server.handleRequest(msg);
-                break;
-            case REQUEST_CHANNEL:
-                server.requestPrivateChannel(msg,this );
-            case NOTIFICATION:
-                throw new UnsupportedOperationException("not implemented yet");
-                //break;
             case LOGIN:
                 throw new IllegalArgumentException("You've already Logged In");
+            case REGISTER:
+                throw new IllegalArgumentException("You've already Register");
+            case PRIVATE_DATA:
+            case PRIVATE_TEXT:
+                server.write(msg);
+                break;
         }
 
 

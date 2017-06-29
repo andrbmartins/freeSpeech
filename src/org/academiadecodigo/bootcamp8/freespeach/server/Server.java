@@ -8,6 +8,7 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,26 +82,6 @@ public class Server {
         }
     }
 
-    public void handleRequest(Sendable message) {
-
-
-    }
-
-    public void requestPrivateChannel(Sendable message, ClientHandler clientHandler) {
-        try {
-
-            notifyRequestClient(message, clientHandler.getName());
-
-        }catch (Exception e){
-
-            e.printStackTrace();
-            message.updateMessage(MessageType.NOTIFICATION, "Client that you wanted to chat is unavailable.");
-            write(clientHandler,message);
-            return;
-        }
-
-    }
-
     private void notifyRequestClient(Sendable message, String name) {
 
         String username = (String) message.getContent();
@@ -114,8 +95,19 @@ public class Server {
         }
     }
 
-    private void write(ClientHandler clientHandler, Sendable message) {
+    public void write(Sendable msg) {
 
-        clientHandler.write(message);
+        HashMap<String,String> content = (HashMap<String,String>)(msg.getContent());
+        String destiny = content.get("to");
+        String message = content.get("message");
+
+        for (ClientHandler c : loggedUsers){
+            if(c.getName().equals(destiny)){
+
+                c.write(msg);
+                break;
+            }
+        }
+
     }
 }
