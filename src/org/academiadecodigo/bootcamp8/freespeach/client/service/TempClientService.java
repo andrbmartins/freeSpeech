@@ -22,8 +22,6 @@ import java.util.List;
 public class TempClientService implements ClientService {
 
     private Socket clientSocket;
-    //private ObjectOutputStream output;
-    //private ObjectInputStream input;
 
     public TempClientService() {
         try {
@@ -34,25 +32,7 @@ public class TempClientService implements ClientService {
             System.out.println("NO CONNECTION");
             System.exit(1);
         }
-        //setupStreams();
     }
-
-    /**
-     * Instantiates an ObjectOutputStream and an ObjectInputStream from and to the client socket.
-     */
-    /*
-    public void setupStreams() {
-        try {
-            output = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-            input = new ObjectInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("output stream: " + output);
-        System.out.println("input stream: " + input);
-    }
-    */
 
     /**
      * @param textArea
@@ -158,4 +138,18 @@ public class TempClientService implements ClientService {
         }
         return (Message) serverMessage;
     }
+
+    @Override
+    public boolean getConnectionServer() {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void makeConnection(String server, int port) {
+        // TODO implement method
+        throw new UnsupportedOperationException();
+    }
+
+
 }

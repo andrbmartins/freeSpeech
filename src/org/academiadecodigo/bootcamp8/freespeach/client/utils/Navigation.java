@@ -58,6 +58,7 @@ public class Navigation {
      */
     public void loadScreen(String view) {
         try {
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
             Parent root = loader.load();
             controllers.put(view, loader.getController());

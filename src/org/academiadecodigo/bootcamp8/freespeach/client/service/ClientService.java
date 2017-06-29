@@ -36,5 +36,13 @@ public interface ClientService {
 
     InputStream getInput() throws IOException;
 
+    public boolean getConnectionServer();
+
+    public void makeConnection(String server, int port);
+
+    //public void setupStreams();
+
+
     void sendUserData(File file);
+
 }
