@@ -31,4 +31,5 @@ public class Values {
 
     public static final String EMPTY_FIELDS = "No empty fields accepted. Thanks";
 
+    public static final String NEW_USER = "New User";
 }

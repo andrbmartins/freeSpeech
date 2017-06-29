@@ -3,6 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.Communication;
 import org.academiadecodigo.bootcamp8.freespeach.server.communication.CommunicationService;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
@@ -35,6 +36,7 @@ public class ClientHandler implements Runnable {
     public void run() {
 
         communication.openStreams(clientSocket);
+        notifyNewUser();
         authenticateClient();
         readFromClient();
 
@@ -106,6 +108,12 @@ public class ClientHandler implements Runnable {
             }
         }
         return false;
+    }
+
+    private void notifyNewUser() {
+
+        Message<String> message = new Message<>(MessageType.NOTIFICATION, Values.NEW_USER);
+        server.writeToAll(message);
     }
 
     private void readFromClient() {
