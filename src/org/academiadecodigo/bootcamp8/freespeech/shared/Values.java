@@ -26,6 +26,7 @@ public class Values {
     public static final String LOGIN_FAIL = "Unable to login";
     public static final String REGISTER_OK = "Successfully registered user";
     public static final String USER_TAKEN = "Username taken. Choose another one";
+    public static final String CHECK_PASSWORD = "Please confirm you typed the same password";
 
     public static final String EMPTY_FIELDS = "No empty fields accepted. Thanks";
 

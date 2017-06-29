@@ -35,18 +35,14 @@ public class LoginClientService implements LoginService {
                 clientSocket = new Socket(server, port);
 
                 Session.getInstance().setUserSocket(clientSocket);
-                //Service.setClientSocket(clientSocket);
             } else {
                 System.out.println("Client already connected");
             }
 
         } catch (IOException e) {
-            System.out.println("Connection to server not successful");
             connectionServer = false;
             return;
         }
-
-        System.out.println("Connection to server successful");
         connectionServer = true;
 
     }
@@ -60,7 +56,7 @@ public class LoginClientService implements LoginService {
         }
     }
 
-
+    @Override
     public boolean getConnectionServer() {
         return connectionServer;
     }

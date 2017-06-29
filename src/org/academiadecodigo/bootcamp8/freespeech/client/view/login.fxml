@@ -3,6 +3,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -31,14 +32,14 @@
             <AnchorPane prefHeight="410.0" prefWidth="408.0">
                <children>
                   <Button fx:id="registerButton" layoutX="276.0" layoutY="245.0" mnemonicParsing="false" onAction="#onRegister" text="Register" visible="false" />
-                  <Label fx:id="serverMessageLabel" alignment="CENTER" layoutX="33.0" layoutY="359.0" text="server message" visible="false" />
-                  <TextField fx:id="passwordField" layoutX="182.0" layoutY="157.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
+                  <Label fx:id="serverMessageLabel" alignment="CENTER" layoutX="33.0" layoutY="359.0" textFill="#e80505" />
                   <Label fx:id="passwordLabel" alignment="CENTER" layoutX="95.0" layoutY="111.0" text="password_" visible="false" />
                   <Label fx:id="nameLabel" alignment="CENTER" layoutX="95.0" layoutY="59.0" text="username_" visible="false" />
-                  <Label fx:id="emailLabel" alignment="CENTER" layoutX="119.0" layoutY="165.0" text="email_" visible="false" />
+                  <Label fx:id="emailLabel" alignment="CENTER" layoutX="55.0" layoutY="165.0" text="confirm password_" visible="false" />
                   <TextField fx:id="nameField" layoutX="183.0" layoutY="54.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
-                  <TextField fx:id="emailField" layoutX="182.0" layoutY="105.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
                   <Button fx:id="loginButton" layoutX="202.0" layoutY="245.0" mnemonicParsing="false" onAction="#onLogin" text="Login" visible="false" />
+                  <PasswordField fx:id="passwordField" layoutX="182.0" layoutY="106.0" prefHeight="27.0" prefWidth="185.0" visible="false" />
+                  <PasswordField fx:id="confirmPassword" layoutX="182.0" layoutY="160.0" prefHeight="27.0" prefWidth="185.0" visible="false" />
                </children>
             </AnchorPane>
          </children>

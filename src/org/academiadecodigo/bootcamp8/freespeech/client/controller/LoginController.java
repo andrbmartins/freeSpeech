@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Paint;
@@ -34,9 +35,6 @@ import java.util.ResourceBundle;
 public class LoginController implements Controller {
 
     @FXML
-    private GridPane root;
-
-    @FXML
     private Label nameLabel;
 
     @FXML
@@ -49,10 +47,10 @@ public class LoginController implements Controller {
     private TextField nameField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
-    private TextField emailField;
+    private PasswordField confirmPassword;
 
     @FXML
     private Button loginButton;
@@ -92,13 +90,8 @@ public class LoginController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         clientService = RegisterService.getInstance().get(LoginService.class);
-        System.out.println("CS" + clientService);
     }
 
-    //@Override
-    public void init() {
-
-    }
 
     @Override
     public void setStage(Stage stage) {
@@ -121,7 +114,6 @@ public class LoginController implements Controller {
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
 
         } else {
-            serverMessageLabel.setVisible(true);
             serverMessageLabel.setText((String) serverMsg.getContent());
         }
     }
@@ -132,18 +124,17 @@ public class LoginController implements Controller {
     void onRegister(ActionEvent event) {
 
         if (fieldsAreEmpty()) {
-            serverMessageLabel.setVisible(true);
             serverMessageLabel.setText(Values.EMPTY_FIELDS);
             return;
         }
-
+        if (!passwordField.getText().equals(confirmPassword.getText())) {
+            serverMessageLabel.setText(Values.CHECK_PASSWORD);
+        }
         sendMsg(MessageType.REGISTER);
 
         if (clientService.readObject().getContent().equals(Values.REGISTER_OK)) {
-            serverMessageLabel.setVisible(true);
             serverMessageLabel.setText(Values.REGISTER_OK);
         } else {
-            serverMessageLabel.setVisible(true);
             serverMessageLabel.setText(Values.USER_TAKEN);
         }
 
@@ -176,7 +167,7 @@ public class LoginController implements Controller {
         if(!clientService.getConnectionServer()) {
             StatusCircle.setFill(Paint.valueOf("red"));
             serverMessageLabel.setText("DISCONNECTED FROM SERVER");
-            hideLoginRegister();
+            toggleView(false);
         }
     }
 
@@ -188,48 +179,35 @@ public class LoginController implements Controller {
                 clientService.makeConnection(serverTextField.getText(), Integer.parseInt(portTextField.getText()));
         }
         else {
-            serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("ALREADY CONNECTED");
             return;
         }
 
         if(clientService.getConnectionServer()) {
             StatusCircle.setFill(Paint.valueOf("green"));
-            serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CONNECTION TO SERVER SUCCESSFUL");
-            showLoginRegister();
+            toggleView(true);
         }
         else{
             serverMessageLabel.setVisible(true);
             serverMessageLabel.setText("CLIENT DISCONNECTED");
         }
-
     }
 
-    private void hideLoginRegister() {
-        nameLabel.setVisible(false);
-        nameField.setVisible(false);
-        passwordLabel.setVisible(false);
-        passwordField.setVisible(false);
-        emailLabel.setVisible(false);
-        emailField.setVisible(false);
-        loginButton.setVisible(false);
-        registerButton.setVisible(false);
+    private void toggleView(boolean value) {
+        nameLabel.setVisible(value);
+        nameField.setVisible(value);
+        passwordLabel.setVisible(value);
+        passwordField.setVisible(value);
+        emailLabel.setVisible(value);
+        confirmPassword.setVisible(value);
+        loginButton.setVisible(value);
+        registerButton.setVisible(value);
     }
 
-    private void showLoginRegister() {
-        nameLabel.setVisible(true);
-        nameField.setVisible(true);
-        passwordLabel.setVisible(true);
-        passwordField.setVisible(true);
-        emailLabel.setVisible(true);
-        emailField.setVisible(true);
-        loginButton.setVisible(true);
-        registerButton.setVisible(true);
-    }
 
     private boolean fieldsAreEmpty(){
-        return nameField.getText().isEmpty() || passwordField.getText().isEmpty();
+        return nameField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPassword.getText().isEmpty();
 
     }
 
