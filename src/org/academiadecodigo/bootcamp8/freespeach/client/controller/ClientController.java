@@ -53,7 +53,7 @@ public class ClientController implements Controller {
         rooms = new LinkedList<>();
         rooms.add(lobbyTextArea);
         position = new double[2];
-        clientService = Services.getLoginService();
+        clientService = Services.getTempClientService();
 
     }
 
