@@ -152,8 +152,4 @@ public class ClientController implements Controller {
         this.stage = stage;
     }
 
-    @Override
-    public void setClientService(ClientService clientService) {
-        this.clientService = clientService;
-    }
 }
