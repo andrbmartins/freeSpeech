@@ -20,19 +20,14 @@ import java.util.List;
  */
 
 public class TempClientService implements ClientService {
-
+    private static TempClientService tempClientService;
     private Socket clientSocket;
 
-    public TempClientService() {
-        try {
-            clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
-        } catch (IOException e) {
-            //TODO load login with no connection error
-            e.printStackTrace();
-            System.out.println("NO CONNECTION");
-            System.exit(1);
-        }
+    private TempClientService(Socket clientSocket) {
+        this.clientSocket = clientSocket;
     }
+
+
 
     /**
      * @param textArea
@@ -150,6 +145,19 @@ public class TempClientService implements ClientService {
         // TODO implement method
         throw new UnsupportedOperationException();
     }
+
+    public static TempClientService getInstance(Socket clientSocket) {
+        if (tempClientService == null) {
+            synchronized (TempClientService.class) {
+                if (tempClientService == null) {
+                    tempClientService = new TempClientService(clientSocket);
+                }
+            }
+        }
+        return tempClientService;
+    }
+
+  
 
 
 }

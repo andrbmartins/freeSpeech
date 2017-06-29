@@ -24,15 +24,15 @@ public class LoginClientService implements ClientService {
 
 
     public void makeConnection(String server, int port) {
-
         try {
 
             InetAddress address = InetAddress.getByName(server);
             System.out.println(address);
 
-            if (!connectionServer)
+            if (!connectionServer) {
                 clientSocket = new Socket(server, port);
-            else {
+                Service.setClientSocket(clientSocket);
+            } else {
                 System.out.println("Client already connected");
             }
 
