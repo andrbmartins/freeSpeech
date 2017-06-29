@@ -84,24 +84,10 @@ public class Server {
         }
     }
 
-    private void notifyRequestClient(Sendable message, String name) {
-
-        String username = (String) message.getContent();
-
-        for (ClientHandler c : loggedUsers){
-
-            if(c.getName().equals(username)){
-
-                Sendable chatNotification = message.updateMessage(MessageType.NOTIFICATION,name);
-            }
-        }
-    }
-
     public void write(Sendable msg) {
 
         HashMap<String,String> content = (HashMap<String,String>)(msg.getContent());
         String destiny = content.get(Values.DESTINY_USER);
-        String message = content.get(Values.MESSAGE);
 
         for (ClientHandler c : loggedUsers){
             if(c.getName().equals(destiny)){

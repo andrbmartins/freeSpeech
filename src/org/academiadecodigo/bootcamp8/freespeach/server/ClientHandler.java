@@ -113,11 +113,31 @@ public class ClientHandler implements Runnable {
 
         while ((msg = communication.retrieveMessage()) != null) {
 
-            server.writeToAll(msg);
-
+            handleMessage(msg);
         }
         server.logOutUser(this);
         closeSocket();
+    }
+
+    private void handleMessage(Sendable msg) {
+
+        MessageType type = msg.getType();
+
+        switch (type){
+
+            case DATA:
+            case TEXT:
+                server.writeToAll(msg);
+                break;
+            case LOGIN:
+                throw new IllegalArgumentException("You've already Logged In");
+            case REGISTER:
+                throw new IllegalArgumentException("You've already Register");
+            case PRIVATE_DATA:
+            case PRIVATE_TEXT:
+                server.write(msg);
+                break;
+        }
     }
 
 
