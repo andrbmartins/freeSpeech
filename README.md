@@ -1,2 +1,2 @@
-# freeSpeach
+# FreeSpeech
 F****** awesome chat server
