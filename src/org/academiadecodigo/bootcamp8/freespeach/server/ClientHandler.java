@@ -9,6 +9,7 @@ import org.academiadecodigo.bootcamp8.freespeach.server.utils.User;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Developed @ <Academia de Código_>
@@ -107,7 +108,6 @@ public class ClientHandler implements Runnable {
         return false;
     }
 
-
     private void readFromClient() {
         Sendable msg;
 
@@ -136,6 +136,10 @@ public class ClientHandler implements Runnable {
             case PRIVATE_DATA:
             case PRIVATE_TEXT:
                 server.write(msg);
+                break;
+            case REQUEST_USERS_ONLINE:
+                List<String> list = server.getUsersOnlineList();
+                write(msg.updateMessage(msg.getType(),list));
                 break;
         }
     }
