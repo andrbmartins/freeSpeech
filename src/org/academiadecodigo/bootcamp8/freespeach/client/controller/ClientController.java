@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import org.academiadecodigo.bootcamp8.freespeach.client.InputHandler;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.Services;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +53,7 @@ public class ClientController implements Controller {
         rooms = new LinkedList<>();
         rooms.add(lobbyTextArea);
         position = new double[2];
+        clientService = Services.getLoginService();
 
     }
 
