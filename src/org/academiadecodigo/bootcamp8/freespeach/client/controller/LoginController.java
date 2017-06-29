@@ -89,13 +89,12 @@ public class LoginController implements Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        serverMessageLabel.setVisible(false);
         clientService = Services.getLoginService();
     }
 
     @Override
     public void init() {
-        hideLoginRegister();
+        
     }
 
     @FXML

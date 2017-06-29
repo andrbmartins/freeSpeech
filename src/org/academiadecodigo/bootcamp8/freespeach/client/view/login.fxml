@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<GridPane fx:id="root" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeach.client.controller.LoginController">
+<GridPane fx:id="root" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeach.client.controller.LoginController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="288.0" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="288.0" />
@@ -30,15 +30,15 @@
          <children>
             <AnchorPane prefHeight="410.0" prefWidth="408.0">
                <children>
-                  <Button fx:id="registerButton" layoutX="276.0" layoutY="245.0" mnemonicParsing="false" onAction="#onRegister" text="Register" />
-                  <Label fx:id="serverMessageLabel" alignment="CENTER" layoutX="33.0" layoutY="359.0" text="server message" />
-                  <TextField fx:id="passwordField" layoutX="182.0" layoutY="157.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" />
-                  <Label fx:id="passwordLabel" alignment="CENTER" layoutX="95.0" layoutY="111.0" text="password_" />
-                  <Label fx:id="nameLabel" alignment="CENTER" layoutX="95.0" layoutY="59.0" text="username_" />
-                  <Label fx:id="emailLabel" alignment="CENTER" layoutX="119.0" layoutY="165.0" text="email_" />
-                  <TextField fx:id="nameField" layoutX="183.0" layoutY="54.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" />
-                  <TextField fx:id="emailField" layoutX="182.0" layoutY="105.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" />
-                  <Button fx:id="loginButton" layoutX="202.0" layoutY="245.0" mnemonicParsing="false" onAction="#onLogin" text="Login" />
+                  <Button fx:id="registerButton" layoutX="276.0" layoutY="245.0" mnemonicParsing="false" onAction="#onRegister" text="Register" visible="false" />
+                  <Label fx:id="serverMessageLabel" alignment="CENTER" layoutX="33.0" layoutY="359.0" text="server message" visible="false" />
+                  <TextField fx:id="passwordField" layoutX="182.0" layoutY="157.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
+                  <Label fx:id="passwordLabel" alignment="CENTER" layoutX="95.0" layoutY="111.0" text="password_" visible="false" />
+                  <Label fx:id="nameLabel" alignment="CENTER" layoutX="95.0" layoutY="59.0" text="username_" visible="false" />
+                  <Label fx:id="emailLabel" alignment="CENTER" layoutX="119.0" layoutY="165.0" text="email_" visible="false" />
+                  <TextField fx:id="nameField" layoutX="183.0" layoutY="54.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
+                  <TextField fx:id="emailField" layoutX="182.0" layoutY="105.0" prefHeight="26.0" prefWidth="185.0" styleClass="text-field" visible="false" />
+                  <Button fx:id="loginButton" layoutX="202.0" layoutY="245.0" mnemonicParsing="false" onAction="#onLogin" text="Login" visible="false" />
                </children>
             </AnchorPane>
          </children>
