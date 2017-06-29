@@ -11,6 +11,10 @@ public class Values {
     public static final String HOST = "127.0.0.1";
     public static final int SERVER_PORT = 4040;
 
+    public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
+    public static final String USER_DBSERVER = "root";
+    public static final String PASSWORD_DBSERVER = "root";
+
     public static final String VIEW = "../view";
     public static final String LOGIN_SCENE = "login";
     public static final String USER_SCENE = "user";
@@ -29,5 +33,8 @@ public class Values {
     public static final String CHECK_PASSWORD = "Please confirm you typed the same password";
 
     public static final String EMPTY_FIELDS = "No empty fields accepted. Thanks";
+
+
+
 
 }

@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -34,8 +35,8 @@ public class Server {
     public void init() throws IOException {
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
-        userService = TempUserService.getInstance();
-
+        //userService = TempUserService.getInstance();
+        userService = JdbcUserService.getInstance();
     }
 
 
