@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeach.server;
 
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeach.server.utils.UserService;
+import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 
@@ -99,8 +100,8 @@ public class Server {
     public void write(Sendable msg) {
 
         HashMap<String,String> content = (HashMap<String,String>)(msg.getContent());
-        String destiny = content.get("to");
-        String message = content.get("message");
+        String destiny = content.get(Values.DESTINY_USER);
+        String message = content.get(Values.MESSAGE);
 
         for (ClientHandler c : loggedUsers){
             if(c.getName().equals(destiny)){
