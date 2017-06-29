@@ -40,7 +40,14 @@ public class ClientHandler implements Runnable {
 
     }
 
-
+    /**
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException if the object recieved does not exist (message wrongly created)
+     *
+     * It validates if the client is registered in the server.
+     *
+     */
     private void authenticateClient() throws IOException, ClassNotFoundException {
 
         Sendable sendable = null;
@@ -79,6 +86,12 @@ public class ClientHandler implements Runnable {
             communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
         }
     }
+
+
+    /***
+     *
+     * @param sendable
+     */
 
     private void updateUsername(Sendable sendable) {
 
@@ -169,10 +182,6 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
 
         }
-    }
-
-    public void setCommunication(Communication communication) {
-        this.communication = communication;
     }
 
     public String getName() {
