@@ -97,6 +97,11 @@ public class LoginController implements Controller {
         
     }
 
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     @FXML
     void onLogin(ActionEvent event) {
 

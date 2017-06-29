@@ -2,9 +2,9 @@ package org.academiadecodigo.bootcamp8.freespeach.client;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.service.LoginClientService;
-import org.academiadecodigo.bootcamp8.freespeach.client.service.TempClientService;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 
@@ -31,6 +31,7 @@ public class Client extends Application {
 
         ClientService clientService = new LoginClientService();
 
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         String css = new File(Values.STYLESHEET).toURI().toString();
         Navigation.getInstance().setCss(css);
         primaryStage.setTitle(Values.TITLE);

@@ -2,7 +2,6 @@ package org.academiadecodigo.bootcamp8.freespeach.client;
 
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
 
 import java.io.InputStream;
@@ -26,8 +25,8 @@ public class InputHandler implements Runnable {
     @Override
     public void run() {
         while (!room.isDisabled()) {
-            String text = ((Sendable<String>) Stream.readObject(input)).getContent();
-            room.appendText(text + "\n");
+            String text = ((Message<String>) Stream.readObject(input)).getContent();
+            room.appendText((room.getText().isEmpty() ? "" : "\n") + text);
         }
     }
 }
