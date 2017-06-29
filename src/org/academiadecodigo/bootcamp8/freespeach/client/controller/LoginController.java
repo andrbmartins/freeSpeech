@@ -11,7 +11,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import org.academiadecodigo.bootcamp8.freespeach.client.service.ClientService;
-import org.academiadecodigo.bootcamp8.freespeach.client.service.Services;
+import org.academiadecodigo.bootcamp8.freespeach.client.service.Service;
 import org.academiadecodigo.bootcamp8.freespeach.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeach.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
@@ -89,7 +89,7 @@ public class LoginController implements Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        clientService = Services.getLoginService();
+        clientService = Service.getLoginService();
     }
 
     @Override
@@ -114,6 +114,7 @@ public class LoginController implements Controller {
         sendMsg(MessageType.LOGIN);
         Sendable serverMsg = clientService.readObject();
         if (serverMsg.getContent().equals(Values.LOGIN_OK)) {
+            Service.setUsername(nameField.getText());
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
 
         } else {

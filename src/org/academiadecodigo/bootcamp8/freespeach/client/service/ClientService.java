@@ -7,6 +7,7 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Socket;
 
 /**
  * Developed @ <Academia de Código_>

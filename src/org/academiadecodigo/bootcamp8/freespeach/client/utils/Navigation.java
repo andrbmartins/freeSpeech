@@ -28,8 +28,6 @@ public class Navigation {
     private Map<String, Controller> controllers = new HashMap<>();
     private String css;
 
-    //TODO TEST
-    public static final String USERNAME = "test-user";
 
     private ClientService clientService;
 

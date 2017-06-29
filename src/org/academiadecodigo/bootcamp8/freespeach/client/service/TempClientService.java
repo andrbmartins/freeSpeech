@@ -7,6 +7,7 @@ import org.academiadecodigo.bootcamp8.freespeach.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeach.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeach.shared.utils.Stream;
+import org.academiadecodigo.bootcamp8.freespeach.tests.Server;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,19 +21,16 @@ import java.util.List;
  */
 
 public class TempClientService implements ClientService {
-
+    private static TempClientService tempClientService;
     private Socket clientSocket;
+    private String username;
 
-    public TempClientService() {
-        try {
-            clientSocket = new Socket(Values.HOST, Values.SERVER_PORT);
-        } catch (IOException e) {
-            //TODO load login with no connection error
-            e.printStackTrace();
-            System.out.println("NO CONNECTION");
-            System.exit(1);
-        }
+    private TempClientService(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+        username = Service.getUsername();
     }
+
+
 
     /**
      * @param textArea
@@ -44,7 +42,7 @@ public class TempClientService implements ClientService {
         if (textArea.getText().isEmpty()) {
             return;
         }
-        String text = Navigation.USERNAME + ": " + textArea.getText();
+        String text = username + ": " + textArea.getText();
         Message<String> message = new Message<>(MessageType.TEXT, text);
         writeObject(message);
         textArea.clear();
@@ -150,6 +148,19 @@ public class TempClientService implements ClientService {
         // TODO implement method
         throw new UnsupportedOperationException();
     }
+
+    public static TempClientService getInstance(Socket clientSocket) {
+        if (tempClientService == null) {
+            synchronized (TempClientService.class) {
+                if (tempClientService == null) {
+                    tempClientService = new TempClientService(clientSocket);
+                }
+            }
+        }
+        return tempClientService;
+    }
+
+
 
 
 }
