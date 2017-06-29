@@ -39,6 +39,7 @@ public class ClientHandler implements Runnable {
 
     }
 
+
     private void authenticateClient() {
 
         Sendable sendable;
@@ -67,6 +68,7 @@ public class ClientHandler implements Runnable {
                 } else {
                     message = Values.USER_TAKEN;
                 }
+
             }
 
             // TODO use correct interface Sendable<TYPE>
