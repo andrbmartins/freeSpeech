@@ -120,7 +120,8 @@ public class ClientHandler implements Runnable {
 
 
     public void write(Sendable sendable) {
-        System.out.println(sendable); //to remove after tests completed
+        //TODO to remove after tests completed
+        System.out.println(sendable);
         communication.sendMessage(sendable);
     }
 
