@@ -7,6 +7,10 @@
     -fx-background-radius: 0;
 }
 
+#topBar {
+    -fx-background-color: #FFFFFF;
+}
+
 /* //TODO add a custom bar top? draggable? */
 
 .list-view {
@@ -41,6 +45,7 @@
 
 .text-area,
 .text-area:focused .content {
+    -fx-text-fill: #000000;
     -fx-background-radius: 0;
     -fx-background-color: white;
 }

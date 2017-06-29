@@ -62,6 +62,7 @@ public class Navigation {
             Parent root = loader.load();
             controllers.put(view, loader.getController());
             controllers.get(view).setClientService(clientService);
+            controllers.get(view).setStage(stage);
             controllers.get(view).init();
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
