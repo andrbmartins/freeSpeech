@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -147,7 +148,7 @@ public class Server {
     public List<String> getUsersOnlineList() {
 
         //TODO think of a better idea
-        ArrayList<String> usersList = new ArrayList<>();
+        LinkedList<String> usersList = new LinkedList<>();
 
         for (ClientHandler c :loggedUsers){
             usersList.add(c.getName());
