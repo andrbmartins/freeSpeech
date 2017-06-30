@@ -85,7 +85,8 @@ public class AdminController implements Initializable {
 
     @FXML
     void clearTable(ActionEvent event) {
-        display.setText(reader.clearTable() ? Utils.CLEARED : Utils.NOT_CLEARED);
+        String result = reader.clearTable() ? Utils.CLEARED : Utils.NOT_CLEARED;
+        display.setText(result);
     }
 
 

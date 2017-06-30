@@ -8,7 +8,7 @@ public class Utils {
 
     public static final String USER_CONNECTION = "query goes here";
 
-    public static final String CLEAR_TABLE = "goes here";
+    public static final String CLEAR_TABLE = "DELETE FROM loans";
 
     public static final String CLEARED = "Table cleared successfully";
 

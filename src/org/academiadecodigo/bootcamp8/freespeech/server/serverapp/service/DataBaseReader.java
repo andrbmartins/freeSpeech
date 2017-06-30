@@ -20,7 +20,7 @@ public class DataBaseReader {
     }
 
     public ResultSet executeQuery(String query) {
-        Statement statement = null;
+        statement = null;
         ResultSet resultSet = null;
 
         try {
@@ -35,7 +35,7 @@ public class DataBaseReader {
 
     public boolean clearTable() {
         boolean deleteOk;
-        Statement statement = null;
+        statement = null;
 
         try {
             statement = connection.getConnection().createStatement();
