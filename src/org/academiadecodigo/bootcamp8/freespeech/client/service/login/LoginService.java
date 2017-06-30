@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.login;
 
 import org.academiadecodigo.bootcamp8.freespeech.client.service.Service;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 
 /**
  * Developed @ <Academia de Código_>
@@ -15,4 +16,6 @@ public interface LoginService extends Service {
     public void makeConnection(String server, int port);
 
     void closeClientSocket();
+
+    Message readObject();
 }

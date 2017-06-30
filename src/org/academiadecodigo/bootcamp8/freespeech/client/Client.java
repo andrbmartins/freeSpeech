@@ -3,7 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeech.client;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.RegisterService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.FreeSpeechClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginService;
@@ -47,7 +47,7 @@ public class Client extends Application {
         LoginService login = new LoginClientService();
         FreeSpeechClientService freeSpeech = new FreeSpeechClientService();
 
-        RegisterService.getInstance().addService(login);
-        RegisterService.getInstance().addService(freeSpeech);
+        RegistryService.getInstance().addService(login);
+        RegistryService.getInstance().addService(freeSpeech);
     }
 }

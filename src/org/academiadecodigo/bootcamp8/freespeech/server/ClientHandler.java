@@ -3,12 +3,14 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 import org.academiadecodigo.bootcamp8.freespeech.server.communication.Communication;
 import org.academiadecodigo.bootcamp8.freespeech.server.communication.CommunicationService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Developed @ <Academia de Código_>
@@ -17,6 +19,7 @@ import java.util.HashMap;
  */
 
 public class ClientHandler implements Runnable {
+    private String cypherName;
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
@@ -34,6 +37,7 @@ public class ClientHandler implements Runnable {
 
         communication.openStreams(clientSocket);
         authenticateClient();
+        notifyNewUser();
         readFromClient();
 
     }
@@ -53,6 +57,7 @@ public class ClientHandler implements Runnable {
 
                 if(exit = makeLogIn(sendable)){
                     message = Values.LOGIN_OK;
+                    cypherName = ((HashMap<String,String>)(sendable.getContent())).get(Values.NAME_KEY);
                     server.addActiveUser(this);
                     exit = true;
                 } else {
@@ -106,16 +111,46 @@ public class ClientHandler implements Runnable {
         return false;
     }
 
+    private void notifyNewUser() {
+
+        Message<String> message = new Message<>(MessageType.NOTIFICATION, Values.NEW_USER);
+        server.writeToAll(message);
+    }
 
     private void readFromClient() {
         Sendable msg;
+
         while ((msg = communication.retrieveMessage()) != null) {
 
-            server.writeToAll(msg);
-
+            handleMessage(msg);
         }
         server.logOutUser(this);
         closeSocket();
+    }
+
+    private void handleMessage(Sendable msg) {
+
+        MessageType type = msg.getType();
+
+        switch (type){
+
+            case DATA:
+            case TEXT:
+                server.writeToAll(msg);
+                break;
+            case LOGIN:
+                throw new IllegalArgumentException("You've already Logged In");
+            case REGISTER:
+                throw new IllegalArgumentException("You've already Register");
+            case PRIVATE_DATA:
+            case PRIVATE_TEXT:
+                server.write(msg);
+                break;
+            case REQUEST_USERS_ONLINE:
+                List<String> list = server.getUsersOnlineList();
+                write(msg.updateMessage(msg.getType(),list));
+                break;
+        }
     }
 
 
@@ -135,5 +170,9 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
 
         }
+    }
+
+    public String getName() {
+        return cypherName;
     }
 }

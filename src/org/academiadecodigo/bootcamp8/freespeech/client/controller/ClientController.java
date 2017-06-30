@@ -1,6 +1,8 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -14,15 +16,19 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import org.academiadecodigo.bootcamp8.freespeech.client.InputHandler;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.RegisterService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
+import javax.xml.soap.Text;
+import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,40 +41,40 @@ import java.util.concurrent.Executors;
 //TODO documentation
 public class ClientController implements Controller {
 
-    @FXML private TabPane tabPane;
-    @FXML private GridPane topBar;
-    @FXML private TextArea lobbyTextArea;
-    @FXML private TextArea privateTextArea;
-    @FXML private TextArea inputTextArea;
+    @FXML
+    private TabPane tabPane;
+    @FXML
+    private GridPane topBar;
+    @FXML
+    private TextArea lobbyTextArea;
+    @FXML
+    private TextArea inputTextArea;
+    @FXML
+    private ListView onlineUsersList;
 
     private Stage stage;
     private ClientService clientService;
-    //private List<TextArea> rooms;
     private Map<Tab, TextArea> rooms;
-    private ExecutorService inputHandlerPool;
+    //private ExecutorService inputHandlerPool;
     private TextArea currentRoom;
     private double[] position;
 
     public ClientController() {
-        inputHandlerPool = Executors.newCachedThreadPool();
+        //inputHandlerPool = Executors.newCachedThreadPool();
         rooms = new HashMap<>();
         position = new double[2];
-        clientService = RegisterService.getInstance().get(ClientService.class);
-
+        clientService = RegistryService.getInstance().get(ClientService.class);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        selectedTab();
-
         rooms.put(selectedTab(), lobbyTextArea);
         setDraggableTopBar();
         focusUserInput();
-        currentRoom = rooms.get(selectedTab());
-        System.out.println("ROOM " + currentRoom);
+        currentRoom = lobbyTextArea;
         clientService.setSocket(Session.getInstance().getUserSocket());
-        listenCurrentRoom();
+        setupChatListener();
     }
 
     private Tab selectedTab() {
@@ -77,11 +83,11 @@ public class ClientController implements Controller {
 
     private void focusUserInput() {
         Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        inputTextArea.requestFocus();
-                    }
-                });
+            @Override
+            public void run() {
+                inputTextArea.requestFocus();
+            }
+        });
     }
 
     private void setDraggableTopBar() {
@@ -107,15 +113,12 @@ public class ClientController implements Controller {
      * Instantiates a new thread to handle server responses for the current room.
      */
 
-    private void listenCurrentRoom() {
+    private void setupChatListener() {
 
-        try {
-            Runnable inputHandler = new InputHandler(clientService.getInput(), currentRoom);
-            inputHandlerPool.submit(inputHandler);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new Thread(new ServerResponseHandler(clientService, this)).start();
 
+        //Runnable inputHandler = new ServerResponseHandler(clientService, this);
+        //inputHandlerPool.submit(inputHandler);
     }
 
     @FXML
@@ -131,8 +134,7 @@ public class ClientController implements Controller {
     @FXML
     void onSendKey(KeyEvent event) {
         if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
-            inputTextArea.setText(inputTextArea.getText() + "\n");
-            inputTextArea.positionCaret(inputTextArea.getText().length());
+            inputTextArea.appendText("\n");
             return;
         }
         if (event.getCode() == KeyCode.ENTER) {
@@ -143,13 +145,12 @@ public class ClientController implements Controller {
 
     @FXML
     void onFile(ActionEvent event) {
-
         FileChooser fileChooser = new FileChooser();
+
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-           clientService.sendUserData(file);
+            clientService.sendUserData(file);
         }
-
     }
 
     public TextArea getCurrentRoom() {
@@ -159,5 +160,28 @@ public class ClientController implements Controller {
     @Override
     public void setStage(Stage stage) {
         this.stage = stage;
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+        this.stage.setMinWidth(Values.CLIENT_WIDTH);
+        this.stage.setMaxWidth(screen.getWidth());
+
+        this.stage.setMinHeight(Values.CLIENT_HEIGHT);
+        this.stage.setMaxHeight(screen.getHeight());
+    }
+
+    public ListView getOnlineUsersList() {
+        return onlineUsersList;
+    }
+
+    public void processUsersList(Sendable message) {
+
+        onlineUsersList.addEventHandler(Event.ANY, new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                List<String> list = (LinkedList<String>) message.getContent();
+                ObservableList<String> observableList = FXCollections.observableList(list);
+                onlineUsersList.setItems(observableList);
+            }
+        });
     }
 }

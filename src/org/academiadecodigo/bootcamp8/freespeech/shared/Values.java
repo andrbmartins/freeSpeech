@@ -18,9 +18,11 @@ public class Values {
 
     public static final String NAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+    public static final String DESTINY_USER = "to";
+    public static final String MESSAGE = "message";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
-    public static final String TITLE = "Free Speach";
+    public static final String TITLE = "Free Speech";
 
     public static final String LOGIN_OK = "ok";
     public static final String LOGIN_FAIL = "Unable to login";
@@ -30,4 +32,10 @@ public class Values {
 
     public static final String EMPTY_FIELDS = "No empty fields accepted. Thanks";
 
+    public static final String NEW_USER = "New User";
+
+    public static final double LOGIN_HEIGHT = 450d;
+    public static final double LOGIN_WIDTH = 350d;
+    public static final double CLIENT_WIDTH = 900d;
+    public static final double CLIENT_HEIGHT = 600d;
 }
