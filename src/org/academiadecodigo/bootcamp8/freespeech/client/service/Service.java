@@ -17,7 +17,7 @@ public interface Service {
 
     String getName();
 
-    Message readObject();
+    //Message readObject();
 
     void sendUserText(TextArea textArea);
 

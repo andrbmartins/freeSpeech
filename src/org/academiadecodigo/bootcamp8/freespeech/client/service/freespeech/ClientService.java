@@ -32,7 +32,7 @@ public interface ClientService extends Service {
      */
     void writeObject(Sendable message);
 
-    Message readObject();
+    //Message readObject();
 
     InputStream getInput() throws IOException;
 
@@ -40,4 +40,5 @@ public interface ClientService extends Service {
 
     void sendUserData(File file);
 
+    void sendListRequest();
 }

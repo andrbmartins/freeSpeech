@@ -14,24 +14,24 @@ import java.util.Map;
 
 //TODO documentation
 
-public class RegisterService {
+public class RegistryService {
 
-    private static RegisterService instance = null;
+    private static RegistryService instance = null;
     private Map<String, Service> services;
 
-    public static RegisterService getInstance() {
+    public static RegistryService getInstance() {
 
         if (instance == null) {
             synchronized (Navigation.class) {
                 if (instance == null) {
-                    instance = new RegisterService();
+                    instance = new RegistryService();
                 }
             }
         }
         return instance;
     }
 
-    private RegisterService() {
+    private RegistryService() {
         services = new HashMap<>();
     }
 
