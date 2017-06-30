@@ -12,7 +12,10 @@ import java.sql.SQLException;
 public class JdbcConnectionManager {
     private Connection connection = null;
 
-
+    /**
+     * Creates connection to specified database
+     * @return the open connection
+     */
     public Connection getConnection() {
 
         try {
@@ -25,6 +28,9 @@ public class JdbcConnectionManager {
         return connection;
     }
 
+    /**
+     * Closes the connection to the database
+     */
     public void close() {
         try {
             if (connection != null) {

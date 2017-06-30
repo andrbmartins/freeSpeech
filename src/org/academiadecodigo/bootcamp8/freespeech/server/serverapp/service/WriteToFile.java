@@ -1,24 +1,29 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
-
 import java.io.*;
 
 /**
- * Created by Prashanta on 30/06/17.
+ * Developed @ <Academia de Código_>
+ * Created by
+ * <Code Cadet> PedroMAlves
  */
 public class WriteToFile {
     private BufferedWriter fileOutputStream;
     private File logSave;
 
-    public WriteToFile() {
-        logSave = new File(System.getProperty("user.home") + Utils.FILE_PATH);
-        createStream();
-    }
 
+    /**
+     * Saves a String to a file in home folder. If file already exists it will append the new content
+     * If user chooses to save to default file
+     * @param data content to be saved to file
+     */
+    public void save(String data) {
+        if (logSave == null) {
+            setSavingFile(new File(System.getProperty("user.home") + Utils.DEFAULT_FILE));
+        }
 
-    public void save(String queryResult) {
-        StringBuilder builder = new StringBuilder(queryResult);
+        StringBuilder builder = new StringBuilder(data);
         builder.append("\n");
         try {
             fileOutputStream.append(builder);
@@ -28,6 +33,22 @@ public class WriteToFile {
         }
     }
 
+    /**
+     * Sets file to save data. If OutputStream is open, it will close it first.
+     * @param file user given file
+     */
+    public void setSavingFile(File file) {
+        if (fileOutputStream != null) {
+            closeOutput();
+        }
+        logSave = file;
+        createStream();
+
+    }
+
+    /**
+     * Creates the OutputStream to write to file
+     */
     private void createStream() {
         try {
             fileOutputStream = new BufferedWriter(new FileWriter(logSave));
@@ -35,6 +56,10 @@ public class WriteToFile {
             System.out.println("Unable to write fileOutputStream");
         }
     }
+
+    /**
+     * Closes the OutputStream
+     */
 
     public void closeOutput() {
         try {
