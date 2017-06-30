@@ -61,15 +61,8 @@ public class AdminController implements Initializable {
 
     @FXML
     void getCustomQuery(ActionEvent event) {
-        ResultSet result = reader.executeQuery(customQuery.getText());
-        try {
-            while (result.next()) {
-            display.appendText(result.getInt("user_id") + "");
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        display.appendText(reader.executeQuery(customQuery.getText()));
+        customQuery.setText("");
         reader.closeStatement();
 
     }

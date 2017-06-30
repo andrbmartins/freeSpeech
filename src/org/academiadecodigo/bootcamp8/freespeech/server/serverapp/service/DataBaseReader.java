@@ -1,8 +1,10 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
 
+
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -19,18 +21,39 @@ public class DataBaseReader {
         connection = manager;
     }
 
-    public ResultSet executeQuery(String query) {
+
+    public String executeQuery(String query) {
         statement = null;
-        ResultSet resultSet = null;
+        ResultSet resultSet;
+        ResultSetMetaData metaData;
+        StringBuilder builder = new StringBuilder();
+        builder.append(query);
+        builder.append("\n");
 
         try {
+
             statement = connection.getConnection().createStatement();
             resultSet = statement.executeQuery(query);
+            metaData = resultSet.getMetaData();
+            int columnsNumber = metaData.getColumnCount();
+
+
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnsNumber; i++) {
+                    if (i > 1) builder.append(" <||> ");
+                    String columnValue = resultSet.getString(i);
+                    builder.append(metaData.getColumnName(i));
+                    builder.append(": ");
+                    builder.append(columnValue);
+                }
+                builder.append("\n");
+            }
+            builder.append("\n");
 
         } catch (SQLException e) {
             System.out.println("Unable to read from database " + e.getMessage());
         }
-        return resultSet;
+        return builder.toString();
     }
 
     public boolean clearTable() {
