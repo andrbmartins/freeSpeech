@@ -5,9 +5,7 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.Service;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -31,12 +29,6 @@ public interface ClientService extends Service {
      * @param message - the specified element.
      */
     void writeObject(Sendable message);
-
-    //Message readObject();
-
-    InputStream getInput() throws IOException;
-
-    void setSocket(Socket socket);
 
     void sendUserData(File file);
 

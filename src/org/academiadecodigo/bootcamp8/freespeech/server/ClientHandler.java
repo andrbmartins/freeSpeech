@@ -37,6 +37,7 @@ public class ClientHandler implements Runnable {
         communication.openStreams(clientSocket);
         authenticateClient();
         notifyNewUser();
+        server.addActiveUser(this);
         readFromClient();
 
     }
@@ -56,7 +57,6 @@ public class ClientHandler implements Runnable {
                 if(exit = makeLogIn(sendable)){
                     message = Values.LOGIN_OK;
                     cypherName = ((HashMap<String,String>)(sendable.getContent())).get(Values.NAME_KEY);
-                    server.addActiveUser(this);
                     exit = true;
                 } else {
                     message = Values.LOGIN_FAIL;

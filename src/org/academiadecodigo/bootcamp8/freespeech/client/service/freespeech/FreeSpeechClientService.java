@@ -22,8 +22,6 @@ import java.util.List;
 
 public class FreeSpeechClientService implements ClientService {
 
-    private Socket clientSocket;
-
     @Override
     public void sendUserText(TextArea textArea) {
 
@@ -40,7 +38,7 @@ public class FreeSpeechClientService implements ClientService {
 
     @Override
     public void sendListRequest() {
-        Message<String> message = new Message<>(MessageType.REQUEST_USERS_ONLINE, "SEND NUDES");
+        Message<Object> message = new Message<>(MessageType.REQUEST_USERS_ONLINE, "SEND ME");
         writeObject(message);
     }
 
@@ -93,16 +91,7 @@ public class FreeSpeechClientService implements ClientService {
 
     //TODO - logout
     public void closeClientSocket() {
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public InputStream getInput() throws IOException {
-        return clientSocket.getInputStream();
+        Session.getInstance().close();
     }
 
     /**
@@ -111,22 +100,11 @@ public class FreeSpeechClientService implements ClientService {
      */
     @Override
     public void writeObject(Sendable message) {
-        try {
-            Stream.writeObject(clientSocket.getOutputStream(), message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
     }
 
     @Override
     public String getName() {
         return ClientService.class.getSimpleName();
-    }
-
-    @Override
-    public void setSocket(Socket socket) {
-        if (clientSocket == null) {
-            clientSocket = socket;
-        }
     }
 }
