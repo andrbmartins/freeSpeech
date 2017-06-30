@@ -5,12 +5,15 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.Clien
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Map;
 
 
 /**
@@ -62,27 +65,7 @@ public class LoginClientService implements LoginService {
         return connectionServer;
     }
 
-    @Override
-    public void sendUserText(TextArea textField) {
 
-        System.out.println("SENDING USER TEXT " + this.getClass().getSimpleName());
-
-        if (textField.getText().isEmpty()) {
-            return;
-        }
-
-        Message<String> message = new Message<>(MessageType.DATA, textField.getText());
-        writeObject(message);
-        System.out.println("SENT: " + message);
-        textField.clear();
-        textField.requestFocus();
-    }
-
-    /**
-     * @param message
-     * @see ClientService#writeObject(Sendable)
-     */
-    @Override
     public void writeObject(Sendable message) {
         Stream.writeObject(Session.getInstance().getOutputStream(), message);
     }
@@ -90,6 +73,17 @@ public class LoginClientService implements LoginService {
     @Override
     public String getName() {
         return LoginService.class.getSimpleName();
+    }
+
+    @Override
+    public void writeObject(MessageType messageType, Sendable message) {
+        SealedSendable sealedMessage = getCrypto().encryptObject(messageType, message, getCrypto().getSymmetricKey());
+
+        Stream.writeObject(Session.getInstance().getOutputStream(), sealedMessage);
+    }
+
+    private Crypto getCrypto() {
+        return Session.getInstance().getCryptographer();
     }
 
     @Override

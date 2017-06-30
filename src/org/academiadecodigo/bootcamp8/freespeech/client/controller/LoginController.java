@@ -111,6 +111,8 @@ public class LoginController implements Controller {
 //TODO para testar - Filipe
         clientService.makeConnection("192.168.1.29", 4040);
         serverSelection.setText(freeSpeechOption.getText());
+
+
     }
 
 
@@ -133,12 +135,12 @@ public class LoginController implements Controller {
 
         sendMsg(MessageType.LOGIN);
         Sendable serverMsg = clientService.readObject();
-        if (serverMsg.getContent().equals(Values.LOGIN_OK)) {
+        if (serverMsg.getContent(String.class).equals(Values.LOGIN_OK)) {
             Session.getInstance().setUsername(nameField.getText());
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
 
         } else {
-            serverMessageLabel.setText((String) serverMsg.getContent());
+            serverMessageLabel.setText((String) serverMsg.getContent(String.class));
         }
     }
 
@@ -156,7 +158,7 @@ public class LoginController implements Controller {
         }
         sendMsg(MessageType.REGISTER);
 
-        if (clientService.readObject().getContent().equals(Values.REGISTER_OK)) {
+        if (clientService.readObject().getContent(String.class).equals(Values.REGISTER_OK)) {
             serverMessageLabel.setText(Values.REGISTER_OK);
         } else {
             serverMessageLabel.setText(Values.USER_TAKEN);
@@ -171,9 +173,9 @@ public class LoginController implements Controller {
         messageContent.put(Values.NAME_KEY, nameField.getText());
         messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passwordField.getText()));
 
-        Message<Map> message = new Message<>(messageType, messageContent);
+        Message<Map> message = new Message<>(messageContent);
 
-        clientService.writeObject(message);
+        clientService.writeObject(messageType, message);
     }
 
     @FXML

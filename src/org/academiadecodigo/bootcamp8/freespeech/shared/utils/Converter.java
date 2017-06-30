@@ -7,10 +7,6 @@ package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
  */
 public class Converter {
 
-    public static <T> T safeCast(Class<T> type, Object object) {
 
-        return object == null ? null : type.cast(object);
-
-    }
 
 }

@@ -3,12 +3,16 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 import org.academiadecodigo.bootcamp8.freespeech.server.communication.Communication;
 import org.academiadecodigo.bootcamp8.freespeech.server.communication.CommunicationService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
+
+import javax.crypto.IllegalBlockSizeException;
 import java.io.*;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,13 +23,16 @@ import java.util.List;
  */
 
 public class ClientHandler implements Runnable {
+    private Crypto crypto;
     private String cypherName;
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
 
 
-    public ClientHandler(Server server, Socket clientSocket) {
+    public ClientHandler(Server server, Socket clientSocket, Key key) {
+        crypto = new Crypto();
+        crypto.setSymmetricKey(key);
         this.clientSocket = clientSocket;
         this.server = server;
         communication = new CommunicationService();
@@ -44,19 +51,20 @@ public class ClientHandler implements Runnable {
 
     private void authenticateClient() {
 
-        Sendable sendable;
+        SealedSendable sendable;
+        Sendable sendable1;
         boolean exit = false;
         String message = "";
 
         while (!exit) {
             sendable = communication.retrieveMessage();
-
+            sendable1 = crypto.decryptObject(sendable, crypto.getSymmetricKey());
 
             if (sendable.getType() == MessageType.LOGIN) {
 
-                if(exit = makeLogIn(sendable)){
+                if (exit = makeLogIn(sendable1)) {
                     message = Values.LOGIN_OK;
-                    cypherName = ((HashMap<String,String>)(sendable.getContent())).get(Values.NAME_KEY);
+                    cypherName = ((HashMap<String,String>)sendable1.getContent(HashMap.class)).get(Values.NAME_KEY);
                     exit = true;
                 } else {
                     message = Values.LOGIN_FAIL;
@@ -66,7 +74,7 @@ public class ClientHandler implements Runnable {
 
             if (sendable.getType() == MessageType.REGISTER) {
 
-                if (makeRegistry(sendable)) { //TODO: registry is enough to log in??
+                if (makeRegistry(sendable1)) { //TODO: registry is enough to log in??
                     message = Values.REGISTER_OK;
                 } else {
                     message = Values.USER_TAKEN;
@@ -74,7 +82,10 @@ public class ClientHandler implements Runnable {
             }
 
             // TODO use correct interface Sendable<TYPE>
-            communication.sendMessage(sendable.updateMessage(sendable.getType(), message));
+
+            sendable1 = sendable1.updateContent(message);
+            sendable = crypto.encryptObject(sendable.getType(), sendable1, crypto.getSymmetricKey());
+            communication.sendMessage(sendable);
         }
 
     }
@@ -82,17 +93,17 @@ public class ClientHandler implements Runnable {
     private boolean makeLogIn(Sendable sendable) {
 
         // TODO use correct interface Sendable<TYPE>
-        HashMap<String, String> map = (HashMap<String, String>) sendable.getContent();
+        HashMap<String, String> map = (HashMap<String, String>)sendable.getContent(HashMap.class);
         String username = map.get(Values.NAME_KEY);
         String password = map.get(Values.PASSWORD_KEY);
+        return server.getUserService().authenticate(username, password);
 
-        return server.getUserService().authenticate(username,password);
     }
 
     private boolean makeRegistry(Sendable sendable) {
 
         // TODO use correct interface Sendable<TYPE>
-        HashMap<String, String> mapR = (HashMap<String, String>) sendable.getContent();
+        HashMap<String, String> mapR = (HashMap<String, String>)sendable.getContent(HashMap.class);
         String username = mapR.get(Values.NAME_KEY);
 
         synchronized (server.getUserService()) {
@@ -111,12 +122,13 @@ public class ClientHandler implements Runnable {
 
     private void notifyNewUser() {
 
-        Message<String> message = new Message<>(MessageType.NOTIFICATION, Values.NEW_USER);
-        server.writeToAll(message);
+        Message<String> message = new Message<>(Values.NEW_USER);
+        SealedSendable sealedMessage = crypto.encryptObject(MessageType.NOTIFICATION, message, crypto.getSymmetricKey());
+        server.writeToAll(sealedMessage);
     }
 
     private void readFromClient() {
-        Sendable msg;
+        SealedSendable msg;
 
         while ((msg = communication.retrieveMessage()) != null) {
 
@@ -126,11 +138,11 @@ public class ClientHandler implements Runnable {
         closeSocket();
     }
 
-    private void handleMessage(Sendable msg) {
+    private void handleMessage(SealedSendable msg) {
 
         MessageType type = msg.getType();
 
-        switch (type){
+        switch (type) {
 
             case DATA:
             case TEXT:
@@ -146,12 +158,13 @@ public class ClientHandler implements Runnable {
                 break;
             case REQUEST_USERS_ONLINE:
                 List<String> list = server.getUsersOnlineList();
-                write(msg.updateMessage(msg.getType(),list));
+                Message<List> message = new Message<>(list);
+                SealedSendable sealedSendable = crypto.encryptObject(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymmetricKey());
                 break;
         }
     }
 
-    public void write(Sendable sendable) {
+    public void write(SealedSendable sendable) {
         //TODO to remove after tests completed
         System.out.println(sendable);
         communication.sendMessage(sendable);

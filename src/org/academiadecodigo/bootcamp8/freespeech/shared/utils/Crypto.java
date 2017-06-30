@@ -1,5 +1,10 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
 
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedMessage;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+
 import javax.crypto.*;
 import java.io.IOException;
 import java.io.Serializable;
@@ -10,41 +15,17 @@ import java.security.*;
  *         freeSpeach (25/06/2017)
  *         <Academia de Código_>
  */
-public final class Crypto {
-
-    private static Crypto instance;
+public class Crypto {
 
     private Key symmetricKey;
     private Key foreignPublicKey;
     private KeyPair nativeKeyPair;
 
     /**
-     * Private constructor to prevent direct object initialization
+     * Constructor
      */
-    private Crypto() {
+    public Crypto() {
         generateKeyPair();
-    }
-
-    /**
-     * Singleton method
-     * @return an instance of crypto
-     */
-    public static Crypto getInstance() {
-
-        if (instance == null) {
-
-            synchronized (Crypto.class) {
-
-                if (instance == null) {
-                    instance = new Crypto();
-                }
-
-            }
-
-        }
-
-        return instance;
-
     }
 
     /**
@@ -81,18 +62,19 @@ public final class Crypto {
 
     /**
      * This method is responsible for encrypt the object
+     *
      * @param object to encrypt
-     * @param key key to encrypt
+     * @param key    key to encrypt
      * @return an encrypt (sealed) object
      */
-    public SealedObject encryptObject(Serializable object, Key key) {
+    public SealedSendable encryptObject(MessageType type, Serializable object, Key key) {
 
-        SealedObject sealed = null;
+        SealedSendable sealed = null;
 
         try {
 
             Cipher cipher = getCipher(key);
-            sealed = new SealedObject(object, cipher);
+            sealed = new SealedMessage(type, object, cipher);
 
         } catch (IOException e) {
             System.err.println("Failure on encapsulate object :: " + e.getMessage());
@@ -106,17 +88,18 @@ public final class Crypto {
 
     /**
      * This method is responsible for decrypt the object
+     *
      * @param sealedObject the object to decrypt
-     * @param key the symmetricKey to decrypt
+     * @param key          the symmetricKey to decrypt
      * @return an object
      */
-    public Object decryptObject(SealedObject sealedObject, Key key) {
+    public Sendable decryptObject(SealedSendable sealedObject, Key key) {
 
-        Object object = null;
+        Sendable object = null;
 
         try {
 
-            object = sealedObject.getObject(key);
+            object = sealedObject.getContent(key);
 
         } catch (IOException e) {
             System.err.println("Failure on de-encapsulate object :: " + e.getMessage());
@@ -132,10 +115,11 @@ public final class Crypto {
 
     /**
      * This method is responsible for decrypt the object using the private key
+     *
      * @param sealedObject the object to decrypt
      * @return an object
      */
-    public Object decryptObject(SealedObject sealedObject) {
+    public Object decryptObject(SealedSendable sealedObject) {
 
         return decryptObject(sealedObject, nativeKeyPair.getPrivate());
 
@@ -143,6 +127,7 @@ public final class Crypto {
 
     /**
      * createCipher method is responsible for creating Cipher object for encryption
+     *
      * @param key to cipher
      * @return the initialized cipher
      */

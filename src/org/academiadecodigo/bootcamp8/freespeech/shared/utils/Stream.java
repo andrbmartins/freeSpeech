@@ -17,7 +17,6 @@ public class Stream {
     public static void writeObject(ObjectOutputStream out, Object message) {
 
         try {
-
             out.writeObject(message);
             out.flush();
 
