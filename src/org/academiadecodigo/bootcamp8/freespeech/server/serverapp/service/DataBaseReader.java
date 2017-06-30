@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,7 +19,6 @@ public class DataBaseReader {
         connection = manager;
     }
 
-
     public ResultSet executeQuery(String query) {
         Statement statement = null;
         ResultSet resultSet = null;
@@ -30,6 +31,22 @@ public class DataBaseReader {
             System.out.println("Unable to read from database " + e.getMessage());
         }
         return resultSet;
+    }
+
+    public boolean clearTable() {
+        boolean deleteOk;
+        Statement statement = null;
+
+        try {
+            statement = connection.getConnection().createStatement();
+            statement.executeUpdate(Utils.CLEAR_TABLE);
+            deleteOk = true;
+        } catch (SQLException e) {
+            deleteOk = false;
+        } finally {
+            closeStatement();
+        }
+        return deleteOk;
     }
 
     public void closeStatement() {
