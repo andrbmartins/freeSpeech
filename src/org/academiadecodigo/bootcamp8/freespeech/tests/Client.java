@@ -63,6 +63,10 @@ public class Client {
             object = crypto.decryptObject(sealedObject, crypto.getSymmetricKey());
             System.out.println(object);
 
+            // To server
+            sealedObject = crypto.encryptObject("Client to server", crypto.getSymmetricKey());
+            Stream.writeObject(socket.getOutputStream(), sealedObject);
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

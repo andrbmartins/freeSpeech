@@ -22,7 +22,7 @@ public final class Crypto {
      * Private constructor to prevent direct object initialization
      */
     private Crypto() {
-        init();
+        generateKeyPair();
     }
 
     /**
@@ -47,7 +47,10 @@ public final class Crypto {
 
     }
 
-    private void init() {
+    /**
+     * Generate the key pair using an RSA algorithm
+     */
+    private void generateKeyPair() {
 
         try {
 
@@ -57,6 +60,21 @@ public final class Crypto {
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Invalid encryption algorithm or invalid provider :: " + e.getMessage());
+        }
+
+    }
+
+    /**
+     * Generate the symmetricKey using an generated key
+     */
+    public void generateSymmetricKey() {
+
+        try {
+
+            symmetricKey = KeyGenerator.getInstance("Blowfish").generateKey();
+
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Invalid encryption algorithm :: " + e.getMessage());
         }
 
     }
@@ -145,29 +163,8 @@ public final class Crypto {
 
     }
 
-    /**
-     * Set the symmetricKey using an generated key
-     */
-    public void setSymmetricKey() {
-
-        try {
-
-            symmetricKey = KeyGenerator.getInstance("Blowfish").generateKey();
-
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("Invalid encryption algorithm :: " + e.getMessage());
-        }
-
-    }
-
-    /**
-     * Set the symmetricKey
-     * @param key the pretended symmetric key
-     */
-    public void setSymmetricKey(Key key) {
-
-        symmetricKey = key;
-
+    public void setSymmetricKey(Key symmetricKey) {
+        this.symmetricKey = symmetricKey;
     }
 
     public void setForeignPublicKey(Key foreignPublicKey) {

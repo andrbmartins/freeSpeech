@@ -1,7 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeech.tests;
 
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
@@ -43,7 +41,7 @@ public class Server {
         try {
 
             Crypto crypto = Crypto.getInstance();
-            crypto.setSymmetricKey();
+            crypto.generateSymmetricKey();
 
             clientSocket = socket.accept();
             System.out.println("Client connected");
@@ -60,6 +58,11 @@ public class Server {
             // Encrypt and send message
             sealedObject = crypto.encryptObject("Hello", crypto.getSymmetricKey());
             Stream.writeObject(clientSocket.getOutputStream(), sealedObject);
+
+            // From client
+            sealedObject = (SealedObject) Stream.readObject(clientSocket.getInputStream());
+            object = crypto.decryptObject(sealedObject, crypto.getSymmetricKey());
+            System.out.println(object);
 
         } catch (IOException e) {
             e.printStackTrace();
