@@ -7,7 +7,7 @@ import java.io.*;
  *         Project freeSpeach (26/06/17)
  *         <Academia de Código_>
  */
-public final class Stream {
+public class Stream {
 
     /**
      * Write an object to stream, given an object stream
