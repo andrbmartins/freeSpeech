@@ -1,11 +1,18 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,34 +24,64 @@ import java.util.regex.Pattern;
 
 public class ServerResponseHandler implements Runnable {
 
-    private InputStream input;
-    private TextArea room;
+    private ClientService clientService;
+    private ClientController clientController;
 
-    public ServerResponseHandler(InputStream input, TextArea room) {
-        this.input = input;
-        this.room = room;
+
+    public ServerResponseHandler(ClientService clientService, ClientController clientController) {
+        this.clientService = clientService;
+        this.clientController = clientController;
     }
 
 
     @Override
     public void run() {
 
-        while (!room.isDisabled()) {
+        while (true) {
 
-            Sendable message = (Sendable) Stream.readObject(input);
-
-            switch (message.getType()) {
-                case TEXT:
-                    printToRoom(message);
-                    break;
+            Sendable message;
+            try {
+                message = (Sendable) Stream.readObject(clientService.getInput());
+                process(message);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
+    private void process(Sendable message) {
+
+        switch (message.getType()) {
+            case NOTIFICATION:
+                clientService.sendListRequest();
+                break;
+            case TEXT:
+                printToRoom(message);
+                break;
+            case DATA:
+                //TODO
+                break;
+            case REQUEST_USERS_ONLINE:
+                clientController.processUsersList(message);
+                break;
+            case PRIVATE_DATA:
+                //TODO
+                break;
+            case PRIVATE_TEXT:
+                //TODO
+                break;
+        }
+    }
+
     private void printToRoom(Sendable message) {
+
+        //TODO only works for lobby
+
+        System.out.println("RECEIVED ON " + clientController.getCurrentRoom());
+
         String text = (String) message.getContent();
         text = wipeWhiteSpaces(text);
-        room.appendText((room.getText().isEmpty() ? "" : "\n") + text);
+        clientController.getCurrentRoom().appendText((clientController.getCurrentRoom().getText().isEmpty() ? "" : "\n") + text);
     }
 
     /**

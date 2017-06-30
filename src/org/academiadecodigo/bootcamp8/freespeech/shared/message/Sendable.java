@@ -14,6 +14,8 @@ public interface Sendable<T> extends Serializable {
 
     MessageType getType();
 
+
+    //TODO <T> ?
     T getContent();
 
     Sendable<T> updateMessage(MessageType type, T content);

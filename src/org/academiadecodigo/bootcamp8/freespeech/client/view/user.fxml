@@ -46,9 +46,7 @@
                </content>
                </Tab>
                <Tab fx:id="privateTab" onSelectionChanged="#onTabClicked" text="Private">
-                   <content>
-                       <TextArea fx:id="privateTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" wrapText="true" />
-                   </content>
+
                </Tab>
            </tabs>
        </TabPane>

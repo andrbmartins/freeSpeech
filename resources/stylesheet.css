@@ -3,6 +3,7 @@
     -fx-cursor: default;
     -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, #FF0000 0%, #690504 100%);
     -fx-background-radius: 0;
+    -fx-font: 10pt Helvetica;
 }
 
 #buttonBox {
@@ -18,10 +19,19 @@
 
 .menu-button {
     -fx-background-radius: 20 20 20 20;
+    -fx-background-color: black;
 }
 
 .menu-button .context-menu {
     -fx-text-fill: #000000;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.menu-item,
+.menu-item:hover {
+    -fx-background-color: white;
 }
 
 .menu-item .label {
@@ -30,19 +40,16 @@
 
 .text-field {
     -fx-max-width: 20em;
-    -fx-background-radius: 20 20 20 20;
+
 }
 
 .label {
     -fx-text-fill: #FFFFFF;
-    -fx-font: 10pt Helvetica;
 }
 
 #topBar {
     -fx-background-color: #FFFFFF;
 }
-
-/* //TODO add a custom bar top? draggable? */
 
 .list-view {
     -fx-background-color: #FF0000;
@@ -60,7 +67,6 @@
     -fx-background-radius: 0;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-
 }
 
 .tab:selected {

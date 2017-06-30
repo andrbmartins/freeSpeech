@@ -39,6 +39,12 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
+    public void sendListRequest() {
+        Message<String> message = new Message<>(MessageType.REQUEST_USERS_ONLINE, "SEND NUDES");
+        writeObject(message);
+    }
+
+    @Override
     public void sendUserData(File file) {
 
         byte[] buffer = fileToByteArray(file);
@@ -115,19 +121,6 @@ public class FreeSpeechClientService implements ClientService {
     @Override
     public String getName() {
         return ClientService.class.getSimpleName();
-    }
-
-    @Override
-    public Message readObject() {
-
-        //TODO only reading strings?
-        Object serverMessage = null;
-        try {
-            serverMessage = Stream.readObject(clientSocket.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return (Message) serverMessage;
     }
 
     @Override
