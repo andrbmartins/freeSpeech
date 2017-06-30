@@ -7,7 +7,7 @@ import java.io.*;
  *         Project freeSpeach (26/06/17)
  *         <Academia de Código_>
  */
-public final class Stream {
+public class Stream {
 
     /**
      * Write an object to stream, given an object stream
@@ -22,7 +22,7 @@ public final class Stream {
             out.flush();
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open stream -> " + e.getMessage());
         }
 
     }
@@ -40,7 +40,7 @@ public final class Stream {
             writeObject(bout, message);
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open stream -> " + e.getMessage());
         }
 
     }
@@ -59,9 +59,9 @@ public final class Stream {
             object = in.readObject();
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open object stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open object stream :: " + e.getMessage());
         } catch (ClassNotFoundException e) {
-            System.err.println("Class not found.\n" + e.getMessage());
+            System.err.println("Class not found :: " + e.getMessage());
         }
 
         return object;
@@ -83,7 +83,7 @@ public final class Stream {
             object = readObject(bin);
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open object stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open object stream :: " + e.getMessage());
         }
 
         return object;
@@ -103,7 +103,7 @@ public final class Stream {
             }
 
         } catch (IOException e) {
-            System.err.println("Error on trying to close stream.\n" + e.getMessage());
+            System.err.println("Error on trying to close stream :: " + e.getMessage());
         }
 
     }

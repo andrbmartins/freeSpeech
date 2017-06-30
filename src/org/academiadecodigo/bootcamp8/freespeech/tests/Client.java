@@ -41,12 +41,31 @@ public class Client {
 
             Crypto crypto = Crypto.getInstance();
 
-            Key key = (Key) Stream.readObject(socket.getInputStream());
+            // Send public key to server
+            Stream.writeObject(socket.getOutputStream(), crypto.getNativePublicKey());
 
+            // Received encrypted symmetric key
             SealedObject sealedObject = (SealedObject) Stream.readObject(socket.getInputStream());
             System.out.println(sealedObject);
-            Object object = crypto.decryptObject(sealedObject, key);
+
+            // Decrypt symmetric key
+            Object object = crypto.decryptObject(sealedObject);
             System.out.println(object);
+
+            // Add symmetric key
+            crypto.setSymmetricKey((Key) object);
+
+            // Received message
+            sealedObject = (SealedObject) Stream.readObject(socket.getInputStream());
+            System.out.println(sealedObject);
+
+            // Decrypt message with the symmetric key
+            object = crypto.decryptObject(sealedObject, crypto.getSymmetricKey());
+            System.out.println(object);
+
+            // To server
+            sealedObject = crypto.encryptObject("Client to server", crypto.getSymmetricKey());
+            Stream.writeObject(socket.getOutputStream(), sealedObject);
 
         } catch (IOException e) {
             e.printStackTrace();
