@@ -63,11 +63,11 @@ public class WriteToFile {
 
     public void closeOutput() {
         try {
-            fileOutputStream.close();
+            if (fileOutputStream != null) {
+                fileOutputStream.close();
+            }
         } catch (IOException e) {
             System.out.println("Unable to close stream");
         }
     }
-
-
 }

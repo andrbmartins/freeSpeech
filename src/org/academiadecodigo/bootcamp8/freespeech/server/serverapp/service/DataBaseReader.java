@@ -25,12 +25,10 @@ public class DataBaseReader {
      * @return the resulting string formatted
      */
     public String executeQuery(String query) {
-        statement = null;
         ResultSet resultSet;
         ResultSetMetaData metaData;
         StringBuilder builder = new StringBuilder();
         builder.append(query);
-        builder.append("\n");
 
         try {
 
@@ -40,6 +38,7 @@ public class DataBaseReader {
             int columnsNumber = metaData.getColumnCount();
 
             while (resultSet.next()) {
+                builder.append("\n");
                 for (int i = 1; i <= columnsNumber; i++) {
                     if (i > 1) builder.append(" <||> ");
                     String columnValue = resultSet.getString(i);
@@ -47,22 +46,22 @@ public class DataBaseReader {
                     builder.append(": ");
                     builder.append(columnValue);
                 }
-                builder.append("\n");
             }
             builder.append("\n");
         } catch (SQLException e) {
-            System.out.println("Unable to read from database " + e.getMessage());
+            return "Error: " + e.getMessage();
+        } finally {
+            closeStatement();
         }
-        return builder.toString();
+        return builder.toString().equals(query + "\n") ? (builder.append(Utils.EMPTY_TABLE)).toString() : builder.toString();
     }
 
     /**
-     * Deletes all the data from a specified table
+     * Deletes all the data from set table
      * @return true if data deleted or false if unable to delete
      */
     public boolean clearTable() {
         boolean deleteOk;
-        statement = null;
 
         try {
             statement = connection.getConnection().createStatement();

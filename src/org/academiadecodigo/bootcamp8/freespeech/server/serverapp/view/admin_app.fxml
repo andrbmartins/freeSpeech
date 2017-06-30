@@ -27,27 +27,28 @@
         <children>
           <AnchorPane focusTraversable="true" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="buttonCustomQ" focusTraversable="false" layoutX="10.0" layoutY="8.0" mnemonicParsing="false" onAction="#getCustomQuery" prefHeight="37.0" prefWidth="476.0" text="Custom Query">
+                  <Button focusTraversable="false" layoutX="10.0" layoutY="8.0" mnemonicParsing="false" onAction="#getCustomQuery" prefHeight="37.0" prefWidth="476.0" text="Custom Query">
                      <graphic>
                         <TextField fx:id="customQuery" prefHeight="27.0" prefWidth="364.0" promptText="insert query" />
                      </graphic>
                   </Button>
                   <SplitMenuButton layoutX="497.0" layoutY="8.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Default Query">
                     <items>
-                      <MenuItem fx:id="serverError" mnemonicParsing="false" onAction="#getServerError" text="Server Error" />
-                      <MenuItem fx:id="userConnection" mnemonicParsing="false" onAction="#getUserConnection" text="User Connection " />
+                      <MenuItem mnemonicParsing="false" onAction="#getServerInfo" text="Server Log" />
+                      <MenuItem mnemonicParsing="false" onAction="#getUserConnection" text="User Connection " />
+                        <MenuItem mnemonicParsing="false" onAction="#registeredUsers" text="Registered Users" />
                     </items>
                   </SplitMenuButton>
-                  <Button fx:id="refresh" layoutX="303.0" layoutY="442.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
-                  <Button fx:id="clearTable" layoutX="445.0" layoutY="442.0" mnemonicParsing="false" onAction="#clearTable" text="Delete Server Log" />
-                  <Button fx:id="exit" layoutX="579.0" layoutY="442.0" mnemonicParsing="false" onAction="#exit" text="Exit" />
                   <TextArea fx:id="display" editable="false" focusTraversable="false" layoutX="12.0" layoutY="67.0" prefHeight="366.0" prefWidth="616.0" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="67.0" />
+                  <Button layoutX="303.0" layoutY="442.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
                   <MenuButton layoutX="374.0" layoutY="442.0" mnemonicParsing="false" text="Save">
                     <items>
-                      <MenuItem fx:id="save" mnemonicParsing="false" onAction="#save" text="Save" />
-                      <MenuItem fx:id="saveAs" mnemonicParsing="false" onAction="#saveAs" text="Save As..." />
+                      <MenuItem mnemonicParsing="false" onAction="#save" text="Save" />
+                      <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Save As..." />
                     </items>
                   </MenuButton>
+                  <Button layoutX="445.0" layoutY="442.0" mnemonicParsing="false" onAction="#clearTable" text="Delete Server Log" />
+                  <Button layoutX="579.0" layoutY="442.0" mnemonicParsing="false" onAction="#exit" text="Exit" />
                </children>
           </AnchorPane>
         </children>

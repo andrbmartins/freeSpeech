@@ -6,13 +6,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.DataBaseReader;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.WriteToFile;
@@ -28,19 +26,10 @@ import java.util.ResourceBundle;
  */
 public class AdminController implements Initializable {
     @FXML
-    private Button buttonCustomQ;
-
-    @FXML
     private TextField customQuery;
 
     @FXML
     private TextArea display;
-
-    @FXML
-    private Button saveFile;
-
-    @FXML
-    private Button exit;
 
     @FXML
     private GridPane parentGrid;
@@ -63,23 +52,40 @@ public class AdminController implements Initializable {
 
     @FXML
     void getCustomQuery(ActionEvent event) {
-        if (!customQuery.getText().isEmpty()) {
-            display.appendText(reader.executeQuery(customQuery.getText()));
-            customQuery.setText("");
-            reader.closeStatement();
+        String query = customQuery.getText();
+        if (query.isEmpty()) {
+            return;
         }
+        if (!isQueryAllowed(query)) {
+            userPrompt(Alert.AlertType.ERROR, Utils.VALIDATING_QUERY, Utils.INVALID_QUERY);
+            customQuery.setText("");
+            return;
+        }
+
+        String result = reader.executeQuery(query);
+        if (isError(result)) {
+            userPrompt(Alert.AlertType.ERROR, Utils.VALIDATING_QUERY, result);
+            return;
+        }
+        display.appendText(result + "\n");
+        customQuery.setText("");
     }
 
+
     @FXML
-    void getServerError(ActionEvent event) {
-        reader.executeQuery(Utils.SERVER_ERROR);
-        reader.closeStatement();
+    void getServerInfo(ActionEvent event) {
+        display.appendText(reader.executeQuery(Utils.SERVER_INFO) + "\n");
     }
 
     @FXML
     void getUserConnection(ActionEvent event) {
-        reader.executeQuery(Utils.USER_CONNECTION);
-        reader.closeStatement();
+        display.appendText(reader.executeQuery(Utils.USER_CONNECTION) + "\n");
+
+    }
+
+    @FXML
+    void registeredUsers(ActionEvent event) {
+        display.appendText(reader.executeQuery(Utils.USERS_TABLE) + "\n");
     }
 
     @FXML
@@ -90,30 +96,46 @@ public class AdminController implements Initializable {
     @FXML
     void save(ActionEvent event) {
         writer.save(display.getText());
-        fileSaved();
+        userPrompt(Alert.AlertType.INFORMATION, Utils.SAVING_FILE, Utils.FILE_SAVED);
     }
 
     @FXML
     void saveAs(ActionEvent event) {
         FileChooser chooser = new FileChooser();
-        writer.setSavingFile(chooser.showSaveDialog(stage));
+        File file;
+        if ((file = chooser.showSaveDialog(stage)) == null) {
+            return;
+        }
+        writer.setSavingFile(file);
         writer.save(display.getText());
-        fileSaved();
+        userPrompt(Alert.AlertType.INFORMATION, Utils.SAVING_FILE, Utils.FILE_SAVED);
     }
 
     @FXML
     void clearTable(ActionEvent event) {
         String result = reader.clearTable() ? Utils.CLEARED : Utils.NOT_CLEARED;
-        display.setText(result);
+        userPrompt(Alert.AlertType.INFORMATION, Utils.CLEARING_LOG, result);
     }
 
-    private void fileSaved() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("File Saved");
+    private void userPrompt(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(Utils.FILE_SAVED);
-
+        alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private boolean isQueryAllowed(String query) {
+        String lowerCase = query.toLowerCase();
+        if (customQuery.getText().contains("delete") || customQuery.getText().contains("insert")
+                || customQuery.getText().contains("update")) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isError(String result) {
+        return result.startsWith("Error: ");
     }
 
 
