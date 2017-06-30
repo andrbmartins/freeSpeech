@@ -6,11 +6,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +69,20 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case PRIVATE_TEXT:
                 //TODO
+                printPrivateChat(message);
                 break;
         }
+    }
+
+    private void printPrivateChat(Sendable message) {
+
+        String user = (String) ((HashMap<String,String>)message.getContent()).get(Values.DESTINY_USER);
+        String text = (String) ((HashMap<String,String>)message.getContent()).get(Values.MESSAGE);
+
+        text = wipeWhiteSpaces(text);
+
+        clientController.addMessageToTab(user,text);
+
     }
 
     private void printToRoom(Sendable message) {

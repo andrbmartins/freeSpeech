@@ -17,7 +17,7 @@ public final class Stream {
     public static void writeObject(ObjectOutputStream out, Object message) {
 
         try {
-
+            System.out.println(out);
             out.writeObject(message);
             out.flush();
 
@@ -35,7 +35,7 @@ public final class Stream {
     public static void writeObject(OutputStream out, Object message) {
 
         try {
-
+            System.out.println(out);
             ObjectOutputStream bout = new ObjectOutputStream(out);
             writeObject(bout, message);
 

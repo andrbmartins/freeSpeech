@@ -46,11 +46,13 @@ public class ClientController implements Controller {
     private Stage stage;
     private ClientService clientService;
     private Map<Tab, TextArea> rooms;
+    private Map<String,Tab> tabNames;
     private TextArea currentRoom; //TODO can i not use this?
     private double[] position;
 
     public ClientController() {
         rooms = new HashMap<>();
+        tabNames = new HashMap<>();
         position = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
     }
@@ -58,7 +60,11 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        rooms.put(getSelectedTab(), lobbyTextArea);
+        Tab tab = getSelectedTab();
+
+        rooms.put(tab, lobbyTextArea);
+        tabNames.put(tab.getText(),tab);
+
         setDraggableTopBar();
         focusUserInput();
         currentRoom = lobbyTextArea;
@@ -158,5 +164,24 @@ public class ClientController implements Controller {
                 onlineUsersList.setItems(observableList);
             }
         });
+    }
+
+    public void addMessageToTab(String user, String text) {
+
+        if(!tabNames.containsKey(user)){
+            createNewTab(user);
+        }
+
+        rooms.get(tabNames.get(user)).appendText(text);
+
+    }
+
+    private void createNewTab(String user) {
+
+        Tab tab = new Tab(user);
+        TextArea textArea = new TextArea();
+
+        tabNames.put(user,tab);
+        rooms.put(tab,textArea);
     }
 }

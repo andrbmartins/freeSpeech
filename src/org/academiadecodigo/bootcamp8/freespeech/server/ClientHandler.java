@@ -110,7 +110,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void notifyNewUser() {
-
+        //TODO change when seald messages implemented
         Message<String> message = new Message<>(MessageType.NOTIFICATION, Values.NEW_USER);
         server.writeToAll(message);
     }

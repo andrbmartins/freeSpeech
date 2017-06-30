@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
 public class LoginController implements Controller {
 
 
-
+    //TODO Cyrille indicou e com razão que a aplicaçao nao tem botão para fechar.
 
     @FXML
     private HBox buttonBox;
@@ -108,8 +108,8 @@ public class LoginController implements Controller {
     private MenuItem freeSpeechOption;
     @FXML
     void freeSpeechSelected(ActionEvent event) {
-//TODO para testar - Filipe
-        clientService.makeConnection("192.168.1.29", 4040);
+//TODO para testar - IP FABIO. Quem que se mudar para um estatico
+        clientService.makeConnection("192.168.1.26", 4040);
         serverSelection.setText(freeSpeechOption.getText());
     }
 
