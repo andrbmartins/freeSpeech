@@ -15,6 +15,8 @@ import javafx.scene.control.TextField;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.WriteToFile;
 
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
@@ -59,7 +61,15 @@ public class AdminController implements Initializable {
 
     @FXML
     void getCustomQuery(ActionEvent event) {
-        reader.executeQuery(customQuery.getText());
+        ResultSet result = reader.executeQuery(customQuery.getText());
+        try {
+            while (result.next()) {
+            display.appendText(result.getInt("user_id") + "");
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         reader.closeStatement();
 
     }
@@ -76,6 +86,11 @@ public class AdminController implements Initializable {
         reader.executeQuery(Utils.USER_CONNECTION);
         reader.closeStatement();
 
+    }
+
+    @FXML
+    void refresh(ActionEvent event) {
+        display.setText("");
     }
 
     @FXML
