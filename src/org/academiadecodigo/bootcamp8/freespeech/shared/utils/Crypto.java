@@ -88,10 +88,10 @@ public final class Crypto {
     public SealedObject encryptObject(Serializable object, Key key) {
 
         SealedObject sealed = null;
-        Cipher cipher = getCipher(key);
 
         try {
 
+            Cipher cipher = getCipher(key);
             sealed = new SealedObject(object, cipher);
 
         } catch (IOException e) {
