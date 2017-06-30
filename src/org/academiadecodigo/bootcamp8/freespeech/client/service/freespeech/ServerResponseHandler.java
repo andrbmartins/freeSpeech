@@ -75,10 +75,6 @@ public class ServerResponseHandler implements Runnable {
 
     private void printToRoom(Sendable message) {
 
-        //TODO only works for lobby
-
-        System.out.println("RECEIVED ON " + clientController.getCurrentRoom());
-
         String text = (String) message.getContent();
         text = wipeWhiteSpaces(text);
         clientController.getCurrentRoom().appendText((clientController.getCurrentRoom().getText().isEmpty() ? "" : "\n") + text);

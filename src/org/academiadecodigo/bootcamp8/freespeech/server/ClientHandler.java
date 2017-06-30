@@ -31,7 +31,6 @@ public class ClientHandler implements Runnable {
         communication = new CommunicationService();
     }
 
-
     @Override
     public void run() {
 
@@ -41,7 +40,6 @@ public class ClientHandler implements Runnable {
         readFromClient();
 
     }
-
 
     private void authenticateClient() {
 
@@ -153,13 +151,11 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
     public void write(Sendable sendable) {
         //TODO to remove after tests completed
         System.out.println(sendable);
         communication.sendMessage(sendable);
     }
-
 
     private void closeSocket() {
         try {

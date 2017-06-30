@@ -175,12 +175,16 @@ public class ClientController implements Controller {
 
     public void processUsersList(Sendable message) {
 
-        onlineUsersList.addEventHandler(Event.ANY, new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
+        Platform.runLater(new Runnable() {
+            public void run() {
+                //onlineUsersList.addEventHandler(Event.ANY, new EventHandler<Event>() {
+                //    @Override
+                //    public void handle(Event event) {
                 List<String> list = (LinkedList<String>) message.getContent();
                 ObservableList<String> observableList = FXCollections.observableList(list);
                 onlineUsersList.setItems(observableList);
+                //   }
+                //});
             }
         });
     }
