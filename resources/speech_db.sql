@@ -4,7 +4,7 @@ USE freespeech;
 
 CREATE TABLE user(
     user_name CHAR(15) NOT NULL,
-    user_password CHAR(15) NOT NULL,
+    user_password CHAR(100) NOT NULL,
     PRIMARY KEY (user_name)
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE bio(
 
 CREATE TABLE log(
     log_id INTEGER AUTO_INCREMENT,
-    useruseruseruserdate_event DATETIME NOT NULL,
+    date_event TIMESTAMP default now(),
     type_event CHAR(50) NOT NULL,
     message_event CHAR(100) NOT NULL,
     PRIMARY KEY (log_id)

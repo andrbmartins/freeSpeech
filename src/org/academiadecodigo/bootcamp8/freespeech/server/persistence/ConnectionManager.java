@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.persistence;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Querys;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.*;
@@ -13,8 +14,6 @@ public class ConnectionManager  {
     private Connection connection;
 
     public ConnectionManager() {
-
-
         try {
             //String url = "jdbc:mysql://localhost:3306/freespeech";
             //connection = DriverManager.getConnection(url, "root", "root");
@@ -30,57 +29,82 @@ public class ConnectionManager  {
         return connection;
     }
 
-    public void insertUser(String username, String password, String email) throws SQLException {
+    public void insertUser(String username, String password) throws SQLException {    // Needs test
 
-        Statement statement = connection.createStatement();
+        //if(findUserByName(username))
+        //    return;
+        PreparedStatement preparedStmt = null;
+        try {
+            preparedStmt = connection.prepareStatement(Querys.INSERT_USER);
+            preparedStmt.setString(1,  username);
+            preparedStmt.setString(2, password);
+            preparedStmt.execute();
+            preparedStmt.close();
+        } catch (SQLException e) {
+            //e.printStackTrace();
+            // Send message de erro para os logs
+            System.out.println("Erro ao inserir user");
 
-        String query = "INSERT INTO users (user_id, password , email) VALUES ('" + username + "', '" + password + "' , '" + email + "' )";
-
-        // execute the query
-         statement.executeUpdate(query);
-        statement.close();
+        }
+        preparedStmt.close();
     }
 
-    public boolean authenticateUser(String username, String password) throws SQLException {
+    public boolean authenticateUser(String username, String password) throws SQLException {  // Needs test
 
-        Statement statement = connection.createStatement();
 
-        // create a query
-        String query = "SELECT * FROM users WHERE users.user_id = '" + username + "' AND users.password = '" + password + "' ";
+        System.out.println("Vou autenticar este user  " + username + password);
+        PreparedStatement preparedStmt = null;
+        try {
+            preparedStmt = connection.prepareStatement(Querys.AUTHENTICATE_USER);
+            preparedStmt.setString(1, username);
+            preparedStmt.setString(2, password);
+            ResultSet resultSet = preparedStmt.executeQuery();
+            if (!resultSet.next()) {
+                preparedStmt.close();
+                // Insert in log - Login Failed
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        preparedStmt.close();
 
-        // execute the query
-        ResultSet resultSet = statement.executeQuery(query);
+        // Insert in log - Login Sucess
+        return true;
 
-        if (resultSet.first())
+
+    }
+
+    public User findUser(String username) throws SQLException {     // Needs test
+
+        User user = null;
+
+        PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
+        preparedStmt.setString(1, username);
+
+        ResultSet resultSet = preparedStmt.executeQuery();
+
+        if(resultSet.next()) {
+            String usernameValue = resultSet.getString("user_name");
+            String passwordValue = resultSet.getString("user_password");
+            user = new User(usernameValue, passwordValue);
+        }
+        return user ;
+    }
+
+   /* public boolean findUserByName(String username) throws SQLException {         // Needs test
+
+        PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
+        preparedStmt.setString(1, username);
+
+        ResultSet resultSet = preparedStmt.executeQuery();
+
+        if (resultSet.next())
             return true;
         else
             return false;
 
-    }
-
-
-    public User findUser(String username) throws SQLException {
-
-        User user = null;
-        Statement statement = connection.createStatement();
-
-        // create a query
-        String query = "SELECT * FROM users WHERE users.user_id = '" + username + "' ";
-
-        // execute the query
-        ResultSet resultSet = statement.executeQuery(query);
-
-        if(resultSet.next()) {
-
-            String usernameValue = resultSet.getString("username");
-            String passwordValue = resultSet.getString("password");
-            String emailValue = resultSet.getString("email");
-
-            //user = new User(usernameValue, passwordValue, emailValue);
-        }
-
-        return user ;
-    }
+    }*/
 
 
     public int count() throws SQLException {
