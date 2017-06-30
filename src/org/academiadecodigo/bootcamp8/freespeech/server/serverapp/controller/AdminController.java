@@ -89,6 +89,7 @@ public class AdminController implements Initializable {
     @FXML
     void saveToFile(ActionEvent event) {
         writer.save(display.getText());
+        display.setText(Utils.FILE_SAVED);
     }
 
     @FXML

@@ -15,4 +15,6 @@ public class Utils {
     public static final String NOT_CLEARED = "Unable to clear table. Try again";
 
     public static final String FILE_PATH = "/freeSpeechServerLog.txt";
+
+    public static final String FILE_SAVED = "File saved at your home folder with name: freeSpeechServerLog.txt";
 }
