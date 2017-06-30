@@ -1,7 +1,8 @@
-package org.academiadecodigo.bootcamp8.freespeech.client;
+package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.InputStream;
@@ -14,27 +15,36 @@ import java.util.regex.Pattern;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class InputHandler implements Runnable {
+public class ServerResponseHandler implements Runnable {
 
     private InputStream input;
     private TextArea room;
 
-    public InputHandler(InputStream input, TextArea room) {
+    public ServerResponseHandler(InputStream input, TextArea room) {
         this.input = input;
         this.room = room;
     }
 
-    /**
-     * Prints received messages to a textarea.
-     */
+
     @Override
     public void run() {
-        while (!room.isDisabled()) {
-            String text = ((Message<String>) Stream.readObject(input)).getContent();
 
-            text = wipeWhiteSpaces(text);
-            room.appendText((room.getText().isEmpty() ? "" : "\n") + text);
+        while (!room.isDisabled()) {
+
+            Sendable message = (Sendable) Stream.readObject(input);
+
+            switch (message.getType()) {
+                case TEXT:
+                    printToRoom(message);
+                    break;
+            }
         }
+    }
+
+    private void printToRoom(Sendable message) {
+        String text = (String) message.getContent();
+        text = wipeWhiteSpaces(text);
+        room.appendText((room.getText().isEmpty() ? "" : "\n") + text);
     }
 
     /**

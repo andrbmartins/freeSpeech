@@ -14,7 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import org.academiadecodigo.bootcamp8.freespeech.client.InputHandler;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegisterService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
@@ -110,7 +110,7 @@ public class ClientController implements Controller {
     private void listenCurrentRoom() {
 
         try {
-            Runnable inputHandler = new InputHandler(clientService.getInput(), currentRoom);
+            Runnable inputHandler = new ServerResponseHandler(clientService.getInput(), currentRoom);
             inputHandlerPool.submit(inputHandler);
         } catch (IOException e) {
             e.printStackTrace();
