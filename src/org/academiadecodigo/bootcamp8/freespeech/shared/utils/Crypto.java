@@ -14,14 +14,15 @@ public final class Crypto {
 
     private static Crypto instance;
 
-    private Key key;
-    private Cipher cipher;
+    private Key symmetricKey;
+    private Key foreignPublicKey;
+    private KeyPair nativeKeyPair;
 
+    /**
+     * Private constructor to prevent direct object initialization
+     */
     private Crypto() {
-
-        key = createKey();
-        cipher = createCipher(Cipher.ENCRYPT_MODE);
-
+        init();
     }
 
     /**
@@ -30,10 +31,14 @@ public final class Crypto {
      */
     public static Crypto getInstance() {
 
-        synchronized (Crypto.class) {
+        if (instance == null) {
 
-            if (instance == null) {
-                instance = new Crypto();
+            synchronized (Crypto.class) {
+
+                if (instance == null) {
+                    instance = new Crypto();
+                }
+
             }
 
         }
@@ -42,74 +47,39 @@ public final class Crypto {
 
     }
 
-    /**
-     * Generate secret key using an algorithm
-     * @return the secret key
-     */
-    private Key createKey() {
-
-
-        Key key = null;
+    private void init() {
 
         try {
 
-            /*KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-            keyGen.initialize(1024, random);*/
-
-            key = KeyGenerator.getInstance("DES").generateKey();
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(3072);
+            nativeKeyPair = keyGen.generateKeyPair();
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            System.err.println("Invalid encryption algorithm or invalid provider :: " + e.getMessage());
         }
-
-        return key;
-
-    }
-
-    /**
-     * createCipher method is responsible for creating Cipher object for encryption and decryption
-     * @param mode of cipher
-     * @return the initialized cipher
-     */
-    private Cipher createCipher(int mode) {
-
-        Cipher cipher = null;
-
-        try {
-
-            cipher = Cipher.getInstance("DES");
-            cipher.init(mode, key);
-
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        }
-
-        return cipher;
 
     }
 
     /**
      * This method is responsible for encrypt the object
      * @param object to encrypt
+     * @param key key to encrypt
      * @return an encrypt (sealed) object
      */
-    public SealedObject encryptObject(Serializable object) {
+    public SealedObject encryptObject(Serializable object, Key key) {
 
         SealedObject sealed = null;
+        Cipher cipher = getCipher(key);
 
         try {
 
             sealed = new SealedObject(object, cipher);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failure on encapsulate object :: " + e.getMessage());
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            System.err.println("Object is too big to encrypt :: " + e.getMessage());
         }
 
         return sealed;
@@ -118,34 +88,102 @@ public final class Crypto {
 
     /**
      * This method is responsible for decrypt the object
-     * @param sealed the object to decrypt
-     * @param key the key to decrypt
+     * @param sealedObject the object to decrypt
+     * @param key the symmetricKey to decrypt
      * @return an object
      */
-    public Object decryptObject(SealedObject sealed, Key key) {
+    public Object decryptObject(SealedObject sealedObject, Key key) {
 
         Object object = null;
 
         try {
 
-            object = sealed.getObject(key);
+            object = sealedObject.getObject(key);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failure on de-encapsulate object :: " + e.getMessage());
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            System.err.println("Invalid cast due to unrecognized object :: " + e.getMessage());
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            System.err.println("Failure on decrypt operation :: " + e.getMessage());
         }
 
         return object;
 
     }
 
-    public Key getKey() {
-        return key;
+    /**
+     * This method is responsible for decrypt the object using the private key
+     * @param sealedObject the object to decrypt
+     * @return an object
+     */
+    public Object decryptObject(SealedObject sealedObject) {
+
+        return decryptObject(sealedObject, nativeKeyPair.getPrivate());
+
+    }
+
+    /**
+     * createCipher method is responsible for creating Cipher object for encryption
+     * @param key to cipher
+     * @return the initialized cipher
+     */
+    private Cipher getCipher(Key key) {
+
+        Cipher cipher = null;
+
+        try {
+
+            cipher = Cipher.getInstance(key.getAlgorithm());
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
+            System.err.println("Failure on cipher creation :: " + e.getMessage());
+        }
+
+        return cipher;
+
+    }
+
+    /**
+     * Set the symmetricKey using an generated key
+     */
+    public void setSymmetricKey() {
+
+        try {
+
+            symmetricKey = KeyGenerator.getInstance("Blowfish").generateKey();
+
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Invalid encryption algorithm :: " + e.getMessage());
+        }
+
+    }
+
+    /**
+     * Set the symmetricKey
+     * @param key the pretended symmetric key
+     */
+    public void setSymmetricKey(Key key) {
+
+        symmetricKey = key;
+
+    }
+
+    public void setForeignPublicKey(Key foreignPublicKey) {
+        this.foreignPublicKey = foreignPublicKey;
+    }
+
+    public Key getSymmetricKey() {
+        return symmetricKey;
+    }
+
+    public Key getForeignPublicKey() {
+        return foreignPublicKey;
+    }
+
+    public Key getNativePublicKey() {
+        return nativeKeyPair.getPublic();
     }
 
 }
