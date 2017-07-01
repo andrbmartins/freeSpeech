@@ -19,18 +19,14 @@ import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Developed @ <Academia de Código_>
@@ -41,26 +37,19 @@ import java.util.concurrent.Executors;
 //TODO documentation
 public class ClientController implements Controller {
 
-    @FXML
-    private TabPane tabPane;
-    @FXML
-    private GridPane topBar;
-    @FXML
-    private TextArea lobbyTextArea;
-    @FXML
-    private TextArea inputTextArea;
-    @FXML
-    private ListView onlineUsersList;
+    @FXML private TabPane tabPane;
+    @FXML private GridPane topBar;
+    @FXML private TextArea lobbyTextArea;
+    @FXML private TextArea inputTextArea;
+    @FXML private ListView onlineUsersList;
 
     private Stage stage;
     private ClientService clientService;
     private Map<Tab, TextArea> rooms;
-    //private ExecutorService inputHandlerPool;
-    private TextArea currentRoom;
+    private TextArea currentRoom; //TODO can i not use this?
     private double[] position;
 
     public ClientController() {
-        //inputHandlerPool = Executors.newCachedThreadPool();
         rooms = new HashMap<>();
         position = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
@@ -69,15 +58,15 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        rooms.put(selectedTab(), lobbyTextArea);
+        rooms.put(getSelectedTab(), lobbyTextArea);
         setDraggableTopBar();
         focusUserInput();
         currentRoom = lobbyTextArea;
-        clientService.setSocket(Session.getInstance().getUserSocket());
-        setupChatListener();
+        new Thread(new ServerResponseHandler(clientService, this)).start();
+        clientService.sendListRequest();
     }
 
-    private Tab selectedTab() {
+    private Tab getSelectedTab() {
         return tabPane.getSelectionModel().getSelectedItem();
     }
 
@@ -109,21 +98,9 @@ public class ClientController implements Controller {
         });
     }
 
-    /**
-     * Instantiates a new thread to handle server responses for the current room.
-     */
-
-    private void setupChatListener() {
-
-        new Thread(new ServerResponseHandler(clientService, this)).start();
-
-        //Runnable inputHandler = new ServerResponseHandler(clientService, this);
-        //inputHandlerPool.submit(inputHandler);
-    }
-
     @FXML
     void onTabClicked(Event event) {
-        currentRoom = rooms.get(selectedTab());
+        currentRoom = rooms.get(getSelectedTab());
     }
 
     @FXML
@@ -159,6 +136,9 @@ public class ClientController implements Controller {
 
     @Override
     public void setStage(Stage stage) {
+
+
+
         this.stage = stage;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -169,22 +149,13 @@ public class ClientController implements Controller {
         this.stage.setMaxHeight(screen.getHeight());
     }
 
-    public ListView getOnlineUsersList() {
-        return onlineUsersList;
-    }
-
     public void processUsersList(Sendable message) {
 
         Platform.runLater(new Runnable() {
             public void run() {
-                //onlineUsersList.addEventHandler(Event.ANY, new EventHandler<Event>() {
-                //    @Override
-                //    public void handle(Event event) {
                 List<String> list = (LinkedList<String>) message.getContent();
                 ObservableList<String> observableList = FXCollections.observableList(list);
                 onlineUsersList.setItems(observableList);
-                //   }
-                //});
             }
         });
     }

@@ -1,5 +1,8 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.utils;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -15,6 +18,8 @@ public class Session {
 
     private String username;
     private Socket userSocket;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
 
     private static Session instance = null;
 
@@ -22,7 +27,7 @@ public class Session {
         if (instance == null) {
             synchronized (Navigation.class) {
                 if (instance == null) {
-                   instance = new Session();
+                    instance = new Session();
                 }
             }
         }
@@ -37,15 +42,40 @@ public class Session {
 
     public void setUserSocket(Socket userSocket) {
         if (this.userSocket == null) {
-            this.userSocket = userSocket;
-        }
-    }
+            try {
+                System.out.println("SETTING SOCKET");
+                this.userSocket = userSocket;
+                System.out.println("SETTING OUTPUT");
+                outputStream = new ObjectOutputStream(userSocket.getOutputStream());
+                //outputStream.flush();
+                System.out.println("SETTING INPUT");
+                inputStream = new ObjectInputStream(userSocket.getInputStream());
 
-    public Socket getUserSocket() {
-        return userSocket;
+                System.out.println("DONE");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public ObjectInputStream getInputStream() {
+        return inputStream;
+    }
+
+    public ObjectOutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    public void close() {
+        try {
+            userSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

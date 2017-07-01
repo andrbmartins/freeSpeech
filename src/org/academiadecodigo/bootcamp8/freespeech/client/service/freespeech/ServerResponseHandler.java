@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
@@ -39,13 +40,10 @@ public class ServerResponseHandler implements Runnable {
 
         while (true) {
 
-            Sendable message;
-            try {
-                message = (Sendable) Stream.readObject(clientService.getInput());
-                process(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Sendable message = (Sendable) Stream.readObject(Session.getInstance().getInputStream());
+            System.out.println("MESSAGE RECEIVED: "+ message);
+            process(message);
+
         }
     }
 

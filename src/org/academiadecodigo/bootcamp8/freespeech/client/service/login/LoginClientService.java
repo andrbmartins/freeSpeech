@@ -23,6 +23,8 @@ public class LoginClientService implements LoginService {
 
     private Socket clientSocket;
     private boolean connectionServer;
+
+
 //TODO password in passwordField
 
     public void makeConnection(String server, int port) {
@@ -33,7 +35,6 @@ public class LoginClientService implements LoginService {
 
             if (!connectionServer) {
                 clientSocket = new Socket(server, port);
-
                 Session.getInstance().setUserSocket(clientSocket);
             } else {
                 System.out.println("Client already connected");
@@ -64,6 +65,8 @@ public class LoginClientService implements LoginService {
     @Override
     public void sendUserText(TextArea textField) {
 
+        System.out.println("SENDING USER TEXT " + this.getClass().getSimpleName());
+
         if (textField.getText().isEmpty()) {
             return;
         }
@@ -75,23 +78,13 @@ public class LoginClientService implements LoginService {
         textField.requestFocus();
     }
 
-/*
-    @Override
-    public InputStream getInput() throws IOException {
-        return clientSocket.getInputStream();
-    }*/
-
     /**
      * @param message
      * @see ClientService#writeObject(Sendable)
      */
     @Override
     public void writeObject(Sendable message) {
-        try {
-            Stream.writeObject(clientSocket.getOutputStream(), message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
     }
 
     @Override
@@ -101,14 +94,8 @@ public class LoginClientService implements LoginService {
 
     @Override
     public Message readObject() {
-        Object serverMessage = null;
+        Object serverMessage = Stream.readObject(Session.getInstance().getInputStream());
 
-        try {
-            serverMessage = Stream.readObject(clientSocket.getInputStream());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return (Message) serverMessage;
     }
 
