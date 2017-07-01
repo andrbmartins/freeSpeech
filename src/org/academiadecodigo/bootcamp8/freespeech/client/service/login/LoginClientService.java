@@ -1,20 +1,15 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.login;
 
-import javafx.scene.control.TextArea;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.Key;
-import java.util.Map;
 
 
 /**
@@ -30,8 +25,6 @@ public class LoginClientService implements LoginService {
 
     public void makeConnection(String server, int port) {
 
-        Crypto crypto = Session.getInstance().getCryptographer();
-
         try {
 
             InetAddress address = InetAddress.getByName(server);
@@ -41,9 +34,9 @@ public class LoginClientService implements LoginService {
                 clientSocket = new Socket(server, port);
                 Session.getInstance().setUserSocket(clientSocket);
 
-                Key foreignKey = (Key) Stream.readObject(Session.getInstance().getInputStream());
-                crypto.setForeignPublicKey(foreignKey);
-                Stream.writeObject(Session.getInstance().getOutputStream(), Session.getInstance().getCryptographer().getNativePublicKey());
+                Key foreignKey = (Key) Stream.read(Session.getInput());
+                Session.getCrypto().setForeignKey(foreignKey);
+                Stream.write(Session.getOutput(), Session.getCrypto().getPublicKey());
 
 
             } else {
@@ -72,11 +65,6 @@ public class LoginClientService implements LoginService {
         return connectionServer;
     }
 
-
-    public void writeObject(Sendable message) {
-        Stream.writeObject(Session.getInstance().getOutputStream(), message);
-    }
-
     @Override
     public String getName() {
         return LoginService.class.getSimpleName();
@@ -85,23 +73,15 @@ public class LoginClientService implements LoginService {
     @Override
     public void writeObject(MessageType messageType, SealedSendable message) {
 
-        Stream.writeObject(Session.getInstance().getOutputStream(), message);
+        Stream.write(Session.getOutput(), message);
     }
 
-    private Crypto getCrypto() {
-        return Session.getInstance().getCryptographer();
-    }
 
     @Override
     public Sendable readObject() {
 
-        SealedSendable sealedSendable = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
-        return getCrypto().decryptObject(sealedSendable, getCrypto().getSymmetricKey());
-
-        //Object serverMessage = Stream.readObject(Session.getInstance().getInputStream());
-
-        //return (Message) serverMessage;
-
+        SealedSendable sealedSendable = Stream.readSendable(Session.getInput());
+        return Session.getCrypto().decryptSendable(sealedSendable);
     }
 
 }

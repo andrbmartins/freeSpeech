@@ -6,9 +6,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import javax.crypto.SealedObject;
 import java.io.*;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,15 +89,15 @@ public class FreeSpeechClientService implements ClientService {
 
     //TODO - logout
     public void closeClientSocket() {
-        Session.getInstance().close();
+        Session.close();
     }
 
     //@Override
     public void writeObject(MessageType type, Sendable message) {
 
-        SealedSendable sealedMessage = getCrypto().encryptObject(type, message, getCrypto().getSymmetricKey());
+        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message, Session.getCrypto().getSymKey());
 
-        Stream.writeObject(Session.getInstance().getOutputStream(), sealedMessage);
+        Stream.write(Session.getOutput(), sealedMessage);
     }
 
     @Override
@@ -109,10 +107,10 @@ public class FreeSpeechClientService implements ClientService {
 
     @Override
     public void writeObject(MessageType messageType, SealedSendable message) {
-        Stream.writeObject(Session.getInstance().getOutputStream(), message);
+        Stream.write(Session.getOutput(), message);
     }
 
     private Crypto getCrypto() {
-        return Session.getInstance().getCryptographer();
+        return Session.getCrypto();
     }
 }
