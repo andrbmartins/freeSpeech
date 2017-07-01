@@ -180,6 +180,7 @@ public class ClientHandler implements Runnable {
                 List<String> list = server.getUsersOnlineList();
                 Message<List> message = new Message<>(list);
                 SealedSendable sealedSendable = crypto.encryptObject(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymmetricKey());
+                write(sealedSendable);
                 break;
         }
     }

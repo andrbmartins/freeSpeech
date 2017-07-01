@@ -19,7 +19,10 @@ import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
 import java.awt.*;
