@@ -13,7 +13,7 @@ public class Values {
 
     public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DBSERVER = "root";
-    public static final String PASSWORD_DBSERVER = "";
+    public static final String PASSWORD_DBSERVER = "root";
 
     public static final String VIEW = "../view";
     public static final String LOGIN_SCENE = "login";
@@ -35,6 +35,18 @@ public class Values {
     public static final String EMPTY_FIELDS = "No empty fields accepted. Thanks";
 
 
+    public static final String SERVER_START = "SERVER START";
+    public static final String SERVER_STOP = "SERVER STOP";
+    public static final String SERVER_DBCONNECT = "SERVER CONNECTED DATABASE";
+    public static final String CONNECT_CLIENT = "CLIENT CONNECTED";
+    public static final String CLIENT_DISCONNECTED = "CLIENT DISCONNECTED";
+    public static final String CLIENT_LOGINOK = "CLIENT LOGGED IN";
+    public static final String CLIENT_LOGINFAILED= "CLIENT LOGIN FAILED";
+    public static final String CLIENT_LOGOUT = "CLIENT LOGGED OUT";
+    public static final String CLIENT_REGISTED = "CLIENT REGISTERED";
+    public static final String CLIENT_REGISTER_FAILED = "FAILED TO REGISTER USER";
+    public static final String CLIENT_PASSORD = "CLIENT CHANGED PASSWORD";
 
+    public enum TypeEvent { SERVER,LOGIN, REGISTER, CLIENT, DATABASE }
 
 }

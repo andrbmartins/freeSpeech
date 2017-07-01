@@ -3,6 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
 import java.io.IOException;
@@ -41,11 +42,13 @@ public class Server {
 
 
     public void start() throws IOException {
-
+        userService.eventlogger(Values.TypeEvent.SERVER, Values.SERVER_START);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println(Thread.currentThread().getName() + ": handshake");
                 cachedPool.submit(new ClientHandler(this, clientSocket));
+                // Inserir no log que alguem se ligou   Chegar la atraves so client socket
+                userService.eventlogger(Values.TypeEvent.CLIENT, Values.CONNECT_CLIENT + "--" + clientSocket.toString());
             }
 
     }
@@ -55,6 +58,7 @@ public class Server {
         if (serverSocket != null) {
             try {
                 serverSocket.close();
+                userService.eventlogger(Values.TypeEvent.SERVER, Values.SERVER_STOP);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -71,7 +75,9 @@ public class Server {
     }
 
     public void logOutUser(ClientHandler client) {
+
         loggedUsers.remove(client);
+
     }
 
 

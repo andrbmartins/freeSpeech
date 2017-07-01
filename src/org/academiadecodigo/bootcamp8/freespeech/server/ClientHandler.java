@@ -47,8 +47,6 @@ public class ClientHandler implements Runnable {
 
         while (!exit) {
             sendable = communication.retrieveMessage();
-
-
             if (sendable.getType() == MessageType.LOGIN) {
 
                 if(exit = makeLogIn(sendable)){
@@ -58,14 +56,15 @@ public class ClientHandler implements Runnable {
                 } else {
                     message = Values.LOGIN_FAIL;
                 }
-
             }
 
             if (sendable.getType() == MessageType.REGISTER) {
 
                 if (makeRegistry(sendable)) { //TODO: registry is enough to log in??
+
                     message = Values.REGISTER_OK;
                 } else {
+
                     message = Values.USER_TAKEN;
                 }
             }
@@ -100,6 +99,7 @@ public class ClientHandler implements Runnable {
                 server.getUserService().notifyAll();
                 return true;
             } else {
+                server.getUserService().eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTER_FAILED + "--" + username );
                 server.getUserService().notifyAll();
             }
         }
@@ -110,11 +110,10 @@ public class ClientHandler implements Runnable {
     private void readFromClient() {
         Sendable msg;
         while ((msg = communication.retrieveMessage()) != null) {
-
             server.writeToAll(msg);
-
         }
         server.logOutUser(this);
+
         closeSocket();
     }
 
@@ -128,6 +127,8 @@ public class ClientHandler implements Runnable {
 
     private void closeSocket() {
         try {
+// Utilizador desligou-se do server
+            server.getUserService().eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_DISCONNECTED + "--" + clientSocket.toString());
             clientSocket.close();
 
         } catch (IOException e) {
@@ -135,5 +136,6 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
 
         }
+
     }
 }

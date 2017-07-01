@@ -15,10 +15,9 @@ public class ConnectionManager  {
 
     public ConnectionManager() {
         try {
-            //String url = "jdbc:mysql://localhost:3306/freespeech";
-            //connection = DriverManager.getConnection(url, "root", "root");
             connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
-        } catch (SQLException e) {
+            eventlogger(Values.TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
+            } catch (SQLException e) {
             e.printStackTrace();
         }
         System.out.println(connection.toString());
@@ -29,27 +28,35 @@ public class ConnectionManager  {
         return connection;
     }
 
-    public void insertUser(String username, String password) throws SQLException {    // Needs test
-
-        //if(findUserByName(username))
-        //    return;
+    public void insertUser(String username, String password) throws SQLException {    // TESTED OK
         PreparedStatement preparedStmt = null;
         try {
             preparedStmt = connection.prepareStatement(Querys.INSERT_USER);
             preparedStmt.setString(1,  username);
             preparedStmt.setString(2, password);
-            preparedStmt.execute();
-            preparedStmt.close();
+            ResultSet resultSet = preparedStmt.executeQuery();
+            /*if (!resultSet.next()) {
+                preparedStmt.close();
+                // Insert in log - Register Failed
+                eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTER_FAILED + "--" + username );
+                return ;
+            }*/
+
+            //eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username );
+            //preparedStmt.close();
+
         } catch (SQLException e) {
             //e.printStackTrace();
             // Send message de erro para os logs
-            System.out.println("Erro ao inserir user");
+
+            eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username );
+            //System.out.println("Erro ao inserir user");
 
         }
         preparedStmt.close();
     }
 
-    public boolean authenticateUser(String username, String password) throws SQLException {  // Needs test
+    public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
 
 
         System.out.println("Vou autenticar este user  " + username + password);
@@ -62,16 +69,16 @@ public class ConnectionManager  {
             if (!resultSet.next()) {
                 preparedStmt.close();
                 // Insert in log - Login Failed
+                eventlogger(Values.TypeEvent.LOGIN, Values.CLIENT_LOGINFAILED + "--" + username );
                 return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         preparedStmt.close();
-
+        eventlogger(Values.TypeEvent.LOGIN, Values.CLIENT_LOGINOK + "--" + username );
         // Insert in log - Login Sucess
         return true;
-
 
     }
 
@@ -120,6 +127,21 @@ public class ConnectionManager  {
             return resultSet.getInt(1);
         else
             return 0;
+    }
+
+    public void eventlogger(Values.TypeEvent type_event, String message){
+
+        PreparedStatement preparedStmt = null;
+        try {
+            preparedStmt = connection.prepareStatement(Querys.LOG);
+            preparedStmt.setString(1,type_event.toString());
+            preparedStmt.setString(2, message);
+            preparedStmt.execute();
+            preparedStmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

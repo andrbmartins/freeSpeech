@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.persistence.ConnectionManager;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.SQLException;
 
@@ -82,8 +83,15 @@ public class JdbcUserService implements UserService {
 
     }
 
-   /// public String getname(){
+    @Override
+    public void eventlogger(Values.TypeEvent typeEvent, String log_message ) {
+        connectionManager.eventlogger(typeEvent, log_message);
+    }
+
+
+    /// public String getname(){
    //     return UserService.class.getSimpleName();
    // }
+
    public static JdbcUserService getInstance(){ return instance; }
 }

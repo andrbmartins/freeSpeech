@@ -163,12 +163,12 @@ public class LoginController implements Controller {
     void OnDisconnetServer(ActionEvent event) {
         if(clientService.getConnectionServer()) {
             clientService.closeClientSocket();
-        }
-        if(!clientService.getConnectionServer()) {
             StatusCircle.setFill(Paint.valueOf("red"));
             serverMessageLabel.setText("DISCONNECTED FROM SERVER");
             toggleView(false);
         }
+        else
+            serverMessageLabel.setText("ALREADY DISCONNECTED FROM SERVER");
     }
 
     @FXML

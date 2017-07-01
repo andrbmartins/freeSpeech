@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.utils;
 
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -17,6 +19,5 @@ public interface UserService {
 
     int count();
 
-
-
+    void eventlogger(Values.TypeEvent typeEvent, String log_message);
 }

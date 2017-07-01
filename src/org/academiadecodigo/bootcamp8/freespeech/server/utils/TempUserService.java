@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.utils;
 
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +58,11 @@ public class TempUserService implements UserService {
     @Override
     public int count() {
         return registeredUsers.size();
+    }
+
+    @Override
+    public void eventlogger(Values.TypeEvent server, String serverStart) {
+        return;
     }
 
 

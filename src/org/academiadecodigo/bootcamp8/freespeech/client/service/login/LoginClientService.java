@@ -51,9 +51,10 @@ public class LoginClientService implements LoginService {
     public void closeClientSocket() {
         try {
             clientSocket.close();
-        } catch (IOException e) {
+            } catch (IOException e) {
             e.printStackTrace();
         }
+        connectionServer = false;
     }
 
     @Override
