@@ -10,9 +10,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.net.Socket;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +30,7 @@ public class ClientHandler implements Runnable {
 
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
-        crypto.setSymmetricKey(key);
+        crypto.setSymKey(key);
         this.clientSocket = clientSocket;
         this.server = server;
         communication = new CommunicationService();
@@ -43,9 +41,9 @@ public class ClientHandler implements Runnable {
 
         communication.openStreams(clientSocket);
 
-        Stream.writeObject(communication.getObjectOutputStream(), crypto.getNativePublicKey());
+        Stream.writeObject(communication.getObjectOutputStream(), crypto.getPublicKey());
         Key key = (Key) Stream.readObject(communication.getObjectInputStream());
-        crypto.setForeignPublicKey(key);
+        crypto.setForeignKey(key);
 
         authenticateClient();
         notifyNewUser();
@@ -65,7 +63,7 @@ public class ClientHandler implements Runnable {
 
             sealedSendable = communication.retrieveMessage();
 
-            sendable = (Sendable<HashMap>) crypto.decryptObjectWithPrivate(sealedSendable);
+            sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
             HashMap<String, String> map = sendable.getContent(HashMap.class);
 
             System.out.println("TYPE " + sealedSendable.getType());
@@ -96,14 +94,14 @@ public class ClientHandler implements Runnable {
             // TODO use correct interface Sendable<TYPE>
 
             Sendable<String> newSendable = new Message<>(message);
-            sealedSendable = crypto.encryptObject(sealedSendable.getType(), newSendable, crypto.getForeignPublicKey());
+            sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
             communication.sendMessage(sealedSendable);
 
 
             if (newSendable.getContent(String.class).equals(Values.LOGIN_OK)) {
 
-                Sendable<Key> sendableKey = new Message<>(crypto.getSymmetricKey());
-                SealedSendable keySeal = crypto.encryptObject(MessageType.KEY, sendableKey, crypto.getForeignPublicKey());
+                Sendable<Key> sendableKey = new Message<>(crypto.getSymKey());
+                SealedSendable keySeal = crypto.encrypt(MessageType.KEY, sendableKey, crypto.getForeignKey());
 
                 communication.sendMessage(keySeal);
             }
@@ -143,7 +141,7 @@ public class ClientHandler implements Runnable {
     private void notifyNewUser() {
 
         Message<String> message = new Message<>(Values.NEW_USER);
-        SealedSendable sealedMessage = crypto.encryptObject(MessageType.NOTIFICATION, message, crypto.getSymmetricKey());
+        SealedSendable sealedMessage = crypto.encrypt(MessageType.NOTIFICATION, message, crypto.getSymKey());
         server.writeToAll(sealedMessage);
     }
 
@@ -179,7 +177,7 @@ public class ClientHandler implements Runnable {
             case REQUEST_USERS_ONLINE:
                 List<String> list = server.getUsersOnlineList();
                 Message<List> message = new Message<>(list);
-                SealedSendable sealedSendable = crypto.encryptObject(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymmetricKey());
+                SealedSendable sealedSendable = crypto.encrypt(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymKey());
                 break;
         }
     }

@@ -1,9 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.login;
 
-import javafx.scene.control.TextArea;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -14,7 +11,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.Key;
-import java.util.Map;
 
 
 /**
@@ -42,8 +38,8 @@ public class LoginClientService implements LoginService {
                 Session.getInstance().setUserSocket(clientSocket);
 
                 Key foreignKey = (Key) Stream.readObject(Session.getInstance().getInputStream());
-                crypto.setForeignPublicKey(foreignKey);
-                Stream.writeObject(Session.getInstance().getOutputStream(), Session.getInstance().getCryptographer().getNativePublicKey());
+                crypto.setForeignKey(foreignKey);
+                Stream.writeObject(Session.getInstance().getOutputStream(), Session.getInstance().getCryptographer().getPublicKey());
 
 
             } else {
@@ -96,7 +92,7 @@ public class LoginClientService implements LoginService {
     public Sendable readObject() {
 
         SealedSendable sealedSendable = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
-        return getCrypto().decryptObject(sealedSendable, getCrypto().getSymmetricKey());
+        return getCrypto().decrypt(sealedSendable, getCrypto().getSymKey());
 
         //Object serverMessage = Stream.readObject(Session.getInstance().getInputStream());
 

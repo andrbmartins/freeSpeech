@@ -1,24 +1,13 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import javax.crypto.SealedObject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,9 +36,10 @@ public class ServerResponseHandler implements Runnable {
         while (true) {
 
             SealedSendable sealedMessage = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
-            Sendable message = crypto.decryptObject(sealedMessage, crypto.getSymmetricKey());
+            Sendable message = crypto.decryptSendable(sealedMessage, crypto.getSymKey());
             System.out.println("MESSAGE RECEIVED: " + message);
             process(sealedMessage.getType(), message);
+
         }
     }
 

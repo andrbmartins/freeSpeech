@@ -17,9 +17,9 @@ import java.security.*;
  */
 public class Crypto {
 
-    private Key symmetricKey;
-    private Key foreignPublicKey;
-    private KeyPair nativeKeyPair;
+    private KeyPair keyPair;
+    private Key symKey;
+    private Key foreignKey;
 
     /**
      * Constructor
@@ -37,7 +37,7 @@ public class Crypto {
 
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(4096);
-            nativeKeyPair = keyGen.generateKeyPair();
+            keyPair = keyGen.generateKeyPair();
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Invalid encryption algorithm or invalid provider :: " + e.getMessage());
@@ -46,13 +46,13 @@ public class Crypto {
     }
 
     /**
-     * Generate the symmetricKey using an generated key
+     * Generate the symKey using an generated key
      */
-    public void generateSymmetricKey() {
+    public void generateSymKey() {
 
         try {
 
-            symmetricKey = KeyGenerator.getInstance("Blowfish").generateKey();
+            symKey = KeyGenerator.getInstance("Blowfish").generateKey();
 
 
         } catch (NoSuchAlgorithmException e) {
@@ -62,13 +62,13 @@ public class Crypto {
     }
 
     /**
-     * This method is responsible for encrypt the object
+     * This method is responsible for encrypt an object
      *
      * @param object to encrypt
      * @param key    key to encrypt
      * @return an encrypt (sealed) object
      */
-    public SealedSendable encryptObject(MessageType type, Serializable object, Key key) {
+    public SealedSendable encrypt(MessageType type, Serializable object, Key key) {
 
         SealedSendable sealed = null;
 
@@ -90,17 +90,17 @@ public class Crypto {
     /**
      * This method is responsible for decrypt the object
      *
-     * @param sealedObject the object to decrypt
-     * @param key          the symmetricKey to decrypt
+     * @param sealed the object to decrypt
+     * @param key    the symKey to decrypt
      * @return an object
      */
-    public Sendable decryptObject(SealedSendable sealedObject, Key key) {
+    public Object decrypt(SealedSendable sealed, Key key) {
 
-        Sendable object = null;
+        Object object = null;
 
         try {
 
-            object = sealedObject.getContent(key);
+            object = sealed.getContent(key);
 
         } catch (IOException e) {
             System.err.println("Failure on de-encapsulate object :: " + e.getMessage());
@@ -115,20 +115,41 @@ public class Crypto {
     }
 
     /**
-     * This method is responsible for decrypt the object using the private key
+     * TODO
      *
-     * @param sealedObject the object to decrypt
-     * @return an object
+     * @param sealedSendable
+     * @return
      */
-    public Object decryptObject(SealedSendable sealedObject) {
+    public Object decryptWithPrivate(SealedSendable sealedSendable) {
 
-        return decryptObject(sealedObject, symmetricKey);
+        return decrypt(sealedSendable, keyPair.getPrivate());
 
     }
 
-    public Object decryptObjectWithPrivate(SealedSendable sealedSendable) {
+    /**
+     * TODO - write comment
+     *
+     * @param sealed
+     * @param key
+     * @return
+     */
+    public Sendable decryptSendable(SealedSendable sealed, Key key) {
 
-        return decryptObject(sealedSendable, nativeKeyPair.getPrivate());
+        Object object = decrypt(sealed, key);
+
+        return (Sendable) object;
+
+    }
+
+    /**
+     * TODO - write comment
+     *
+     * @param sealed
+     * @return
+     */
+    public Sendable decryptSendable(SealedSendable sealed) {
+
+        return decryptSendable(sealed, symKey);
 
     }
 
@@ -155,24 +176,27 @@ public class Crypto {
 
     }
 
-    public void setSymmetricKey(Key symmetricKey) {
-        this.symmetricKey = symmetricKey;
+    public void setSymKey(Key symKey) {
+        this.symKey = symKey;
     }
 
-    public void setForeignPublicKey(Key foreignPublicKey) {
-        this.foreignPublicKey = foreignPublicKey;
+    public void setForeignKey(Key foreignKey) {
+
+        if (this.foreignKey == null) {
+            this.foreignKey = foreignKey;
+        }
     }
 
-    public Key getSymmetricKey() {
-        return symmetricKey;
+    public Key getSymKey() {
+        return symKey;
     }
 
-    public Key getForeignPublicKey() {
-        return foreignPublicKey;
+    public Key getForeignKey() {
+        return foreignKey;
     }
 
-    public Key getNativePublicKey() {
-        return nativeKeyPair.getPublic();
+    public Key getPublicKey() {
+        return keyPair.getPublic();
     }
 
 }
