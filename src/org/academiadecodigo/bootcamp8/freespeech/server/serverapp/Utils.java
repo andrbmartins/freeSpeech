@@ -6,9 +6,9 @@ package org.academiadecodigo.bootcamp8.freespeech.server.serverapp;
  * <Code Cadet> PedroMAlves
  */
 public class Utils {
-    public static final String SERVER_INFO = "SELECT date_event, message_event FROM log WHERE type_event='server_log'";
+    public static final String SERVER_INFO = "SELECT date_event, message_event FROM log WHERE type_event='SERVER'";
 
-    public static final String USER_CONNECTION = "SELECT date_event, message_event FROM log WHERE type_event='user_connection'";
+    public static final String USER_CONNECTION = "SELECT date_event, message_event FROM log WHERE type_event!='SERVER'";
 
     public static final String USERS_TABLE = "SELECT COUNT(*) FROM user" ;
 
