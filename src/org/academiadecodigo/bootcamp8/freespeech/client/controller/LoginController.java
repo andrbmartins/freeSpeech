@@ -165,6 +165,7 @@ public class LoginController implements Controller {
 
         if (s1.getContent(String.class).equals(Values.REGISTER_OK)) {
             serverMessageLabel.setText(Values.REGISTER_OK);
+
         } else {
             serverMessageLabel.setText(Values.REGISTER_FAIL);
         }

@@ -13,7 +13,7 @@ public class ServerStart {
 
         Server server;
 
-        if (args.length < 1 || args.length < 1025) {
+        if (args.length < 1 || Integer.parseInt(args[0]) < 1025) {
             System.out.println("Client app is configured to connect to port 4040.");
             server = new Server();
         }

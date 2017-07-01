@@ -1,7 +1,9 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
@@ -35,6 +37,7 @@ public class Server {
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
 
 
+
     public Server(int port) {
         this.port = port;
         loggedUsers = new CopyOnWriteArrayList<>();
@@ -58,9 +61,12 @@ public class Server {
         crypto.generateSymKey();
         symKey = crypto.getSymKey();
 
+        System.out.println("SERVER SYM KEY " + symKey);
+
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
-        userService = TempUserService.getInstance();
+        //userService = TempUserService.getInstance();
+        userService = JdbcUserService.getInstance();
     }
 
     /**
@@ -71,12 +77,13 @@ public class Server {
      */
 
     public void start() throws IOException {
-
+        userService.eventlogger(Values.TypeEvent.SERVER, Values.SERVER_START);
         while (true) {
             Socket clientSocket = serverSocket.accept();
             System.out.println("LOGGED");
             //TODO log new client
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey));
+            userService.eventlogger(Values.TypeEvent.CLIENT, Values.CONNECT_CLIENT + "--" + clientSocket.toString());
         }
     }
 
@@ -88,6 +95,7 @@ public class Server {
             try {
                 //TODO log server off
                 serverSocket.close();
+                userService.eventlogger(Values.TypeEvent.SERVER, Values.SERVER_STOP);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -114,6 +122,7 @@ public class Server {
      * @param client
      */
     public void logOutUser(ClientHandler client) {
+
         loggedUsers.remove(client);
     }
 
