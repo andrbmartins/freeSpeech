@@ -10,39 +10,28 @@ import java.io.Serializable;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class Message<T> implements Sendable<T>, Serializable {
+public class Message<T> implements Sendable<T> {
 
     private static final long serialVersionUID = Values.UID_MESSAGE;
 
-    private final MessageType type;
     private final T content;
 
-    public Message(MessageType type, T content) {
+    public Message(T content) {
         this.content = content;
-        this.type = type;
     }
 
-    @Override
-    public MessageType getType() {
-        return type;
-    }
 
     @Override
-    public T getContent() {
-        return content;
-    }
+    public <T> T getContent(Class<T> type) {
 
-    @Override
-    public Sendable<T> updateMessage(MessageType type, T content) {
-        return new Message<>(type,content);
+        return content == null ? null : type.cast(content);
+
     }
 
     @Override
     public String toString() {
         return "Message{" +
-                "type=" + type +
-                ", content=" + content +
+                "content=" + content +
                 '}';
     }
-
 }

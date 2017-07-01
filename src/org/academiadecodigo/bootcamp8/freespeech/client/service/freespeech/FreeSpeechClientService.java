@@ -2,11 +2,11 @@ package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
+import javax.crypto.SealedObject;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -30,16 +30,16 @@ public class FreeSpeechClientService implements ClientService {
         }
         String text = Session.getInstance().getUsername() + ": " + textArea.getText();
 
-        Message<String> message = new Message<>(MessageType.TEXT, text);
-        writeObject(message);
+        Message<String> message = new Message<>(text);
+        writeObject(MessageType.TEXT, message);
 
         textArea.clear();
     }
 
     @Override
     public void sendListRequest() {
-        Message<Object> message = new Message<>(MessageType.REQUEST_USERS_ONLINE, "SEND ME");
-        writeObject(message);
+        Message<Object> message = new Message<>("");
+        writeObject(MessageType.REQUEST_USERS_ONLINE, message);
     }
 
     @Override
@@ -48,8 +48,8 @@ public class FreeSpeechClientService implements ClientService {
         byte[] buffer = fileToByteArray(file);
         List<Byte> byteList = byteArrayToList(buffer);
 
-        Message<List> message = new Message<>(MessageType.DATA, byteList);
-        writeObject(message);
+        Message<List> message = new Message<>(byteList);
+        writeObject(MessageType.DATA, message);
     }
 
     /**
@@ -94,17 +94,25 @@ public class FreeSpeechClientService implements ClientService {
         Session.getInstance().close();
     }
 
-    /**
-     * @param message
-     * @see ClientService#writeObject(Sendable)
-     */
-    @Override
-    public void writeObject(Sendable message) {
-        Stream.writeObject(Session.getInstance().getOutputStream(), message);
+    //@Override
+    public void writeObject(MessageType type, Sendable message) {
+
+        SealedSendable sealedMessage = getCrypto().encryptObject(type, message, getCrypto().getSymmetricKey());
+
+        Stream.writeObject(Session.getInstance().getOutputStream(), sealedMessage);
     }
 
     @Override
     public String getName() {
         return ClientService.class.getSimpleName();
+    }
+
+    @Override
+    public void writeObject(MessageType messageType, SealedSendable message) {
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
+    }
+
+    private Crypto getCrypto() {
+        return Session.getInstance().getCryptographer();
     }
 }

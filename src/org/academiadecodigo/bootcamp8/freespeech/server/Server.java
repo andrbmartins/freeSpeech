@@ -3,11 +3,16 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +27,7 @@ import java.util.concurrent.Executors;
  */
 
 public class Server {
+    private Key symKey;
     private UserService userService;
     private static int port;
     private static ServerSocket serverSocket = null;
@@ -44,6 +50,12 @@ public class Server {
      */
 
     public void init() throws IOException {
+        Crypto crypto = new Crypto();
+        crypto.generateSymmetricKey();
+        symKey = crypto.getSymmetricKey();
+
+        System.out.println("SERVER SYM KEY " + symKey);
+
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
         userService = TempUserService.getInstance();
@@ -62,7 +74,7 @@ public class Server {
         while (true) {
             Socket clientSocket = serverSocket.accept();
             System.out.println(Thread.currentThread().getName() + ": handshake");
-            cachedPool.submit(new ClientHandler(this, clientSocket));
+            cachedPool.submit(new ClientHandler(this, clientSocket, symKey));
         }
 
     }
@@ -110,7 +122,7 @@ public class Server {
      * This method is called by a ClientHandler when it receives a new input from the client.
      * @param sendable
      */
-    public void writeToAll(Sendable sendable) {
+    public void writeToAll(SealedSendable sendable) {
         for (ClientHandler c : loggedUsers) {
             c.write(sendable);
 
@@ -124,17 +136,28 @@ public class Server {
      * and the content must be an HashMap with 2 String: an Values.Destiny_User field and a text field.
      * @param msg
      */
-    public void write(Sendable msg) {
+    public void write(SealedSendable msg) {
 
-        HashMap<String,String> content = (HashMap<String,String>)(msg.getContent());
-        String destiny = content.get(Values.DESTINY_USER);
+        HashMap<String,String> content = null;
+        try {
+            content = (HashMap<String,String>)msg.getContent(symKey).getContent(HashMap.class);
+            String destiny = content.get(Values.DESTINY_USER);
 
-        for (ClientHandler c : loggedUsers){
-            if(c.getName().equals(destiny)){
+            for (ClientHandler c : loggedUsers){
+                if(c.getName().equals(destiny)){
 
-                c.write(msg);
-                break;
+                    c.write(msg);
+                    break;
+                }
             }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }

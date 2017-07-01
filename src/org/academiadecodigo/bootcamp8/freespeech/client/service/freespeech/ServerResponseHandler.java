@@ -7,9 +7,14 @@ import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
+import javax.crypto.SealedObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -30,7 +35,6 @@ public class ServerResponseHandler implements Runnable {
     private ClientService clientService;
     private ClientController clientController;
 
-
     public ServerResponseHandler(ClientService clientService, ClientController clientController) {
         this.clientService = clientService;
         this.clientController = clientController;
@@ -40,18 +44,21 @@ public class ServerResponseHandler implements Runnable {
     @Override
     public void run() {
 
+        Crypto crypto = Session.getInstance().getCryptographer();
+
         while (true) {
 
-            Sendable message = (Sendable) Stream.readObject(Session.getInstance().getInputStream());
-            System.out.println("MESSAGE RECEIVED: "+ message);
-            process(message);
-
+            SealedSendable sealedMessage = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+            Sendable message = crypto.decryptObject(sealedMessage, crypto.getSymmetricKey());
+            System.out.println("MESSAGE RECEIVED: " + message);
+            process(sealedMessage.getType(), message);
         }
     }
 
-    private void process(Sendable message) {
 
-        switch (message.getType()) {
+    private void process(MessageType type, Sendable message) {
+
+        switch (type) {
             case NOTIFICATION:
                 clientService.sendListRequest();
                 break;
@@ -76,8 +83,8 @@ public class ServerResponseHandler implements Runnable {
 
     private void printPrivateChat(Sendable message) {
 
-        String user = (String) ((HashMap<String,String>)message.getContent()).get(Values.DESTINY_USER);
-        String text = (String) ((HashMap<String,String>)message.getContent()).get(Values.MESSAGE);
+        String user = (String) ((HashMap<String,String>)message.getContent(HashMap.class)).get(Values.DESTINY_USER);
+        String text = (String) ((HashMap<String,String>)message.getContent(HashMap.class)).get(Values.MESSAGE);
 
         text = wipeWhiteSpaces(text);
 
@@ -87,7 +94,7 @@ public class ServerResponseHandler implements Runnable {
 
     private void printToRoom(Sendable message) {
 
-        String text = (String) message.getContent();
+        String text = (String) message.getContent(String.class);
         text = wipeWhiteSpaces(text);
         clientController.getCurrentRoom().appendText((clientController.getCurrentRoom().getText().isEmpty() ? "" : "\n") + text);
     }
