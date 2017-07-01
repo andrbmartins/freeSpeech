@@ -39,11 +39,7 @@ public class JdbcUserService implements UserService {
 
     @Override
     public void addUser(User user) {
-        try {
-            connectionManager.insertUser(user.getUsername(),user.getPassword());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connectionManager.insertUser(user.getUsername(),user.getPassword());
     }
 
     @Override

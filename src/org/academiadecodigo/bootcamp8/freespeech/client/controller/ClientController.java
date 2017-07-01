@@ -8,11 +8,15 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -42,6 +46,16 @@ public class ClientController implements Controller {
     @FXML private TextArea lobbyTextArea;
     @FXML private TextArea inputTextArea;
     @FXML private ListView onlineUsersList;
+    @FXML
+    private Button exitButton;
+    @FXML
+    private MenuItem Bio_Menu;
+    @FXML
+    private VBox Bio;
+    @FXML
+    private ImageView Bio_Image;
+    @FXML
+    private TextArea Bio_Data;
 
     private Stage stage;
     private ClientService clientService;
@@ -158,4 +172,10 @@ public class ClientController implements Controller {
             }
         });
     }
+
+    @FXML
+    void ShowBio(ActionEvent event) {
+        System.out.println("Show bio");
+    }
+
 }

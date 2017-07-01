@@ -67,6 +67,10 @@ public class Server {
         cachedPool = Executors.newCachedThreadPool();
         //userService = TempUserService.getInstance();
         userService = JdbcUserService.getInstance();
+        //System.out.println("Fora do init ");
+
+
+
     }
 
     /**

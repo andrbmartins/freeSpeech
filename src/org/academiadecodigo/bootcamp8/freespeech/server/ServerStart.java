@@ -25,10 +25,11 @@ public class ServerStart {
             server.start();
 
         } catch (IOException e) {
+
             e.printStackTrace(); //TODO log?
 
         } finally {
-            server.closeServerSocket();
+           server.closeServerSocket();
         }
     }
 }

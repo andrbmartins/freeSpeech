@@ -88,7 +88,7 @@ public class ConnectionManager  {
 
         PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
         preparedStmt.setString(1, username);
-        System.out.println("beofre result ");
+        System.out.println("before result ");
         ResultSet resultSet = preparedStmt.executeQuery();
 
         if(resultSet.next()) {

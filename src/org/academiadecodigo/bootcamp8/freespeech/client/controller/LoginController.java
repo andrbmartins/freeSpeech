@@ -5,8 +5,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
@@ -45,8 +47,9 @@ public class LoginController implements Controller {
     private Label serverMessageLabel;
     @FXML
     private Button registerButton;
-    @FXML
-    private Button exitButton;
+
+
+
     private Stage stage;
     private LoginService clientService;
 
@@ -195,5 +198,8 @@ public class LoginController implements Controller {
     private boolean fieldsAreEmpty() {
         return nameField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPassword.getText().isEmpty();
     }
+
+
+
 
 }

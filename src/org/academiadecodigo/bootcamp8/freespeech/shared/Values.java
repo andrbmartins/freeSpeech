@@ -37,9 +37,7 @@ public class Values {
     public static final String STYLESHEET = "resources/stylesheet.css";
     public static final String TITLE = "Free Speech";
 
-    //public static final String LOGIN_OK = "ok";
-    //public static final String LOGIN_FAIL = "Unable to login";
-    //public static final String REGISTER_OK = "Successfully registered user";
+
     public static final String USER_TAKEN = "Username taken. Choose another one";
     public static final String CHECK_PASSWORD = "Please confirm you typed the same password";
 
