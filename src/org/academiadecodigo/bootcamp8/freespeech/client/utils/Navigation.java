@@ -32,7 +32,7 @@ public class Navigation {
     }
 
     /**
-     * Instantiates a singleton instance of this class and returns it.
+     * Singleton instantiation.
      *
      * @return the instance.
      */

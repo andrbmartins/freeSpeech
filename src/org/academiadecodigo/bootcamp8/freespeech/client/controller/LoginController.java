@@ -133,8 +133,8 @@ public class LoginController implements Controller {
 
         sendMsg(MessageType.LOGIN);
 
-        SealedSendable serverRsp = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
-        Sendable<String> serverMsg = (Sendable<String>) Session.getInstance().getCryptographer().decryptWithPrivate(serverRsp);
+        SealedSendable serverRsp = Stream.readSendable(Session.getInput());
+        Sendable<String> serverMsg = (Sendable<String>) Session.getCrypto().decryptWithPrivate(serverRsp);
 
 
         //TODO stopping here
@@ -144,11 +144,11 @@ public class LoginController implements Controller {
             Session.getInstance().setUsername(nameField.getText());
 
 
-            SealedSendable s = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
+            SealedSendable s = Stream.readSendable(Session.getInput());
             System.out.println("SEALED S " + s + " \nTYPE " + s.getType());
-            Sendable<Key> key = (Sendable<Key>) Session.getInstance().getCryptographer().decryptWithPrivate(s);
+            Sendable<Key> key = (Sendable<Key>) Session.getCrypto().decryptWithPrivate(s);
             System.out.println("KEY AFTER " + key);
-            Session.getInstance().getCryptographer().setSymKey(key.<Key>getContent(Key.class));
+            Session.getCrypto().setSymKey(key.<Key>getContent(Key.class));
 
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
 
@@ -170,8 +170,8 @@ public class LoginController implements Controller {
         }
         sendMsg(MessageType.REGISTER);
 
-        SealedSendable s = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
-        Sendable<String> s1 = (Sendable<String>) Session.getInstance().getCryptographer().decryptWithPrivate(s);
+        SealedSendable s = Stream.readSendable(Session.getInput());
+        Sendable<String> s1 = (Sendable<String>) Session.getCrypto().decryptWithPrivate(s);
 
         System.out.println("RECEIVED " + s1.getContent(String.class));
 
@@ -194,8 +194,8 @@ public class LoginController implements Controller {
 
         System.out.println("SENDING " + messageType + " " + message + "ON " + this.getClass().getSimpleName());
 
-        SealedSendable sealed = Session.getInstance().getCryptographer().encrypt(messageType, message,
-                Session.getInstance().getCryptographer().getForeignKey());
+        SealedSendable sealed = Session.getCrypto().encrypt(messageType, message,
+                Session.getCrypto().getForeignKey());
 
 
         clientService.writeObject(messageType, sealed);

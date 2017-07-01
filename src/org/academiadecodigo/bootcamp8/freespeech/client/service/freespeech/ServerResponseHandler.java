@@ -31,11 +31,11 @@ public class ServerResponseHandler implements Runnable {
     @Override
     public void run() {
 
-        Crypto crypto = Session.getInstance().getCryptographer();
+        Crypto crypto = Session.getCrypto();
 
         while (true) {
 
-            SealedSendable sealedMessage = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
+            SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
             Sendable message = crypto.decryptSendable(sealedMessage, crypto.getSymKey());
             System.out.println("MESSAGE RECEIVED: " + message);
             process(sealedMessage.getType(), message);

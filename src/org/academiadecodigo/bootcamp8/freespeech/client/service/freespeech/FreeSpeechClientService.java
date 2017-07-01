@@ -89,15 +89,15 @@ public class FreeSpeechClientService implements ClientService {
 
     //TODO - logout
     public void closeClientSocket() {
-        Session.getInstance().close();
+        Session.close();
     }
 
     //@Override
     public void writeObject(MessageType type, Sendable message) {
 
-        SealedSendable sealedMessage = getCrypto().encrypt(type, message, getCrypto().getSymKey());
+        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message, Session.getCrypto().getSymKey());
 
-        Stream.write(Session.getInstance().getOutputStream(), sealedMessage);
+        Stream.write(Session.getOutput(), sealedMessage);
     }
 
     @Override
@@ -107,10 +107,10 @@ public class FreeSpeechClientService implements ClientService {
 
     @Override
     public void writeObject(MessageType messageType, SealedSendable message) {
-        Stream.write(Session.getInstance().getOutputStream(), message);
+        Stream.write(Session.getOutput(), message);
     }
 
     private Crypto getCrypto() {
-        return Session.getInstance().getCryptographer();
+        return Session.getCrypto();
     }
 }
