@@ -49,6 +49,7 @@ public class AdminApp extends Application {
         primaryStage.setResizable(false);
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
+        controller.validateUser();
 
 
     }

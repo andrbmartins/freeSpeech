@@ -36,5 +36,23 @@ public class Utils {
 
     public static final String INVALID_QUERY = "Your query is not valid. Only SELECT is allowed";
 
+    public static final String INVALID_LOG = "Invalid Login";
+
+    public static final String ENTER_VALID = "Please enter valid password";
+
+    public static final String LOGIN_QUERY = "SELECT admin_type FROM admin WHERE pass_word = ?";
+
+    public static final String GRANTED = "Access granted";
+
+    public static final String ROOT_ACCESS = "Root access granted";
+
+    public static final String ADMIN_ACCESS = "Admin level access granted. Some functionalities are not available";
+
+    public enum AdminLevel {
+        ROOT,
+        ADMIN,
+        INVALID
+    }
+
 
 }

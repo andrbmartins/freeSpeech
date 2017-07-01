@@ -1,10 +1,8 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
 
 /**
  * Developed @ <Academia de Código_>
@@ -73,6 +71,39 @@ public class DataBaseReader {
             closeStatement();
         }
         return deleteOk;
+    }
+
+    public Utils.AdminLevel checkPassword(String password) {
+        PreparedStatement statement = null;
+        ResultSet resultSet;
+        Utils.AdminLevel adminLevel = Utils.AdminLevel.INVALID;
+
+        try {
+            statement = connection.getConnection().prepareStatement(Utils.LOGIN_QUERY);
+            statement.setString(1, password);
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                if ((resultSet.getString("admin_type")).equals("ROOT")) {
+                    adminLevel = Utils.AdminLevel.ROOT;
+                } else {
+                    adminLevel = Utils.AdminLevel.ADMIN;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                statement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return adminLevel;
     }
 
     /**

@@ -40,15 +40,15 @@
                     </items>
                   </SplitMenuButton>
                   <TextArea fx:id="display" editable="false" focusTraversable="false" layoutX="12.0" layoutY="67.0" prefHeight="366.0" prefWidth="616.0" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="67.0" />
-                  <Button layoutX="303.0" layoutY="442.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
-                  <MenuButton layoutX="374.0" layoutY="442.0" mnemonicParsing="false" text="Save">
+                  <Button fx:id="deleteLog" layoutX="304.0" layoutY="442.0" mnemonicParsing="false" onAction="#clearTable" text="Delete Server Log" />
+                  <Button layoutX="438.0" layoutY="442.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+                  <MenuButton layoutX="509.0" layoutY="442.0" mnemonicParsing="false" text="Save">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#save" text="Save" />
                       <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Save As..." />
                     </items>
                   </MenuButton>
-                  <Button layoutX="445.0" layoutY="442.0" mnemonicParsing="false" onAction="#clearTable" text="Delete Server Log" />
-                  <Button layoutX="579.0" layoutY="442.0" mnemonicParsing="false" onAction="#exit" text="Exit" />
+                  <Button layoutX="580.0" layoutY="442.0" mnemonicParsing="false" onAction="#exit" text="Exit" />
                </children>
           </AnchorPane>
         </children>

@@ -3,17 +3,17 @@ package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.DataBaseReader;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.PasswordDialog;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.WriteToFile;
 
 import java.io.File;
@@ -34,6 +34,9 @@ public class AdminController implements Initializable {
     private TextArea display;
 
     @FXML
+    private Button deleteLog;
+
+    @FXML
     private GridPane parentGrid;
 
     private WriteToFile writer;
@@ -41,10 +44,46 @@ public class AdminController implements Initializable {
     private Stage stage;
     private double x;
     private double y;
+    private Utils.AdminLevel adminLevel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setDraggableMainFrame();
+    }
+
+    public void validateUser() {
+        if (!login()) {
+            stage.close();
+            return;
+        }
+        validadeResult(adminLevel);
+    }
+
+    private boolean login() {
+        PasswordDialog pd = new PasswordDialog();
+        Optional<String> result = pd.showAndWait();
+
+        if (result.isPresent()) {
+            adminLevel = reader.checkPassword(result.get());
+            return true;
+        }
+        return false;
+    }
+
+    private void validadeResult(Utils.AdminLevel adminLevel) {
+        switch (adminLevel) {
+            case ROOT:
+                userPrompt(Alert.AlertType.INFORMATION, Utils.GRANTED, Utils.ROOT_ACCESS);
+                break;
+            case ADMIN:
+                deleteLog.setVisible(false);
+                userPrompt(Alert.AlertType.INFORMATION, Utils.GRANTED, Utils.ADMIN_ACCESS);
+                break;
+            case INVALID:
+                userPrompt(Alert.AlertType.ERROR, Utils.INVALID_LOG, Utils.ENTER_VALID);
+                validateUser();
+            break;
+        }
     }
 
     @FXML
@@ -129,6 +168,7 @@ public class AdminController implements Initializable {
         return alert.showAndWait();
     }
 
+
     private boolean isQueryAllowed(String query) {
         String lowerCase = query.toLowerCase();
         if (customQuery.getText().contains("delete") || customQuery.getText().contains("insert")
@@ -174,4 +214,5 @@ public class AdminController implements Initializable {
     public void setWriter(WriteToFile writer) {
         this.writer = writer;
     }
+
 }

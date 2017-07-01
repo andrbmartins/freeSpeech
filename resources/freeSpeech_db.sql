@@ -22,3 +22,10 @@ CREATE TABLE log(
     message_event CHAR(100) NOT NULL,
     PRIMARY KEY (log_id)
 );
+
+CREATE TABLE admin(
+    admin_type ENUM('ROOT', 'ADMIN'),
+    pass_word CHAR(10)
+    );
+
+INSERT INTO admin VALUES ('ROOT', 'dblord'), ('ADMIN', 'noob');
