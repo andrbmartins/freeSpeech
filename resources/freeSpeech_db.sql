@@ -3,7 +3,7 @@ CREATE DATABASE freespeech;
 USE freespeech;
 CREATE TABLE user(
     user_name CHAR(15) NOT NULL,
-    user_password CHAR(100) NOT NULL,
+    user_password CHAR(150) NOT NULL,
     PRIMARY KEY (user_name)
 );
 CREATE TABLE bio(

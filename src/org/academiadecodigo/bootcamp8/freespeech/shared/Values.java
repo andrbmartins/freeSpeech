@@ -6,14 +6,14 @@ package org.academiadecodigo.bootcamp8.freespeech.shared;
 
 public class Values {
 
-    public static final String HOST = "127.0.0.1";
+    public static final String HOST = "localhost";
     public static final int SERVER_PORT = 4040;
 
     public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DBSERVER = "root";
-    public static final String PASSWORD_DBSERVER = "";
+    public static final String PASSWORD_DBSERVER = "root";
 
-    public static final String VIEW = "../view";
+    //public static final String VIEW = "../view";
     public static final String VIEW_PATH = "../view";
     public static final String LOGIN_SCENE = "login";
     public static final String USER_SCENE = "user";
@@ -37,9 +37,7 @@ public class Values {
     public static final String STYLESHEET = "resources/stylesheet.css";
     public static final String TITLE = "Free Speech";
 
-    //public static final String LOGIN_OK = "ok";
-    //public static final String LOGIN_FAIL = "Unable to login";
-    //public static final String REGISTER_OK = "Successfully registered user";
+
     public static final String USER_TAKEN = "Username taken. Choose another one";
     public static final String CHECK_PASSWORD = "Please confirm you typed the same password";
 
