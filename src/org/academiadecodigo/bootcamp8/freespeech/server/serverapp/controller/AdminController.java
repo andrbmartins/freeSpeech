@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
@@ -17,6 +18,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.WriteT
 
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -113,16 +115,18 @@ public class AdminController implements Initializable {
 
     @FXML
     void clearTable(ActionEvent event) {
-        String result = reader.clearTable() ? Utils.CLEARED : Utils.NOT_CLEARED;
-        userPrompt(Alert.AlertType.INFORMATION, Utils.CLEARING_LOG, result);
+        if (userPrompt(Alert.AlertType.CONFIRMATION, Utils.CONFIRM, Utils.CONFIRM_QUESTION).get() == ButtonType.OK) {
+            String result = reader.clearTable() ? Utils.CLEARED : Utils.NOT_CLEARED;
+            userPrompt(Alert.AlertType.INFORMATION, Utils.CLEARING_LOG, result);
+        }
     }
 
-    private void userPrompt(Alert.AlertType alertType, String title, String content) {
+    private Optional<ButtonType> userPrompt(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
-        alert.showAndWait();
+        return alert.showAndWait();
     }
 
     private boolean isQueryAllowed(String query) {

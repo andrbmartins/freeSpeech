@@ -10,9 +10,13 @@ public class Utils {
 
     public static final String USER_CONNECTION = "SELECT date_event, message_event FROM log WHERE type_event='user_connection'";
 
-    public static final String USERS_TABLE = "SELECT user_name FROM user" ;
+    public static final String USERS_TABLE = "SELECT COUNT(*) FROM user" ;
 
     public static final String CLEAR_TABLE = "DELETE FROM log";
+
+    public static final String CONFIRM = "Confirm delete of data";
+
+    public static final String CONFIRM_QUESTION = "Are you sure you want to delete all data from 'log' table?";
 
     public static final String CLEARED = "'log' Table cleared successfully";
 
