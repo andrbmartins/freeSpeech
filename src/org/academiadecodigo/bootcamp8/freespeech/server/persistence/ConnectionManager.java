@@ -30,7 +30,7 @@ public class ConnectionManager  {
     //return connection;
     //}
 
-    public void insertUser(String username, String password) throws SQLException {    // TESTED OK
+    public void insertUser(String username, String password) {    // TESTED OK
         PreparedStatement preparedStmt = null;
         try {
             System.out.println(password.length());
@@ -46,8 +46,14 @@ public class ConnectionManager  {
             eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTER_FAILED + " -- " + username );
             System.out.println(Values.CLIENT_REGISTER_FAILED);
 
+        } finally {
+            try {
+                preparedStmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
-        preparedStmt.close();
     }
 
     public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
