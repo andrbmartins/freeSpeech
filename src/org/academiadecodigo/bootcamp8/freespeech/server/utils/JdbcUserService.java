@@ -17,7 +17,6 @@ public class JdbcUserService implements UserService {
     private ConnectionManager connectionManager;
 
 
-
     public JdbcUserService() {
         this.connectionManager = new ConnectionManager();
     }
@@ -54,13 +53,14 @@ public class JdbcUserService implements UserService {
 
     @Override
     public User getUser(String username) {
+        System.out.println(username);
         return findByname(username);
     }
 
 
     public User findByname(String username) {
         User user= null;
-
+        System.out.println(username);
         try {
             user = connectionManager.findUser(username);
         } catch (SQLException e) {

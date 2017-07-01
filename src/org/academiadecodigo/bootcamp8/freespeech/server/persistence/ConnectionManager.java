@@ -18,39 +18,33 @@ public class ConnectionManager  {
             connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
             eventlogger(Values.TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
             } catch (SQLException e) {
-            e.printStackTrace();
+            eventlogger(Values.TypeEvent.DATABASE, Values.SERVER_DBDISCONNECT);
+            System.out.println(Values.SERVER_DBDISCONNECT);
+            //e.printStackTrace();
         }
         System.out.println(connection.toString());
 
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
+    //public Connection getConnection() {
+    //return connection;
+    //}
 
     public void insertUser(String username, String password) throws SQLException {    // TESTED OK
         PreparedStatement preparedStmt = null;
         try {
+            System.out.println(password.length());
             preparedStmt = connection.prepareStatement(Querys.INSERT_USER);
             preparedStmt.setString(1,  username);
             preparedStmt.setString(2, password);
-            ResultSet resultSet = preparedStmt.executeQuery();
-            /*if (!resultSet.next()) {
-                preparedStmt.close();
-                // Insert in log - Register Failed
-                eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTER_FAILED + "--" + username );
-                return ;
-            }*/
+            preparedStmt.execute();
+            eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username );
 
-            //eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username );
-            //preparedStmt.close();
 
         } catch (SQLException e) {
-            //e.printStackTrace();
-            // Send message de erro para os logs
 
-            eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username );
-            //System.out.println("Erro ao inserir user");
+            eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTER_FAILED + " -- " + username );
+            System.out.println(Values.CLIENT_REGISTER_FAILED);
 
         }
         preparedStmt.close();
@@ -59,7 +53,7 @@ public class ConnectionManager  {
     public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
 
 
-        System.out.println("Vou autenticar este user  " + username + password);
+        //System.out.println("Vou autenticar este user  " + username + password);
         PreparedStatement preparedStmt = null;
         try {
             preparedStmt = connection.prepareStatement(Querys.AUTHENTICATE_USER);
@@ -88,14 +82,17 @@ public class ConnectionManager  {
 
         PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
         preparedStmt.setString(1, username);
-
+        System.out.println("beofre result ");
         ResultSet resultSet = preparedStmt.executeQuery();
 
         if(resultSet.next()) {
+
             String usernameValue = resultSet.getString("user_name");
             String passwordValue = resultSet.getString("user_password");
             user = new User(usernameValue, passwordValue);
+            System.out.println(user.toString());
         }
+        //System.out.println(user.toString());
         return user ;
     }
 

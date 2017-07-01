@@ -40,6 +40,7 @@ public class Values {
     public static final String SERVER_START = "SERVER START";
     public static final String SERVER_STOP = "SERVER STOP";
     public static final String SERVER_DBCONNECT = "SERVER CONNECTED DATABASE";
+    public static final String SERVER_DBDISCONNECT = "SERVER NOT CONNECTED TO DATABASE";
     public static final String CONNECT_CLIENT = "CLIENT CONNECTED";
     public static final String CLIENT_DISCONNECTED = "CLIENT DISCONNECTED";
     public static final String CLIENT_LOGINOK = "CLIENT LOGGED IN";

@@ -70,13 +70,13 @@ public class ClientHandler implements Runnable {
 
             System.out.println("TYPE " + sealedSendable.getType());
 
-
             //TODO switch
             if (sealedSendable.getType() == MessageType.LOGIN) {
                 System.out.println("ENYTERED GET TYPE IF " + sealedSendable.getType());
                 if (exit = makeLogIn(map)) {
                     message = Values.LOGIN_OK;
                     clientName = map.get(Values.NAME_KEY);
+                    ////server.getUserService().eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTED);
                     //exit = true;
                 } else {
                     message = Values.LOGIN_FAIL;
@@ -88,6 +88,7 @@ public class ClientHandler implements Runnable {
 
                 if (makeRegistry(map)) {
                     message = Values.REGISTER_OK;
+                    //server.getUserService().eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTED);
                 } else {
                     message = Values.USER_TAKEN;
                 }
@@ -124,14 +125,17 @@ public class ClientHandler implements Runnable {
 
         // TODO use correct interface Sendable<TYPE>
         String username = mapR.get(Values.NAME_KEY);
-
+        System.out.println(username);
         synchronized (server.getUserService()) {
-
+            System.out.println(username);
             if (server.getUserService().getUser(username) == null) {
-
+                System.out.println(username);
                 server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
+
+                if(server.getUserService().getUser(username) != null){
+                    return true;
+                }
                 //server.getUserService().notifyAll();
-                return true;
             } else {
                 //server.getUserService().notifyAll();
                 server.getUserService().eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTER_FAILED + "--" + username );
@@ -181,6 +185,7 @@ public class ClientHandler implements Runnable {
                 List<String> list = server.getUsersOnlineList();
                 Message<List> message = new Message<>(list);
                 SealedSendable sealedSendable = crypto.encrypt(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymKey());
+                write(sealedSendable);
                 break;
         }
     }

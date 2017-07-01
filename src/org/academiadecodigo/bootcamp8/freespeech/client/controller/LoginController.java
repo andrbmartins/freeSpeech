@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
@@ -95,7 +96,6 @@ public class LoginController implements Controller {
     public void initialize(URL location, ResourceBundle resources) {
         clientService = RegistryService.getInstance().get(LoginService.class);
 
-
     }
 
     @FXML
@@ -107,7 +107,7 @@ public class LoginController implements Controller {
     @FXML
     void freeSpeechSelected(ActionEvent event) {
 //TODO para testar - Filipe
-        clientService.makeConnection("192.168.1.29", 4040);
+        clientService.makeConnection("localhost", 4040);
         serverSelection.setText(freeSpeechOption.getText());
 
 
@@ -177,6 +177,7 @@ public class LoginController implements Controller {
 
         if (s1.getContent(String.class).equals(Values.REGISTER_OK)) {
             serverMessageLabel.setText(Values.REGISTER_OK);
+
         } else {
             serverMessageLabel.setText(Values.USER_TAKEN);
         }
