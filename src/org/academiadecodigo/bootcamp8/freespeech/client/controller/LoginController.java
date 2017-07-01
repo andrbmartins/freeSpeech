@@ -58,11 +58,27 @@ public class LoginController implements Controller {
     public void initialize(URL location, ResourceBundle resources) {
         position = new double[2];
         clientService = RegistryService.getInstance().get(LoginService.class);
-        setDraggable();
 
         loginButton.setDisable(true);
         registerButton.setDisable(true);
         serverMessageLabel.setText("Please wait for connection");
+
+        //TODO view for connection + controller
+        Platform.runLater( new Runnable() {
+            @Override
+            public void run() {
+                clientService.makeConnection(Values.HOST, Values.SERVER_PORT);
+                loginButton.setDisable(false);
+                registerButton.setDisable(false);
+                serverMessageLabel.setText("Connection established");
+
+            }
+        });
+        connectionEstablished();
+
+        setDraggable();
+
+
     }
 
     private void connectionEstablished() {
@@ -95,22 +111,10 @@ public class LoginController implements Controller {
 
     @Override
     public void setStage(Stage stage) {
+
         this.stage = stage;
         this.stage.setMaxWidth(Values.LOGIN_WIDTH);
         this.stage.setMaxHeight(Values.LOGIN_HEIGHT);
-
-        //TODO view for connection + controller
-        Platform.runLater( new Runnable() {
-            @Override
-            public void run() {
-                clientService.makeConnection(Values.HOST, Values.SERVER_PORT);
-                loginButton.setDisable(false);
-                registerButton.setDisable(false);
-                serverMessageLabel.setText("Connection established");
-
-            }
-        });
-        connectionEstablished();
     }
 
     @FXML

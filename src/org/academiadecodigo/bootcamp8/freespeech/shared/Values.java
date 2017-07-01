@@ -6,7 +6,7 @@ package org.academiadecodigo.bootcamp8.freespeech.shared;
 
 public class Values {
 
-    public static final String HOST = "127.0.0.1";
+    public static final String HOST = "192.168.1.29";
     public static final int SERVER_PORT = 4040;
 
     public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
