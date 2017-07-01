@@ -15,11 +15,11 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginServi
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.net.URL;
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -31,8 +31,6 @@ import java.util.ResourceBundle;
  */
 
 public class LoginController implements Controller {
-
-
 
 
     @FXML
@@ -106,11 +104,14 @@ public class LoginController implements Controller {
 
     @FXML
     private MenuItem freeSpeechOption;
+
     @FXML
     void freeSpeechSelected(ActionEvent event) {
 //TODO para testar - Filipe
         clientService.makeConnection("192.168.1.29", 4040);
         serverSelection.setText(freeSpeechOption.getText());
+
+
     }
 
 
@@ -132,16 +133,30 @@ public class LoginController implements Controller {
         }
 
         sendMsg(MessageType.LOGIN);
-        Sendable serverMsg = clientService.readObject();
-        if (serverMsg.getContent().equals(Values.LOGIN_OK)) {
+
+        SealedSendable serverRsp = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+        Sendable<String> serverMsg = (Sendable<String>) Session.getInstance().getCryptographer().decryptObjectWithPrivate(serverRsp);
+
+
+        //TODO stopping here
+        System.out.println("RECEIVING " + serverMsg.getContent(String.class) + "ON " + this.getClass().getSimpleName());
+
+        if (serverMsg.getContent(String.class).equals(Values.LOGIN_OK)) {
             Session.getInstance().setUsername(nameField.getText());
+
+
+            SealedSendable s = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+            System.out.println("SEALED S " + s + " \nTYPE " + s.getType());
+            Sendable<Key> key = (Sendable<Key>) Session.getInstance().getCryptographer().decryptObjectWithPrivate(s);
+            System.out.println("KEY AFTER " + key);
+            Session.getInstance().getCryptographer().setSymmetricKey(key.<Key>getContent(Key.class));
+
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
 
         } else {
-            serverMessageLabel.setText((String) serverMsg.getContent());
+            serverMessageLabel.setText((String) serverMsg.getContent(String.class));
         }
     }
-
 
 
     @FXML
@@ -156,7 +171,12 @@ public class LoginController implements Controller {
         }
         sendMsg(MessageType.REGISTER);
 
-        if (clientService.readObject().getContent().equals(Values.REGISTER_OK)) {
+        SealedSendable s = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+        Sendable<String> s1 = (Sendable<String>) Session.getInstance().getCryptographer().decryptObjectWithPrivate(s);
+
+        System.out.println("RECEIVED " + s1.getContent(String.class));
+
+        if (s1.getContent(String.class).equals(Values.REGISTER_OK)) {
             serverMessageLabel.setText(Values.REGISTER_OK);
         } else {
             serverMessageLabel.setText(Values.USER_TAKEN);
@@ -171,51 +191,22 @@ public class LoginController implements Controller {
         messageContent.put(Values.NAME_KEY, nameField.getText());
         messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passwordField.getText()));
 
-        Message<Map> message = new Message<>(messageType, messageContent);
+        Message<Map> message = new Message<>(messageContent);
 
-        clientService.writeObject(message);
+        System.out.println("SENDING " + messageType + " " + message + "ON " + this.getClass().getSimpleName());
+
+        SealedSendable sealed = Session.getInstance().getCryptographer().encryptObject(messageType, message,
+                Session.getInstance().getCryptographer().getForeignPublicKey());
+
+
+        clientService.writeObject(messageType, sealed);
     }
 
     @FXML
     void onExitButton(ActionEvent event) {
-        if(clientService.getConnectionServer())
+        if (clientService.getConnectionServer())
             clientService.closeClientSocket();
         Navigation.getInstance().close();
-    }
-
-    @FXML
-    void OnDisconnetServer(ActionEvent event) {
-        if(clientService.getConnectionServer()) {
-            clientService.closeClientSocket();
-        }
-        if(!clientService.getConnectionServer()) {
-            StatusCircle.setFill(Paint.valueOf("red"));
-            serverMessageLabel.setText("DISCONNECTED FROM SERVER");
-            toggleView(false);
-        }
-    }
-
-    @FXML
-    void onConnectServer(ActionEvent event) {
-
-        if(!clientService.getConnectionServer()) {
-           if (!portTextField.getText().isEmpty() && portTextField.getText().matches("^\\d{0,9}$"));
-                clientService.makeConnection(serverTextField.getText(), Integer.parseInt(portTextField.getText()));
-        }
-        else {
-            serverMessageLabel.setText("ALREADY CONNECTED");
-            return;
-        }
-
-        if(clientService.getConnectionServer()) {
-            StatusCircle.setFill(Paint.valueOf("green"));
-            serverMessageLabel.setText("CONNECTION TO SERVER SUCCESSFUL");
-            toggleView(true);
-        }
-        else{
-            serverMessageLabel.setVisible(true);
-            serverMessageLabel.setText("CLIENT DISCONNECTED");
-        }
     }
 
     private void toggleView(boolean value) {
@@ -230,7 +221,7 @@ public class LoginController implements Controller {
     }
 
 
-    private boolean fieldsAreEmpty(){
+    private boolean fieldsAreEmpty() {
         return nameField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPassword.getText().isEmpty();
 
     }

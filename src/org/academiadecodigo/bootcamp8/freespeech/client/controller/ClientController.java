@@ -153,7 +153,7 @@ public class ClientController implements Controller {
 
         Platform.runLater(new Runnable() {
             public void run() {
-                List<String> list = (LinkedList<String>) message.getContent();
+                List<String> list = (LinkedList<String>) message.getContent(List.class);
                 ObservableList<String> observableList = FXCollections.observableList(list);
                 onlineUsersList.setItems(observableList);
             }
