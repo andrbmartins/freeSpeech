@@ -17,12 +17,13 @@ import java.security.*;
  */
 public class Crypto {
 
-    private Key symmetricKey;
-    private Key foreignPublicKey;
-    private KeyPair nativeKeyPair;
+    private KeyPair keyPair;
+    private Key symKey;
+    private Key foreignKey;
 
     /**
-     * Constructor
+     * Construct the object
+     * Initialize the keyPair property
      */
     public Crypto() {
         generateKeyPair();
@@ -30,6 +31,7 @@ public class Crypto {
 
     /**
      * Generate the key pair using an RSA algorithm
+     * Initializes the keyPair property
      */
     private void generateKeyPair() {
 
@@ -37,7 +39,7 @@ public class Crypto {
 
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(4096);
-            nativeKeyPair = keyGen.generateKeyPair();
+            keyPair = keyGen.generateKeyPair();
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Invalid encryption algorithm or invalid provider :: " + e.getMessage());
@@ -46,14 +48,13 @@ public class Crypto {
     }
 
     /**
-     * Generate the symmetricKey using an generated key
+     * Generate an symmetric key given an algorithm
      */
-    public void generateSymmetricKey() {
+    public void generateSymKey() {
 
         try {
 
-            symmetricKey = KeyGenerator.getInstance("Blowfish").generateKey();
-
+            symKey = KeyGenerator.getInstance("Blowfish").generateKey();
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Invalid encryption algorithm :: " + e.getMessage());
@@ -62,13 +63,13 @@ public class Crypto {
     }
 
     /**
-     * This method is responsible for encrypt the object
+     * Encrypt an object and return a sealed object
      *
      * @param object to encrypt
      * @param key    key to encrypt
-     * @return an encrypt (sealed) object
+     * @return SealedSendable
      */
-    public SealedSendable encryptObject(MessageType type, Serializable object, Key key) {
+    public SealedSendable encrypt(MessageType type, Serializable object, Key key) {
 
         SealedSendable sealed = null;
 
@@ -88,19 +89,19 @@ public class Crypto {
     }
 
     /**
-     * This method is responsible for decrypt the object
+     * Decrypt an sealed object and return an object
      *
-     * @param sealedObject the object to decrypt
-     * @param key          the symmetricKey to decrypt
-     * @return an object
+     * @param sealed the object to decrypt
+     * @param key    the symKey to decrypt
+     * @return Object
      */
-    public Sendable decryptObject(SealedSendable sealedObject, Key key) {
+    public Object decrypt(SealedSendable sealed, Key key) {
 
-        Sendable object = null;
+        Object object = null;
 
         try {
 
-            object = sealedObject.getContent(key);
+            object = sealed.getContent(key);
 
         } catch (IOException e) {
             System.err.println("Failure on de-encapsulate object :: " + e.getMessage());
@@ -115,25 +116,45 @@ public class Crypto {
     }
 
     /**
-     * This method is responsible for decrypt the object using the private key
+     * Decrypt an sealed object and return an object
+     * Utilizes the private key
      *
-     * @param sealedObject the object to decrypt
-     * @return an object
+     * @param sealedSendable the object to decrypt
+     * @return Object
      */
-    public Object decryptObject(SealedSendable sealedObject) {
-
-        return decryptObject(sealedObject, symmetricKey);
-
+    public Object decryptWithPrivate(SealedSendable sealedSendable) {
+        return decrypt(sealedSendable, keyPair.getPrivate());
     }
 
-    public Object decryptObjectWithPrivate(SealedSendable sealedSendable) {
+    /**
+     * Decrypt an sealed object and return an Sendable
+     * Utilizes the private key
+     *
+     * @param sealed the object to decrypt
+     * @param key decryption key
+     * @return Sendable
+     */
+    public Sendable decryptSendable(SealedSendable sealed, Key key) {
 
-        return decryptObject(sealedSendable, nativeKeyPair.getPrivate());
+        Object object = decrypt(sealed, key);
+
+        return (Sendable) object;
 
     }
 
     /**
-     * createCipher method is responsible for creating Cipher object for encryption
+     * Decrypt an sealed object and return an Sendable
+     * Utilizes the symmetric key
+     *
+     * @param sealed the object to decrypt
+     * @return Sendable
+     */
+    public Sendable decryptSendable(SealedSendable sealed) {
+        return decryptSendable(sealed, symKey);
+    }
+
+    /**
+     * Creates the Cipher object for encryption
      *
      * @param key to cipher
      * @return the initialized cipher
@@ -155,24 +176,28 @@ public class Crypto {
 
     }
 
-    public void setSymmetricKey(Key symmetricKey) {
-        this.symmetricKey = symmetricKey;
+    public void setSymKey(Key symKey) {
+        this.symKey = symKey;
     }
 
-    public void setForeignPublicKey(Key foreignPublicKey) {
-        this.foreignPublicKey = foreignPublicKey;
+    public void setForeignKey(Key foreignKey) {
+
+        if (this.foreignKey == null) {
+            this.foreignKey = foreignKey;
+        }
+
     }
 
-    public Key getSymmetricKey() {
-        return symmetricKey;
+    public Key getSymKey() {
+        return symKey;
     }
 
-    public Key getForeignPublicKey() {
-        return foreignPublicKey;
+    public Key getForeignKey() {
+        return foreignKey;
     }
 
-    public Key getNativePublicKey() {
-        return nativeKeyPair.getPublic();
+    public Key getPublicKey() {
+        return keyPair.getPublic();
     }
 
 }

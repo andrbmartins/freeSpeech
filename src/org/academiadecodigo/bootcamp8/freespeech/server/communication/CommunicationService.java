@@ -1,7 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.communication;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 import java.io.*;
 import java.net.Socket;
@@ -34,7 +33,7 @@ public class CommunicationService implements Communication {
 
     @Override
     public void sendMessage(SealedSendable message) {
-        Stream.writeObject(objectOutputStream, message);
+        Stream.write(objectOutputStream, message);
 
     }
 
@@ -48,6 +47,6 @@ public class CommunicationService implements Communication {
 
     @Override
     public SealedSendable retrieveMessage() {
-        return (SealedSendable) Stream.readObject(objectInputStream);
+        return (SealedSendable) Stream.read(objectInputStream);
     }
 }

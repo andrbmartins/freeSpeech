@@ -6,7 +6,6 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 
 import java.io.IOException;
@@ -53,8 +52,8 @@ public class Server {
 
     public void init() throws IOException {
         Crypto crypto = new Crypto();
-        crypto.generateSymmetricKey();
-        symKey = crypto.getSymmetricKey();
+        crypto.generateSymKey();
+        symKey = crypto.getSymKey();
 
         System.out.println("SERVER SYM KEY " + symKey);
 
