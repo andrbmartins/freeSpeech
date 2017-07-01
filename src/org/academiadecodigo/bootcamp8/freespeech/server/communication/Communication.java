@@ -3,6 +3,8 @@ package org.academiadecodigo.bootcamp8.freespeech.server.communication;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -19,5 +21,8 @@ public interface Communication {
 
     // TODO use correct interface Sendable<TYPE>
     SealedSendable retrieveMessage();
+
+    ObjectOutputStream getObjectOutputStream();
+    ObjectInputStream getObjectInputStream();
 
 }

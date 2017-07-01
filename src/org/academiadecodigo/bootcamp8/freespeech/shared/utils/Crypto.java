@@ -36,7 +36,7 @@ public class Crypto {
         try {
 
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(3072);
+            keyGen.initialize(4096);
             nativeKeyPair = keyGen.generateKeyPair();
 
         } catch (NoSuchAlgorithmException e) {
@@ -53,6 +53,7 @@ public class Crypto {
         try {
 
             symmetricKey = KeyGenerator.getInstance("Blowfish").generateKey();
+
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Invalid encryption algorithm :: " + e.getMessage());
@@ -121,7 +122,13 @@ public class Crypto {
      */
     public Object decryptObject(SealedSendable sealedObject) {
 
-        return decryptObject(sealedObject, nativeKeyPair.getPrivate());
+        return decryptObject(sealedObject, symmetricKey);
+
+    }
+
+    public Object decryptObjectWithPrivate(SealedSendable sealedSendable) {
+
+        return decryptObject(sealedSendable, nativeKeyPair.getPrivate());
 
     }
 

@@ -3,6 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeech.client.service;
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
 import java.util.Map;
@@ -20,5 +21,5 @@ public interface Service {
 
     String getName();
 
-    void writeObject(MessageType messageType, Sendable message);
+    void writeObject(MessageType messageType, SealedSendable message);
 }

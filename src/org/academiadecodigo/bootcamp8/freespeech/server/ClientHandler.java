@@ -6,8 +6,8 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import javax.crypto.IllegalBlockSizeException;
 import java.io.*;
 import java.net.Socket;
 import java.security.InvalidKeyException;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ClientHandler implements Runnable {
     private Crypto crypto;
-    private String cypherName;
+    private String clientName;
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
@@ -42,6 +42,11 @@ public class ClientHandler implements Runnable {
     public void run() {
 
         communication.openStreams(clientSocket);
+
+        Stream.writeObject(communication.getObjectOutputStream(), crypto.getNativePublicKey());
+        Key key = (Key) Stream.readObject(communication.getObjectInputStream());
+        crypto.setForeignPublicKey(key);
+
         authenticateClient();
         notifyNewUser();
         server.addActiveUser(this);
@@ -51,30 +56,37 @@ public class ClientHandler implements Runnable {
 
     private void authenticateClient() {
 
-        SealedSendable sendable;
-        Sendable sendable1;
+        SealedSendable sealedSendable;
+        Sendable<HashMap> sendable;
         boolean exit = false;
         String message = "";
 
         while (!exit) {
-            sendable = communication.retrieveMessage();
-            sendable1 = crypto.decryptObject(sendable, crypto.getSymmetricKey());
 
-            if (sendable.getType() == MessageType.LOGIN) {
+            sealedSendable = communication.retrieveMessage();
 
-                if (exit = makeLogIn(sendable1)) {
+            sendable = (Sendable<HashMap>) crypto.decryptObjectWithPrivate(sealedSendable);
+            HashMap<String, String> map = sendable.getContent(HashMap.class);
+
+            System.out.println("TYPE " + sealedSendable.getType());
+
+
+            //TODO switch
+            if (sealedSendable.getType() == MessageType.LOGIN) {
+                System.out.println("ENYTERED GET TYPE IF " + sealedSendable.getType());
+                if (exit = makeLogIn(map)) {
                     message = Values.LOGIN_OK;
-                    cypherName = ((HashMap<String,String>)sendable1.getContent(HashMap.class)).get(Values.NAME_KEY);
-                    exit = true;
+                    clientName = map.get(Values.NAME_KEY);
+                    //exit = true;
                 } else {
                     message = Values.LOGIN_FAIL;
                 }
 
             }
 
-            if (sendable.getType() == MessageType.REGISTER) {
+            if (sealedSendable.getType() == MessageType.REGISTER) {
 
-                if (makeRegistry(sendable1)) { //TODO: registry is enough to log in??
+                if (makeRegistry(map)) {
                     message = Values.REGISTER_OK;
                 } else {
                     message = Values.USER_TAKEN;
@@ -83,27 +95,35 @@ public class ClientHandler implements Runnable {
 
             // TODO use correct interface Sendable<TYPE>
 
-            sendable1 = sendable1.updateContent(message);
-            sendable = crypto.encryptObject(sendable.getType(), sendable1, crypto.getSymmetricKey());
-            communication.sendMessage(sendable);
+            Sendable<String> newSendable = new Message<>(message);
+            sealedSendable = crypto.encryptObject(sealedSendable.getType(), newSendable, crypto.getForeignPublicKey());
+            communication.sendMessage(sealedSendable);
+
+
+            if (newSendable.getContent(String.class).equals(Values.LOGIN_OK)) {
+
+                Sendable<Key> sendableKey = new Message<>(crypto.getSymmetricKey());
+                SealedSendable keySeal = crypto.encryptObject(MessageType.KEY, sendableKey, crypto.getForeignPublicKey());
+
+                communication.sendMessage(keySeal);
+            }
         }
+
 
     }
 
-    private boolean makeLogIn(Sendable sendable) {
+    private boolean makeLogIn(HashMap<String, String> login) {
 
         // TODO use correct interface Sendable<TYPE>
-        HashMap<String, String> map = (HashMap<String, String>)sendable.getContent(HashMap.class);
-        String username = map.get(Values.NAME_KEY);
-        String password = map.get(Values.PASSWORD_KEY);
+        String username = login.get(Values.NAME_KEY);
+        String password = login.get(Values.PASSWORD_KEY);
         return server.getUserService().authenticate(username, password);
 
     }
 
-    private boolean makeRegistry(Sendable sendable) {
+    private boolean makeRegistry(HashMap<String, String> mapR) {
 
         // TODO use correct interface Sendable<TYPE>
-        HashMap<String, String> mapR = (HashMap<String, String>)sendable.getContent(HashMap.class);
         String username = mapR.get(Values.NAME_KEY);
 
         synchronized (server.getUserService()) {
@@ -111,10 +131,10 @@ public class ClientHandler implements Runnable {
             if (server.getUserService().getUser(username) == null) {
 
                 server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
-                server.getUserService().notifyAll();
+                //server.getUserService().notifyAll();
                 return true;
             } else {
-                server.getUserService().notifyAll();
+                //server.getUserService().notifyAll();
             }
         }
         return false;
@@ -182,6 +202,6 @@ public class ClientHandler implements Runnable {
     }
 
     public String getName() {
-        return cypherName;
+        return clientName;
     }
 }

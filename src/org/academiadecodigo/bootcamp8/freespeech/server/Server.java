@@ -53,6 +53,9 @@ public class Server {
         Crypto crypto = new Crypto();
         crypto.generateSymmetricKey();
         symKey = crypto.getSymmetricKey();
+
+        System.out.println("SERVER SYM KEY " + symKey);
+
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
         userService = TempUserService.getInstance();

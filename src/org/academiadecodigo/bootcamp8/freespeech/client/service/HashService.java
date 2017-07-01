@@ -16,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 public class HashService {
 
     private static final String ALGORITHM = "SHA-512";
-    private static final int HASH_SIZE = 64;
+    private static final int HASH_SIZE = 32;
     private static MessageDigest messageDigest = null;
 
     public static String getHash(String string) {

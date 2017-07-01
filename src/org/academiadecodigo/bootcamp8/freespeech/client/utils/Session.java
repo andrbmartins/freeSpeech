@@ -50,16 +50,11 @@ public class Session {
     public void setUserSocket(Socket userSocket) {
         if (this.userSocket == null) {
             try {
-                System.out.println("SETTING SOCKET");
                 this.userSocket = userSocket;
-                System.out.println("SETTING OUTPUT");
                 outputStream = new ObjectOutputStream(userSocket.getOutputStream());
-                //outputStream.flush();
-                System.out.println("SETTING INPUT");
+                System.out.println("OUTPUT " + outputStream);
                 inputStream = new ObjectInputStream(userSocket.getInputStream());
-
-                System.out.println("DONE");
-
+                System.out.println("INPUT" + inputStream);
             } catch (IOException e) {
                 e.printStackTrace();
             }

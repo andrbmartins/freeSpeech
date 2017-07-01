@@ -94,7 +94,7 @@ public class FreeSpeechClientService implements ClientService {
         Session.getInstance().close();
     }
 
-    @Override
+    //@Override
     public void writeObject(MessageType type, Sendable message) {
 
         SealedSendable sealedMessage = getCrypto().encryptObject(type, message, getCrypto().getSymmetricKey());
@@ -105,6 +105,11 @@ public class FreeSpeechClientService implements ClientService {
     @Override
     public String getName() {
         return ClientService.class.getSimpleName();
+    }
+
+    @Override
+    public void writeObject(MessageType messageType, SealedSendable message) {
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
     }
 
     private Crypto getCrypto() {

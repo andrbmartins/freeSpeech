@@ -29,11 +29,6 @@ public class Message<T> implements Sendable<T> {
     }
 
     @Override
-    public Sendable<T> updateContent(T content) {
-        return new Message<>(content);
-    }
-
-    @Override
     public String toString() {
         return "Message{" +
                 "content=" + content +

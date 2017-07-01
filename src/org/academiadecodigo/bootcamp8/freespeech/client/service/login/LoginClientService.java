@@ -13,6 +13,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.security.Key;
 import java.util.Map;
 
 
@@ -27,10 +28,10 @@ public class LoginClientService implements LoginService {
     private Socket clientSocket;
     private boolean connectionServer;
 
-
-//TODO password in passwordField
-
     public void makeConnection(String server, int port) {
+
+        Crypto crypto = Session.getInstance().getCryptographer();
+
         try {
 
             InetAddress address = InetAddress.getByName(server);
@@ -39,6 +40,12 @@ public class LoginClientService implements LoginService {
             if (!connectionServer) {
                 clientSocket = new Socket(server, port);
                 Session.getInstance().setUserSocket(clientSocket);
+
+                Key foreignKey = (Key) Stream.readObject(Session.getInstance().getInputStream());
+                crypto.setForeignPublicKey(foreignKey);
+                Stream.writeObject(Session.getInstance().getOutputStream(), Session.getInstance().getCryptographer().getNativePublicKey());
+
+
             } else {
                 System.out.println("Client already connected");
             }
@@ -76,10 +83,9 @@ public class LoginClientService implements LoginService {
     }
 
     @Override
-    public void writeObject(MessageType messageType, Sendable message) {
-        SealedSendable sealedMessage = getCrypto().encryptObject(messageType, message, getCrypto().getSymmetricKey());
+    public void writeObject(MessageType messageType, SealedSendable message) {
 
-        Stream.writeObject(Session.getInstance().getOutputStream(), sealedMessage);
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
     }
 
     private Crypto getCrypto() {
@@ -87,10 +93,15 @@ public class LoginClientService implements LoginService {
     }
 
     @Override
-    public Message readObject() {
-        Object serverMessage = Stream.readObject(Session.getInstance().getInputStream());
+    public Sendable readObject() {
 
-        return (Message) serverMessage;
+        SealedSendable sealedSendable = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+        return getCrypto().decryptObject(sealedSendable, getCrypto().getSymmetricKey());
+
+        //Object serverMessage = Stream.readObject(Session.getInstance().getInputStream());
+
+        //return (Message) serverMessage;
+
     }
 
 }

@@ -11,7 +11,8 @@ public class Stream {
 
     /**
      * Write an object to stream, given an object stream
-     * @param out destination object stream
+     *
+     * @param out     destination object stream
      * @param message object to send
      */
     public static void writeObject(ObjectOutputStream out, Object message) {
@@ -28,7 +29,8 @@ public class Stream {
 
     /**
      * Write an object to stream
-     * @param out destination stream
+     *
+     * @param out     destination stream
      * @param message object to send
      */
     public static void writeObject(OutputStream out, Object message) {
@@ -46,6 +48,7 @@ public class Stream {
 
     /**
      * Read an object from the stream, given an object stream
+     *
      * @param in source object stream
      * @return the received object
      */
@@ -55,12 +58,18 @@ public class Stream {
 
         try {
 
+            System.out.println("ENTERED");
+
             object = in.readObject();
+
+            System.out.println("OBJ " + object);
 
         } catch (IOException e) {
             System.err.println("Error on trying to open object stream :: " + e.getMessage());
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             System.err.println("Class not found :: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return object;
@@ -69,6 +78,7 @@ public class Stream {
 
     /**
      * Read an object from the stream
+     *
      * @param in source stream
      * @return the received object
      */
@@ -91,6 +101,7 @@ public class Stream {
 
     /**
      * Close the stream
+     *
      * @param stream to close
      */
     public static void close(Closeable stream) {

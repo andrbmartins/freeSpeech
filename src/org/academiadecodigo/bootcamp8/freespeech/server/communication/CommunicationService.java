@@ -38,6 +38,13 @@ public class CommunicationService implements Communication {
 
     }
 
+    public ObjectInputStream getObjectInputStream() {
+        return objectInputStream;
+    }
+
+    public ObjectOutputStream getObjectOutputStream() {
+        return objectOutputStream;
+    }
 
     @Override
     public SealedSendable retrieveMessage() {
