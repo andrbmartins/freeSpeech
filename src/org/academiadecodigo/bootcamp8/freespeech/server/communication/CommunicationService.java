@@ -11,30 +11,25 @@ import java.net.Socket;
  * <Code Cadet> PedroMAlves
  */
 public class CommunicationService implements Communication {
-    //private OutputStream objectOutputStream;
-    //private InputStream objectInputStream;
+
+    //TODO do we need this? Do we really need this? Really?
+
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-
 
     @Override
     public void openStreams(Socket socket) {
         try {
-            //objectOutputStream = socket.getOutputStream();
-            //objectInputStream = socket.getInputStream();
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
 
     @Override
     public void sendMessage(SealedSendable message) {
         Stream.write(objectOutputStream, message);
-
     }
 
     public ObjectInputStream getObjectInputStream() {

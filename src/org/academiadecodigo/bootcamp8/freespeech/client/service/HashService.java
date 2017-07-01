@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service;
 
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,20 +13,24 @@ import java.security.NoSuchAlgorithmException;
  */
 
 
-//TODO documentation - implement on password
+//TODO documentation
 
 public class HashService {
 
     private static final String ALGORITHM = "SHA-512";
     private static final int HASH_SIZE = 32;
-    private static MessageDigest messageDigest = null;
 
+    /**
+     * Returns a String resulting from the hash computation of the specified element.
+     * @param string - the specified element.
+     * @return the hashed string.
+     */
     public static String getHash(String string) {
 
         String hashText = "";
 
         try {
-            messageDigest = MessageDigest.getInstance(ALGORITHM);
+            MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
             messageDigest.reset();
             messageDigest.update(string.getBytes());
             byte[] data = messageDigest.digest();

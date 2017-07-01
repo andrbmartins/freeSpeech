@@ -25,16 +25,35 @@ public class SealedMessage extends SealedObject implements SealedSendable {
         this.type = type;
     }
 
+    /**
+     * @see SealedSendable#getType()
+     */
     @Override
     public MessageType getType() {
         return type;
     }
 
+    /**
+     * @see SealedSendable#getContent(Key)
+     */
     @Override
-    public Sendable getContent(Key key) throws ClassNotFoundException, NoSuchAlgorithmException,
-            InvalidKeyException, IOException {
+    public Sendable getContent(Key key) {
 
-        return (Sendable) getObject(key);
+        Sendable sendable = null;
 
+        try {
+            sendable = (Sendable) getObject(key);
+        } catch (IOException e) {
+            //TODO log
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+
+        return sendable;
     }
 }
