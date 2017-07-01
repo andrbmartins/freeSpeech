@@ -13,9 +13,6 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-
-//TODO documentation
-
 public class Session {
 
     private String username;
@@ -26,6 +23,9 @@ public class Session {
 
     private static Session instance = null;
 
+    /**
+     * Instantiates a Session and a Crypto.
+     */
     private Session() {
         cryptographer = new Crypto();
     }

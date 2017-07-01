@@ -7,16 +7,11 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 /**
  * Developed @ <Academia de Código_>
  * Created by
- * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> JPM Ramos
+ * <Code Cadet> PedroMAlves
  */
 
 public interface LoginService extends Service {
 
-    public boolean getConnectionServer();
-
-    public void makeConnection(String server, int port);
-
-    void closeClientSocket();
-
-    Sendable readObject();
+    void makeConnection(String server, int port);
 }

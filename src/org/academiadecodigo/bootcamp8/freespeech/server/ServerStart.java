@@ -11,24 +11,24 @@ public class ServerStart {
 
     public static void main(String[] args) {
 
-        if (args.length < 1) {
-            System.out.println("Usage: ChatServer <port>");
-            System.exit(1);
+        Server server;
+
+        if (args.length < 1 || args.length < 1025) {
+            System.out.println("Client app is configured to connect to port 4040.");
+            server = new Server();
         }
-
-        Server server = new Server(Integer.parseInt(args[0]));
-
+        else {
+            server = new Server(Integer.parseInt(args[0]));
+        }
         try {
             server.init();
             server.start();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //TODO log?
 
         } finally {
             server.closeServerSocket();
-
         }
-
     }
 }

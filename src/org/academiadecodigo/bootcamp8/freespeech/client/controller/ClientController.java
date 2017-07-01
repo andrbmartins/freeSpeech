@@ -37,16 +37,11 @@ import java.util.List;
 //TODO documentation
 public class ClientController implements Controller {
 
-    @FXML
-    private TabPane tabPane;
-    @FXML
-    private GridPane topBar;
-    @FXML
-    private TextArea lobbyTextArea;
-    @FXML
-    private TextArea inputTextArea;
-    @FXML
-    private ListView onlineUsersList;
+    @FXML private TabPane tabPane;
+    @FXML private GridPane topBar;
+    @FXML private TextArea lobbyTextArea;
+    @FXML private TextArea inputTextArea;
+    @FXML private ListView onlineUsersList;
 
     private Stage stage;
     private ClientService clientService;

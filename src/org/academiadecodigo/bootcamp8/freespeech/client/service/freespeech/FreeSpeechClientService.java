@@ -50,6 +50,8 @@ public class FreeSpeechClientService implements ClientService {
         writeObject(MessageType.DATA, message);
     }
 
+
+    //TODO file manager?
     /**
      * Converts a byte array into a byte list.
      *
@@ -88,29 +90,15 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     //TODO - logout
-    public void closeClientSocket() {
-        Session.close();
-    }
 
-    //@Override
-    public void writeObject(MessageType type, Sendable message) {
+    private void writeObject(MessageType type, Sendable message) {
 
         SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message, Session.getCrypto().getSymKey());
-
         Stream.write(Session.getOutput(), sealedMessage);
     }
 
     @Override
     public String getName() {
         return ClientService.class.getSimpleName();
-    }
-
-    @Override
-    public void writeObject(MessageType messageType, SealedSendable message) {
-        Stream.write(Session.getOutput(), message);
-    }
-
-    private Crypto getCrypto() {
-        return Session.getCrypto();
     }
 }

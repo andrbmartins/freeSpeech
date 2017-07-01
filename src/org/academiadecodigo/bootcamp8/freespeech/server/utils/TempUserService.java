@@ -13,6 +13,8 @@ import java.util.List;
 
 public class TempUserService implements UserService {
 
+    //TODO is this needed?
+
     private static TempUserService instance = new TempUserService();
     private List<User> registeredUsers;
 
@@ -32,7 +34,6 @@ public class TempUserService implements UserService {
         if (getUser(user.getUsername()) == null) {
            registeredUsers.add(user);
         }
-
     }
 
     @Override
@@ -41,7 +42,6 @@ public class TempUserService implements UserService {
             return;
         }
         registeredUsers.remove(getUser(username));
-
     }
 
     @Override
@@ -67,7 +67,6 @@ public class TempUserService implements UserService {
 
 
     public static TempUserService getInstance(){
-
         return instance;
     }
 

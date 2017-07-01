@@ -27,22 +27,15 @@ public class ServerResponseHandler implements Runnable {
         this.clientController = clientController;
     }
 
-
     @Override
     public void run() {
 
-        Crypto crypto = Session.getCrypto();
-
         while (true) {
-
             SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
-            Sendable message = crypto.decryptSendable(sealedMessage, crypto.getSymKey());
-            System.out.println("MESSAGE RECEIVED: " + message);
+            Sendable message = Session.getCrypto().decryptSendable(sealedMessage, Session.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
-
         }
     }
-
 
     private void process(MessageType type, Sendable message) {
 
@@ -70,9 +63,11 @@ public class ServerResponseHandler implements Runnable {
 
     private void printToRoom(Sendable message) {
 
-        String text = (String) message.getContent(String.class);
-        text = wipeWhiteSpaces(text);
-        clientController.getCurrentRoom().appendText((clientController.getCurrentRoom().getText().isEmpty() ? "" : "\n") + text);
+        String roomText = clientController.getCurrentRoom().getText();
+        String messageText = (String) message.getContent(String.class);
+
+        messageText = wipeWhiteSpaces(messageText);
+        clientController.getCurrentRoom().appendText((roomText.isEmpty() ? "" : "\n") + messageText);
     }
 
     /**
@@ -88,14 +83,16 @@ public class ServerResponseHandler implements Runnable {
         //Every word character, digit, whitespace, punctuation and symbol
         //A single character, punctuation or symbol
 
+        //TODO allow specials characs
+
         Pattern pattern = Pattern.compile("(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])");
         Matcher matcher = pattern.matcher(text);
 
         String result = "";
         while (matcher.find()) {
-            result = result.concat(matcher.group(1) + " "); //username and colon
-            result = result.concat(matcher.group(3));       //string content
-            result = result.concat(matcher.group(4));       //last valid character
+            result = result.concat(matcher.group(1) + " ");
+            result = result.concat(matcher.group(3));
+            result = result.concat(matcher.group(4));
         }
         return result;
     }

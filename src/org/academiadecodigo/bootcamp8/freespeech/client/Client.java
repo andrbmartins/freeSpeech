@@ -32,6 +32,7 @@ public class Client extends Application {
         Navigation.getInstance().setStage(primaryStage);
         defineStyle(primaryStage);
         Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
+
     }
 
     private void defineStyle(Stage stage) {

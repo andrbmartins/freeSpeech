@@ -13,6 +13,7 @@ public interface UserService {
 
     void addUser(User user);
 
+    //TODO check if this is needed
     void removeUser(String username);
 
     User getUser(String username);

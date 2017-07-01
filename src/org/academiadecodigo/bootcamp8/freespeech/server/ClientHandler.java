@@ -21,85 +21,83 @@ import java.util.List;
  */
 
 public class ClientHandler implements Runnable {
+
     private Crypto crypto;
     private String clientName;
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
 
-
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
         crypto.setSymKey(key);
+
         this.clientSocket = clientSocket;
         this.server = server;
+        //TODO do we really need 2 more layers of encapsulation?
         communication = new CommunicationService();
     }
-
 
     @Override
     public void run() {
 
         communication.openStreams(clientSocket);
-
-        Stream.write(communication.getObjectOutputStream(), crypto.getPublicKey());
-        Key key = (Key) Stream.read(communication.getObjectInputStream());
-        crypto.setForeignKey(key);
+        exchangeKeys();
 
         authenticateClient();
         notifyNewUser();
         server.addActiveUser(this);
-        readFromClient();
 
+        readFromClient();
     }
 
+    private void exchangeKeys() {
+
+        Stream.write(communication.getObjectOutputStream(), crypto.getPublicKey());
+        Key key = (Key) Stream.read(communication.getObjectInputStream());
+        crypto.setForeignKey(key);
+    }
 
     private void authenticateClient() {
 
         SealedSendable sealedSendable;
         Sendable<HashMap> sendable;
+
         boolean exit = false;
         String message = "";
 
         while (!exit) {
-
             sealedSendable = communication.retrieveMessage();
 
+            //TODO check casts
             sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
             HashMap<String, String> map = sendable.getContent(HashMap.class);
 
-            System.out.println("TYPE " + sealedSendable.getType());
-
-            //TODO switch
+            //TODO switch and indentation
             if (sealedSendable.getType() == MessageType.LOGIN) {
-                System.out.println("ENYTERED GET TYPE IF " + sealedSendable.getType());
                 if (exit = makeLogIn(map)) {
                     message = Values.LOGIN_OK;
                     clientName = map.get(Values.NAME_KEY);
-                    ////server.getUserService().eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTED);
-                    //exit = true;
                 } else {
                     message = Values.LOGIN_FAIL;
-                }
+                    //authenticateClient();
 
+                }
             }
 
             if (sealedSendable.getType() == MessageType.REGISTER) {
 
                 if (makeRegistry(map)) {
                     message = Values.REGISTER_OK;
-                    //server.getUserService().eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTED);
                 } else {
-                    message = Values.USER_TAKEN;
+                    message = Values.REGISTER_FAIL;
                 }
             }
 
-            // TODO use correct interface Sendable<TYPE>
-
             Sendable<String> newSendable = new Message<>(message);
             sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
-            communication.sendMessage(sealedSendable);
 
+            communication.sendMessage(sealedSendable);
 
             if (newSendable.getContent(String.class).equals(Values.LOGIN_OK)) {
 
@@ -109,37 +107,26 @@ public class ClientHandler implements Runnable {
                 communication.sendMessage(keySeal);
             }
         }
-
     }
 
     private boolean makeLogIn(HashMap<String, String> login) {
 
-        // TODO use correct interface Sendable<TYPE>
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
-        return server.getUserService().authenticate(username, password);
 
+        return server.getUserService().authenticate(username, password);
     }
 
     private boolean makeRegistry(HashMap<String, String> mapR) {
 
-        // TODO use correct interface Sendable<TYPE>
         String username = mapR.get(Values.NAME_KEY);
-        System.out.println(username);
-        synchronized (server.getUserService()) {
-            System.out.println(username);
-            if (server.getUserService().getUser(username) == null) {
-                System.out.println(username);
-                server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
 
-                if(server.getUserService().getUser(username) != null){
-                    return true;
-                }
-                //server.getUserService().notifyAll();
-            } else {
-                //server.getUserService().notifyAll();
-                server.getUserService().eventlogger(Values.TypeEvent.REGISTER, Values.CLIENT_REGISTER_FAILED + "--" + username );
-                //server.getUserService().notifyAll();
+        synchronized (server.getUserService()) {
+
+            if (server.getUserService().getUser(username) == null) {
+
+                server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
+                return true;
             }
         }
         return false;
@@ -149,6 +136,7 @@ public class ClientHandler implements Runnable {
 
         Message<String> message = new Message<>(Values.NEW_USER);
         SealedSendable sealedMessage = crypto.encrypt(MessageType.NOTIFICATION, message, crypto.getSymKey());
+
         server.writeToAll(sealedMessage);
     }
 
@@ -156,9 +144,9 @@ public class ClientHandler implements Runnable {
         SealedSendable msg;
 
         while ((msg = communication.retrieveMessage()) != null) {
-
             handleMessage(msg);
         }
+
         server.logOutUser(this);
         closeSocket();
     }
@@ -174,36 +162,40 @@ public class ClientHandler implements Runnable {
                 server.writeToAll(msg);
                 break;
             case LOGIN:
+                //TODO log
                 throw new IllegalArgumentException("You've already Logged In");
             case REGISTER:
+                //TODO log
                 throw new IllegalArgumentException("You've already Register");
             case PRIVATE_DATA:
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
             case REQUEST_USERS_ONLINE:
-                List<String> list = server.getUsersOnlineList();
-                Message<List> message = new Message<>(list);
-                SealedSendable sealedSendable = crypto.encrypt(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymKey());
-                write(sealedSendable);
+                sendUsersList();
                 break;
         }
     }
 
+    private void sendUsersList() {
+
+        List<String> list = server.getUsersOnlineList();
+        Message<List> message = new Message<>(list);
+        SealedSendable sealedSendable = crypto.encrypt(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymKey());
+        write(sealedSendable);
+    }
+
     public void write(SealedSendable sendable) {
-        //TODO to remove after tests completed
-        System.out.println(sendable);
         communication.sendMessage(sendable);
     }
 
-
     private void closeSocket() {
+
         try {
-// Utilizador desligou-se do server
-            server.getUserService().eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_DISCONNECTED + "--" + clientSocket.toString());
             clientSocket.close();
 
         } catch (IOException e) {
+            //TODO log
             System.out.println(Thread.currentThread().getName() + ": could not close socket");
             e.printStackTrace();
 
