@@ -133,7 +133,7 @@ public class LoginController implements Controller {
 
         sendMsg(MessageType.LOGIN);
 
-        SealedSendable serverRsp = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+        SealedSendable serverRsp = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
         Sendable<String> serverMsg = (Sendable<String>) Session.getInstance().getCryptographer().decryptWithPrivate(serverRsp);
 
 
@@ -144,7 +144,7 @@ public class LoginController implements Controller {
             Session.getInstance().setUsername(nameField.getText());
 
 
-            SealedSendable s = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+            SealedSendable s = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
             System.out.println("SEALED S " + s + " \nTYPE " + s.getType());
             Sendable<Key> key = (Sendable<Key>) Session.getInstance().getCryptographer().decryptWithPrivate(s);
             System.out.println("KEY AFTER " + key);
@@ -170,7 +170,7 @@ public class LoginController implements Controller {
         }
         sendMsg(MessageType.REGISTER);
 
-        SealedSendable s = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+        SealedSendable s = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
         Sendable<String> s1 = (Sendable<String>) Session.getInstance().getCryptographer().decryptWithPrivate(s);
 
         System.out.println("RECEIVED " + s1.getContent(String.class));

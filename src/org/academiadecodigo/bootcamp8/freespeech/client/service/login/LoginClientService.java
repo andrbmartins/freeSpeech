@@ -37,9 +37,9 @@ public class LoginClientService implements LoginService {
                 clientSocket = new Socket(server, port);
                 Session.getInstance().setUserSocket(clientSocket);
 
-                Key foreignKey = (Key) Stream.readObject(Session.getInstance().getInputStream());
+                Key foreignKey = (Key) Stream.read(Session.getInstance().getInputStream());
                 crypto.setForeignKey(foreignKey);
-                Stream.writeObject(Session.getInstance().getOutputStream(), Session.getInstance().getCryptographer().getPublicKey());
+                Stream.write(Session.getInstance().getOutputStream(), Session.getInstance().getCryptographer().getPublicKey());
 
 
             } else {
@@ -70,7 +70,7 @@ public class LoginClientService implements LoginService {
 
 
     public void writeObject(Sendable message) {
-        Stream.writeObject(Session.getInstance().getOutputStream(), message);
+        Stream.write(Session.getInstance().getOutputStream(), message);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class LoginClientService implements LoginService {
     @Override
     public void writeObject(MessageType messageType, SealedSendable message) {
 
-        Stream.writeObject(Session.getInstance().getOutputStream(), message);
+        Stream.write(Session.getInstance().getOutputStream(), message);
     }
 
     private Crypto getCrypto() {
@@ -91,10 +91,10 @@ public class LoginClientService implements LoginService {
     @Override
     public Sendable readObject() {
 
-        SealedSendable sealedSendable = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+        SealedSendable sealedSendable = (SealedSendable) Stream.read(Session.getInstance().getInputStream());
         return getCrypto().decrypt(sealedSendable, getCrypto().getSymKey());
 
-        //Object serverMessage = Stream.readObject(Session.getInstance().getInputStream());
+        //Object serverMessage = Stream.read(Session.getInstance().getInputStream());
 
         //return (Message) serverMessage;
 

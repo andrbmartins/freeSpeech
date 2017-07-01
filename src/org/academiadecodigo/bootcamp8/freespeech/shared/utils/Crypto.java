@@ -22,7 +22,8 @@ public class Crypto {
     private Key foreignKey;
 
     /**
-     * Constructor
+     * Construct the object
+     * Initialize the keyPair property
      */
     public Crypto() {
         generateKeyPair();
@@ -30,6 +31,7 @@ public class Crypto {
 
     /**
      * Generate the key pair using an RSA algorithm
+     * Initializes the keyPair property
      */
     private void generateKeyPair() {
 
@@ -46,14 +48,13 @@ public class Crypto {
     }
 
     /**
-     * Generate the symKey using an generated key
+     * Generate an symmetric key given an algorithm
      */
     public void generateSymKey() {
 
         try {
 
             symKey = KeyGenerator.getInstance("Blowfish").generateKey();
-
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Invalid encryption algorithm :: " + e.getMessage());
@@ -62,11 +63,11 @@ public class Crypto {
     }
 
     /**
-     * This method is responsible for encrypt an object
+     * Encrypt an object and return a sealed object
      *
      * @param object to encrypt
      * @param key    key to encrypt
-     * @return an encrypt (sealed) object
+     * @return SealedSendable
      */
     public SealedSendable encrypt(MessageType type, Serializable object, Key key) {
 
@@ -88,11 +89,11 @@ public class Crypto {
     }
 
     /**
-     * This method is responsible for decrypt the object
+     * Decrypt an sealed object and return an object
      *
      * @param sealed the object to decrypt
      * @param key    the symKey to decrypt
-     * @return an object
+     * @return Object
      */
     public Object decrypt(SealedSendable sealed, Key key) {
 
@@ -115,23 +116,23 @@ public class Crypto {
     }
 
     /**
-     * TODO
+     * Decrypt an sealed object and return an object
+     * Utilizes the private key
      *
-     * @param sealedSendable
-     * @return
+     * @param sealedSendable the object to decrypt
+     * @return Object
      */
     public Object decryptWithPrivate(SealedSendable sealedSendable) {
-
         return decrypt(sealedSendable, keyPair.getPrivate());
-
     }
 
     /**
-     * TODO - write comment
+     * Decrypt an sealed object and return an Sendable
+     * Utilizes the private key
      *
-     * @param sealed
-     * @param key
-     * @return
+     * @param sealed the object to decrypt
+     * @param key decryption key
+     * @return Sendable
      */
     public Sendable decryptSendable(SealedSendable sealed, Key key) {
 
@@ -142,19 +143,18 @@ public class Crypto {
     }
 
     /**
-     * TODO - write comment
+     * Decrypt an sealed object and return an Sendable
+     * Utilizes the symmetric key
      *
-     * @param sealed
-     * @return
+     * @param sealed the object to decrypt
+     * @return Sendable
      */
     public Sendable decryptSendable(SealedSendable sealed) {
-
         return decryptSendable(sealed, symKey);
-
     }
 
     /**
-     * createCipher method is responsible for creating Cipher object for encryption
+     * Creates the Cipher object for encryption
      *
      * @param key to cipher
      * @return the initialized cipher
@@ -185,6 +185,7 @@ public class Crypto {
         if (this.foreignKey == null) {
             this.foreignKey = foreignKey;
         }
+
     }
 
     public Key getSymKey() {

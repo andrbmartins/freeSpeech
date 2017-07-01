@@ -41,8 +41,8 @@ public class ClientHandler implements Runnable {
 
         communication.openStreams(clientSocket);
 
-        Stream.writeObject(communication.getObjectOutputStream(), crypto.getPublicKey());
-        Key key = (Key) Stream.readObject(communication.getObjectInputStream());
+        Stream.write(communication.getObjectOutputStream(), crypto.getPublicKey());
+        Key key = (Key) Stream.read(communication.getObjectInputStream());
         crypto.setForeignKey(key);
 
         authenticateClient();
