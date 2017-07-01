@@ -13,9 +13,6 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-
-//TODO documentation
-
 public class Session {
 
     private String username;
@@ -26,10 +23,18 @@ public class Session {
 
     private static Session instance = null;
 
+    /**
+     * Instantiates a Session and a Crypto.
+     */
     private Session() {
         cryptographer = new Crypto();
     }
 
+    /**
+     * Singleton instantiation.
+     *
+     * @return - the instance.
+     */
     public static Session getInstance() {
         if (instance == null) {
             synchronized (Navigation.class) {
@@ -47,39 +52,49 @@ public class Session {
         }
     }
 
+    /**
+     * Sets property socket and corresponding ObjectStreams.
+     *
+     * @param userSocket - the socket.
+     */
     public void setUserSocket(Socket userSocket) {
         if (this.userSocket == null) {
-            try {
-                this.userSocket = userSocket;
-                outputStream = new ObjectOutputStream(userSocket.getOutputStream());
-                System.out.println("OUTPUT " + outputStream);
-                inputStream = new ObjectInputStream(userSocket.getInputStream());
-                System.out.println("INPUT" + inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            setupStreams(userSocket);
         }
+    }
+
+    private void setupStreams(Socket userSocket) {
+        try {
+            this.userSocket = userSocket;
+            outputStream = new ObjectOutputStream(userSocket.getOutputStream());
+            inputStream = new ObjectInputStream(userSocket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ObjectOutputStream getOutput() {
+        return getInstance().outputStream;
+    }
+
+    public static ObjectInputStream getInput() {
+        return getInstance().inputStream;
+    }
+
+    public static Crypto getCrypto() {
+        return getInstance().cryptographer;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public ObjectInputStream getInputStream() {
-        return inputStream;
-    }
-
-    public ObjectOutputStream getOutputStream() {
-        return outputStream;
-    }
-
-    public Crypto getCryptographer() {
-        return cryptographer;
-    }
-
-    public void close() {
+    /**
+     * Closes the socket.
+     */
+    public static void close() {
         try {
-            userSocket.close();
+            getInstance().userSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

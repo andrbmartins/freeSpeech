@@ -1,24 +1,13 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import javax.crypto.SealedObject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,21 +27,15 @@ public class ServerResponseHandler implements Runnable {
         this.clientController = clientController;
     }
 
-
     @Override
     public void run() {
 
-        Crypto crypto = Session.getInstance().getCryptographer();
-
         while (true) {
-
-            SealedSendable sealedMessage = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
-            Sendable message = crypto.decryptObject(sealedMessage, crypto.getSymmetricKey());
-            System.out.println("MESSAGE RECEIVED: " + message);
+            SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
+            Sendable message = Session.getCrypto().decryptSendable(sealedMessage, Session.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
     }
-
 
     private void process(MessageType type, Sendable message) {
 
@@ -80,9 +63,11 @@ public class ServerResponseHandler implements Runnable {
 
     private void printToRoom(Sendable message) {
 
-        String text = (String) message.getContent(String.class);
-        text = wipeWhiteSpaces(text);
-        clientController.getCurrentRoom().appendText((clientController.getCurrentRoom().getText().isEmpty() ? "" : "\n") + text);
+        String roomText = clientController.getCurrentRoom().getText();
+        String messageText = (String) message.getContent(String.class);
+
+        messageText = wipeWhiteSpaces(messageText);
+        clientController.getCurrentRoom().appendText((roomText.isEmpty() ? "" : "\n") + messageText);
     }
 
     /**
@@ -98,14 +83,16 @@ public class ServerResponseHandler implements Runnable {
         //Every word character, digit, whitespace, punctuation and symbol
         //A single character, punctuation or symbol
 
+        //TODO allow specials characs
+
         Pattern pattern = Pattern.compile("(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])");
         Matcher matcher = pattern.matcher(text);
 
         String result = "";
         while (matcher.find()) {
-            result = result.concat(matcher.group(1) + " "); //username and colon
-            result = result.concat(matcher.group(3));       //string content
-            result = result.concat(matcher.group(4));       //last valid character
+            result = result.concat(matcher.group(1) + " ");
+            result = result.concat(matcher.group(3));
+            result = result.concat(matcher.group(4));
         }
         return result;
     }

@@ -1,7 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.communication;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 import java.io.*;
 import java.net.Socket;
@@ -12,30 +11,25 @@ import java.net.Socket;
  * <Code Cadet> PedroMAlves
  */
 public class CommunicationService implements Communication {
-    //private OutputStream objectOutputStream;
-    //private InputStream objectInputStream;
+
+    //TODO do we need this? Do we really need this? Really?
+
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-
 
     @Override
     public void openStreams(Socket socket) {
         try {
-            //objectOutputStream = socket.getOutputStream();
-            //objectInputStream = socket.getInputStream();
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
 
     @Override
     public void sendMessage(SealedSendable message) {
-        Stream.writeObject(objectOutputStream, message);
-
+        Stream.write(objectOutputStream, message);
     }
 
     public ObjectInputStream getObjectInputStream() {
@@ -48,6 +42,6 @@ public class CommunicationService implements Communication {
 
     @Override
     public SealedSendable retrieveMessage() {
-        return (SealedSendable) Stream.readObject(objectInputStream);
+        return (SealedSendable) Stream.read(objectInputStream);
     }
 }

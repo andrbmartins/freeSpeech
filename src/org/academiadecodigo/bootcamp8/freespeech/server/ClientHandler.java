@@ -10,9 +10,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.net.Socket;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,18 +21,20 @@ import java.util.List;
  */
 
 public class ClientHandler implements Runnable {
+
     private Crypto crypto;
     private String clientName;
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
 
-
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
-        crypto.setSymmetricKey(key);
+        crypto.setSymKey(key);
+
         this.clientSocket = clientSocket;
         this.server = server;
+        //TODO do we really need 2 more layers of encapsulation?
         communication = new CommunicationService();
     }
 
@@ -42,46 +42,47 @@ public class ClientHandler implements Runnable {
     public void run() {
 
         communication.openStreams(clientSocket);
-
-        Stream.writeObject(communication.getObjectOutputStream(), crypto.getNativePublicKey());
-        Key key = (Key) Stream.readObject(communication.getObjectInputStream());
-        crypto.setForeignPublicKey(key);
+        exchangeKeys();
 
         authenticateClient();
         notifyNewUser();
         server.addActiveUser(this);
-        readFromClient();
 
+        readFromClient();
+    }
+
+    private void exchangeKeys() {
+
+        Stream.write(communication.getObjectOutputStream(), crypto.getPublicKey());
+        Key key = (Key) Stream.read(communication.getObjectInputStream());
+        crypto.setForeignKey(key);
     }
 
     private void authenticateClient() {
 
         SealedSendable sealedSendable;
         Sendable<HashMap> sendable;
+
         boolean exit = false;
         String message = "";
 
         while (!exit) {
-
             sealedSendable = communication.retrieveMessage();
 
-            sendable = (Sendable<HashMap>) crypto.decryptObjectWithPrivate(sealedSendable);
+            //TODO check casts
+            sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
             HashMap<String, String> map = sendable.getContent(HashMap.class);
 
-            System.out.println("TYPE " + sealedSendable.getType());
-
-
-            //TODO switch
+            //TODO switch and indentation
             if (sealedSendable.getType() == MessageType.LOGIN) {
-                System.out.println("ENYTERED GET TYPE IF " + sealedSendable.getType());
                 if (exit = makeLogIn(map)) {
                     message = Values.LOGIN_OK;
                     clientName = map.get(Values.NAME_KEY);
-                    //exit = true;
                 } else {
                     message = Values.LOGIN_FAIL;
-                }
+                    //authenticateClient();
 
+                }
             }
 
             if (sealedSendable.getType() == MessageType.REGISTER) {
@@ -89,41 +90,35 @@ public class ClientHandler implements Runnable {
                 if (makeRegistry(map)) {
                     message = Values.REGISTER_OK;
                 } else {
-                    message = Values.USER_TAKEN;
+                    message = Values.REGISTER_FAIL;
                 }
             }
 
-            // TODO use correct interface Sendable<TYPE>
-
             Sendable<String> newSendable = new Message<>(message);
-            sealedSendable = crypto.encryptObject(sealedSendable.getType(), newSendable, crypto.getForeignPublicKey());
-            communication.sendMessage(sealedSendable);
+            sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
 
+            communication.sendMessage(sealedSendable);
 
             if (newSendable.getContent(String.class).equals(Values.LOGIN_OK)) {
 
-                Sendable<Key> sendableKey = new Message<>(crypto.getSymmetricKey());
-                SealedSendable keySeal = crypto.encryptObject(MessageType.KEY, sendableKey, crypto.getForeignPublicKey());
+                Sendable<Key> sendableKey = new Message<>(crypto.getSymKey());
+                SealedSendable keySeal = crypto.encrypt(MessageType.KEY, sendableKey, crypto.getForeignKey());
 
                 communication.sendMessage(keySeal);
             }
         }
-
-
     }
 
     private boolean makeLogIn(HashMap<String, String> login) {
 
-        // TODO use correct interface Sendable<TYPE>
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
-        return server.getUserService().authenticate(username, password);
 
+        return server.getUserService().authenticate(username, password);
     }
 
     private boolean makeRegistry(HashMap<String, String> mapR) {
 
-        // TODO use correct interface Sendable<TYPE>
         String username = mapR.get(Values.NAME_KEY);
 
         synchronized (server.getUserService()) {
@@ -131,10 +126,7 @@ public class ClientHandler implements Runnable {
             if (server.getUserService().getUser(username) == null) {
 
                 server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
-                //server.getUserService().notifyAll();
                 return true;
-            } else {
-                //server.getUserService().notifyAll();
             }
         }
         return false;
@@ -143,7 +135,8 @@ public class ClientHandler implements Runnable {
     private void notifyNewUser() {
 
         Message<String> message = new Message<>(Values.NEW_USER);
-        SealedSendable sealedMessage = crypto.encryptObject(MessageType.NOTIFICATION, message, crypto.getSymmetricKey());
+        SealedSendable sealedMessage = crypto.encrypt(MessageType.NOTIFICATION, message, crypto.getSymKey());
+
         server.writeToAll(sealedMessage);
     }
 
@@ -151,9 +144,9 @@ public class ClientHandler implements Runnable {
         SealedSendable msg;
 
         while ((msg = communication.retrieveMessage()) != null) {
-
             handleMessage(msg);
         }
+
         server.logOutUser(this);
         closeSocket();
     }
@@ -169,32 +162,40 @@ public class ClientHandler implements Runnable {
                 server.writeToAll(msg);
                 break;
             case LOGIN:
+                //TODO log
                 throw new IllegalArgumentException("You've already Logged In");
             case REGISTER:
+                //TODO log
                 throw new IllegalArgumentException("You've already Register");
             case PRIVATE_DATA:
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
             case REQUEST_USERS_ONLINE:
-                List<String> list = server.getUsersOnlineList();
-                Message<List> message = new Message<>(list);
-                SealedSendable sealedSendable = crypto.encryptObject(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymmetricKey());
+                sendUsersList();
                 break;
         }
     }
 
+    private void sendUsersList() {
+
+        List<String> list = server.getUsersOnlineList();
+        Message<List> message = new Message<>(list);
+        SealedSendable sealedSendable = crypto.encrypt(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymKey());
+        write(sealedSendable);
+    }
+
     public void write(SealedSendable sendable) {
-        //TODO to remove after tests completed
-        System.out.println(sendable);
         communication.sendMessage(sendable);
     }
 
     private void closeSocket() {
+
         try {
             clientSocket.close();
 
         } catch (IOException e) {
+            //TODO log
             System.out.println(Thread.currentThread().getName() + ": could not close socket");
             e.printStackTrace();
 

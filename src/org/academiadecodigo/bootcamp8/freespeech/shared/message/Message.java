@@ -2,8 +2,6 @@ package org.academiadecodigo.bootcamp8.freespeech.shared.message;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
-import java.io.Serializable;
-
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -12,7 +10,7 @@ import java.io.Serializable;
 
 public class Message<T> implements Sendable<T> {
 
-    private static final long serialVersionUID = Values.UID_MESSAGE;
+    private static final long serialVersionUID = Values.SERIAL_VERSION_UID;
 
     private final T content;
 
@@ -20,7 +18,9 @@ public class Message<T> implements Sendable<T> {
         this.content = content;
     }
 
-
+    /**
+     * @see Sendable#getContent(Class)
+     */
     @Override
     public <T> T getContent(Class<T> type) {
 
@@ -28,6 +28,9 @@ public class Message<T> implements Sendable<T> {
 
     }
 
+    /**
+     * @see Object#toString()
+     */
     @Override
     public String toString() {
         return "Message{" +

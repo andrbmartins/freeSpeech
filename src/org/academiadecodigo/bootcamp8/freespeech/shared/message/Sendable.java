@@ -10,9 +10,15 @@ import java.io.Serializable;
 
 public interface Sendable<T> extends Serializable {
 
-    //TODO write comments and
-
-
+    /**
+     * Interface Sendable is a wrapper for all the objects to be sealed
+     * <p>
+     * Get the content of a Sendable
+     *
+     * @param type type of the content
+     * @param <T>  genetic type (cast to the pretend type
+     * @return the content with type T
+     */
     <T> T getContent(Class<T> type);
 
 

@@ -1,9 +1,12 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.message;
 
 /**
- * Created by codecadet on 26/06/17.
+ * Developed @ <Academia de Código_>
  */
+
 public enum MessageType {
+
+    //TODO cleanup this mess
 
     DATA,
     PRIVATE_DATA, //content will be an hashmap with 2 entries ( "to" : <destiny_name> ; "message" : <message_to_send>). both values can be encrypted
@@ -13,5 +16,5 @@ public enum MessageType {
     REGISTER,
     REQUEST_USERS_ONLINE,
     NOTIFICATION,
-    KEY, COMMAND
+    KEY
 }

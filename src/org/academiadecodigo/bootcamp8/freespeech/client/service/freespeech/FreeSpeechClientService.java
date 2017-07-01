@@ -6,9 +6,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import javax.crypto.SealedObject;
 import java.io.*;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +50,8 @@ public class FreeSpeechClientService implements ClientService {
         writeObject(MessageType.DATA, message);
     }
 
+
+    //TODO file manager?
     /**
      * Converts a byte array into a byte list.
      *
@@ -90,29 +90,15 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     //TODO - logout
-    public void closeClientSocket() {
-        Session.getInstance().close();
-    }
 
-    //@Override
-    public void writeObject(MessageType type, Sendable message) {
+    private void writeObject(MessageType type, Sendable message) {
 
-        SealedSendable sealedMessage = getCrypto().encryptObject(type, message, getCrypto().getSymmetricKey());
-
-        Stream.writeObject(Session.getInstance().getOutputStream(), sealedMessage);
+        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message, Session.getCrypto().getSymKey());
+        Stream.write(Session.getOutput(), sealedMessage);
     }
 
     @Override
     public String getName() {
         return ClientService.class.getSimpleName();
-    }
-
-    @Override
-    public void writeObject(MessageType messageType, SealedSendable message) {
-        Stream.writeObject(Session.getInstance().getOutputStream(), message);
-    }
-
-    private Crypto getCrypto() {
-        return Session.getInstance().getCryptographer();
     }
 }

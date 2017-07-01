@@ -5,7 +5,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.Controller;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class Navigation {
     }
 
     /**
-     * Instantiates a singleton instance of this class and returns it.
+     * Singleton instantiation.
      *
      * @return the instance.
      */
@@ -56,7 +55,7 @@ public class Navigation {
     public void loadScreen(String view) {
         try {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW + "/" + view + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW_PATH + "/" + view + ".fxml"));
             Parent root = loader.load();
 
             controllers.put(view, loader.getController());

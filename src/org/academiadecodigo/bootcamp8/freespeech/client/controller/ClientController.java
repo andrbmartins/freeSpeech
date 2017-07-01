@@ -138,7 +138,6 @@ public class ClientController implements Controller {
     public void setStage(Stage stage) {
 
 
-
         this.stage = stage;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
