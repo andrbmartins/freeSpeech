@@ -5,12 +5,16 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.Clien
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.security.Key;
+import java.util.Map;
 
 
 /**
@@ -23,9 +27,11 @@ public class LoginClientService implements LoginService {
 
     private Socket clientSocket;
     private boolean connectionServer;
-//TODO password in passwordField
 
     public void makeConnection(String server, int port) {
+
+        Crypto crypto = Session.getInstance().getCryptographer();
+
         try {
 
             InetAddress address = InetAddress.getByName(server);
@@ -33,8 +39,13 @@ public class LoginClientService implements LoginService {
 
             if (!connectionServer) {
                 clientSocket = new Socket(server, port);
-
                 Session.getInstance().setUserSocket(clientSocket);
+
+                Key foreignKey = (Key) Stream.readObject(Session.getInstance().getInputStream());
+                crypto.setForeignPublicKey(foreignKey);
+                Stream.writeObject(Session.getInstance().getOutputStream(), Session.getInstance().getCryptographer().getNativePublicKey());
+
+
             } else {
                 System.out.println("Client already connected");
             }
@@ -62,37 +73,9 @@ public class LoginClientService implements LoginService {
         return connectionServer;
     }
 
-    @Override
-    public void sendUserText(TextArea textField) {
 
-        if (textField.getText().isEmpty()) {
-            return;
-        }
-
-        Message<String> message = new Message<>(MessageType.DATA, textField.getText());
-        writeObject(message);
-        System.out.println("SENT: " + message);
-        textField.clear();
-        textField.requestFocus();
-    }
-
-/*
-    @Override
-    public InputStream getInput() throws IOException {
-        return clientSocket.getInputStream();
-    }*/
-
-    /**
-     * @param message
-     * @see ClientService#writeObject(Sendable)
-     */
-    @Override
     public void writeObject(Sendable message) {
-        try {
-            Stream.writeObject(clientSocket.getOutputStream(), message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
     }
 
     @Override
@@ -101,16 +84,25 @@ public class LoginClientService implements LoginService {
     }
 
     @Override
-    public Message readObject() {
-        Object serverMessage = null;
+    public void writeObject(MessageType messageType, SealedSendable message) {
 
-        try {
-            serverMessage = Stream.readObject(clientSocket.getInputStream());
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
+    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return (Message) serverMessage;
+    private Crypto getCrypto() {
+        return Session.getInstance().getCryptographer();
+    }
+
+    @Override
+    public Sendable readObject() {
+
+        SealedSendable sealedSendable = (SealedSendable) Stream.readObject(Session.getInstance().getInputStream());
+        return getCrypto().decryptObject(sealedSendable, getCrypto().getSymmetricKey());
+
+        //Object serverMessage = Stream.readObject(Session.getInstance().getInputStream());
+
+        //return (Message) serverMessage;
+
     }
 
 }

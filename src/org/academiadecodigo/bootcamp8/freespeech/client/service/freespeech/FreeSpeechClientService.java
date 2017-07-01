@@ -2,11 +2,11 @@ package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
+import javax.crypto.SealedObject;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -22,8 +22,6 @@ import java.util.List;
 
 public class FreeSpeechClientService implements ClientService {
 
-    private Socket clientSocket;
-
     @Override
     public void sendUserText(TextArea textArea) {
 
@@ -32,10 +30,16 @@ public class FreeSpeechClientService implements ClientService {
         }
         String text = Session.getInstance().getUsername() + ": " + textArea.getText();
 
-        Message<String> message = new Message<>(MessageType.TEXT, text);
-        writeObject(message);
+        Message<String> message = new Message<>(text);
+        writeObject(MessageType.TEXT, message);
 
         textArea.clear();
+    }
+
+    @Override
+    public void sendListRequest() {
+        Message<Object> message = new Message<>("");
+        writeObject(MessageType.REQUEST_USERS_ONLINE, message);
     }
 
     @Override
@@ -44,8 +48,8 @@ public class FreeSpeechClientService implements ClientService {
         byte[] buffer = fileToByteArray(file);
         List<Byte> byteList = byteArrayToList(buffer);
 
-        Message<List> message = new Message<>(MessageType.DATA, byteList);
-        writeObject(message);
+        Message<List> message = new Message<>(byteList);
+        writeObject(MessageType.DATA, message);
     }
 
     /**
@@ -87,29 +91,15 @@ public class FreeSpeechClientService implements ClientService {
 
     //TODO - logout
     public void closeClientSocket() {
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Session.getInstance().close();
     }
 
-    @Override
-    public InputStream getInput() throws IOException {
-        return clientSocket.getInputStream();
-    }
+    //@Override
+    public void writeObject(MessageType type, Sendable message) {
 
-    /**
-     * @param message
-     * @see ClientService#writeObject(Sendable)
-     */
-    @Override
-    public void writeObject(Sendable message) {
-        try {
-            Stream.writeObject(clientSocket.getOutputStream(), message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SealedSendable sealedMessage = getCrypto().encryptObject(type, message, getCrypto().getSymmetricKey());
+
+        Stream.writeObject(Session.getInstance().getOutputStream(), sealedMessage);
     }
 
     @Override
@@ -118,22 +108,11 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
-    public Message readObject() {
-
-        //TODO only reading strings?
-        Object serverMessage = null;
-        try {
-            serverMessage = Stream.readObject(clientSocket.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return (Message) serverMessage;
+    public void writeObject(MessageType messageType, SealedSendable message) {
+        Stream.writeObject(Session.getInstance().getOutputStream(), message);
     }
 
-    @Override
-    public void setSocket(Socket socket) {
-        if (clientSocket == null) {
-            clientSocket = socket;
-        }
+    private Crypto getCrypto() {
+        return Session.getInstance().getCryptographer();
     }
 }

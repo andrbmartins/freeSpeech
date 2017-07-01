@@ -7,29 +7,30 @@ import java.io.*;
  *         Project freeSpeach (26/06/17)
  *         <Academia de Código_>
  */
-public final class Stream {
+public class Stream {
 
     /**
      * Write an object to stream, given an object stream
-     * @param out destination object stream
+     *
+     * @param out     destination object stream
      * @param message object to send
      */
     public static void writeObject(ObjectOutputStream out, Object message) {
 
         try {
-
             out.writeObject(message);
             out.flush();
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open stream -> " + e.getMessage());
         }
 
     }
 
     /**
      * Write an object to stream
-     * @param out destination stream
+     *
+     * @param out     destination stream
      * @param message object to send
      */
     public static void writeObject(OutputStream out, Object message) {
@@ -40,13 +41,14 @@ public final class Stream {
             writeObject(bout, message);
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open stream -> " + e.getMessage());
         }
 
     }
 
     /**
      * Read an object from the stream, given an object stream
+     *
      * @param in source object stream
      * @return the received object
      */
@@ -56,12 +58,18 @@ public final class Stream {
 
         try {
 
+            System.out.println("ENTERED");
+
             object = in.readObject();
 
+            System.out.println("OBJ " + object);
+
         } catch (IOException e) {
-            System.err.println("Error on trying to open object stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open object stream :: " + e.getMessage());
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            System.err.println("Class not found.\n" + e.getMessage());
+            System.err.println("Class not found :: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return object;
@@ -70,6 +78,7 @@ public final class Stream {
 
     /**
      * Read an object from the stream
+     *
      * @param in source stream
      * @return the received object
      */
@@ -83,7 +92,7 @@ public final class Stream {
             object = readObject(bin);
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open object stream.\n" + e.getMessage());
+            System.err.println("Error on trying to open object stream :: " + e.getMessage());
         }
 
         return object;
@@ -92,6 +101,7 @@ public final class Stream {
 
     /**
      * Close the stream
+     *
      * @param stream to close
      */
     public static void close(Closeable stream) {
@@ -103,7 +113,7 @@ public final class Stream {
             }
 
         } catch (IOException e) {
-            System.err.println("Error on trying to close stream.\n" + e.getMessage());
+            System.err.println("Error on trying to close stream :: " + e.getMessage());
         }
 
     }

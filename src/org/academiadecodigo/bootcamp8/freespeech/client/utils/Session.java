@@ -1,5 +1,10 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.utils;
 
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -15,14 +20,21 @@ public class Session {
 
     private String username;
     private Socket userSocket;
+    private Crypto cryptographer;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
 
     private static Session instance = null;
+
+    private Session() {
+        cryptographer = new Crypto();
+    }
 
     public static Session getInstance() {
         if (instance == null) {
             synchronized (Navigation.class) {
                 if (instance == null) {
-                   instance = new Session();
+                    instance = new Session();
                 }
             }
         }
@@ -37,15 +49,39 @@ public class Session {
 
     public void setUserSocket(Socket userSocket) {
         if (this.userSocket == null) {
-            this.userSocket = userSocket;
+            try {
+                this.userSocket = userSocket;
+                outputStream = new ObjectOutputStream(userSocket.getOutputStream());
+                System.out.println("OUTPUT " + outputStream);
+                inputStream = new ObjectInputStream(userSocket.getInputStream());
+                System.out.println("INPUT" + inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
-
-    public Socket getUserSocket() {
-        return userSocket;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public ObjectInputStream getInputStream() {
+        return inputStream;
+    }
+
+    public ObjectOutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    public Crypto getCryptographer() {
+        return cryptographer;
+    }
+
+    public void close() {
+        try {
+            userSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
