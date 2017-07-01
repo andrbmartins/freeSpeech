@@ -74,6 +74,7 @@ public class Server {
 
         while (true) {
             Socket clientSocket = serverSocket.accept();
+            System.out.println("LOGGED");
             //TODO log new client
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey));
         }
