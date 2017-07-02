@@ -38,8 +38,8 @@ public class JdbcUserService implements UserService {
 
 
     @Override
-    public void addUser(User user) {
-        connectionManager.insertUser(user.getUsername(),user.getPassword());
+    public boolean addUser(User user) {
+        return connectionManager.insertUser(user.getUsername(),user.getPassword());
     }
 
     @Override

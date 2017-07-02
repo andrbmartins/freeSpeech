@@ -30,10 +30,11 @@ public class ConnectionManager  {
     //return connection;
     //}
 
-    public void insertUser(String username, String password) {    // TESTED OK
+    public boolean insertUser(String username, String password) {    // TESTED OK
+        boolean registered = true;
         PreparedStatement preparedStmt = null;
         try {
-            System.out.println(password.length());
+            //System.out.println(password.length());
             preparedStmt = connection.prepareStatement(Querys.INSERT_USER);
             preparedStmt.setString(1,  username);
             preparedStmt.setString(2, password);
@@ -42,24 +43,24 @@ public class ConnectionManager  {
 
 
         } catch (SQLException e) {
-
             eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTER_FAILED + " -- " + username );
             System.out.println(Values.CLIENT_REGISTER_FAILED);
+            registered = false;
 
         } finally {
             try {
-                preparedStmt.close();
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
         }
+        return registered;
     }
 
     public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
 
-
-        //System.out.println("Vou autenticar este user  " + username + password);
         PreparedStatement preparedStmt = null;
         try {
             preparedStmt = connection.prepareStatement(Querys.AUTHENTICATE_USER);

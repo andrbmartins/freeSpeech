@@ -11,7 +11,7 @@ public interface UserService {
 
     boolean authenticate(String username, String pass);
 
-    void addUser(User user);
+    boolean addUser(User user);
 
     //TODO check if this is needed
     void removeUser(String username);

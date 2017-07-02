@@ -29,11 +29,13 @@ public class TempUserService implements UserService {
     }
 
     @Override
-    public void addUser(User user) {
+    public boolean addUser(User user) {
 
         if (getUser(user.getUsername()) == null) {
            registeredUsers.add(user);
+           return true;
         }
+        return false;
     }
 
     @Override

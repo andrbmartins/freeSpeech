@@ -4,10 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
@@ -171,12 +169,10 @@ public class AdminController implements Initializable {
 
     private boolean isQueryAllowed(String query) {
         String lowerCase = query.toLowerCase();
-        if (customQuery.getText().contains("delete") || customQuery.getText().contains("insert")
-                || customQuery.getText().contains("update")) {
-            return false;
-        }
-        return true;
+        return (customQuery.getText().contains("delete") || customQuery.getText().contains("insert")
+                || customQuery.getText().contains("update") || customQuery.getText().contains("admin"));
     }
+
 
     private boolean isError(String result) {
         return result.startsWith("Error: ");

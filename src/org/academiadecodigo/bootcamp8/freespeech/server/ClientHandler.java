@@ -125,8 +125,8 @@ public class ClientHandler implements Runnable {
 
             if (server.getUserService().getUser(username) == null) {
 
-                server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
-                return true;
+                return server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
+
             }
         }
         return false;
@@ -173,6 +173,12 @@ public class ClientHandler implements Runnable {
                 break;
             case REQUEST_USERS_ONLINE:
                 sendUsersList();
+                break;
+            case BIO_UPDATE:
+                //TODO
+                break;
+            case PASS_CHANGE:
+                //TODO
                 break;
         }
     }
