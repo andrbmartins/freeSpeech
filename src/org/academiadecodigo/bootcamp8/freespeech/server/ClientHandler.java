@@ -95,13 +95,6 @@ public class ClientHandler implements Runnable {
                 }
             }
 
-            if (sealedSendable.getType() == MessageType.BIO) {
-
-
-            }
-
-
-
             Sendable<String> newSendable = new Message<>(message);
             sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
 
@@ -186,7 +179,6 @@ public class ClientHandler implements Runnable {
                 System.out.println("Recebi msg de request de bio" + msg.toString());
                 // IF Message is BIO request
                 sendUserBio(msg);
-
                 break;
             }
         }
@@ -197,13 +189,16 @@ public class ClientHandler implements Runnable {
         System.out.println("Vou mandar a mesma message que recebi para testar" + msg );
 
         Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
-        System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.toString());
 
+        System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.getContent(String.class));
+        // Aqui vou buscar a bio ha BD atraves da query (Tem de retornar a bio)
 
-        //SealedSendable sealedSendable = crypto.encrypt(MessageType.BIO, msg, crypto.getSymKey());
-        write(msg);
+        List<String> messagebio = server.getUserService().getUserBio((String) message.getContent(String.class));
+        Message<List> bio = new Message<>(messagebio);
+        SealedSendable sealedMessage = crypto.encrypt(MessageType.BIO, bio, crypto.getSymKey());
+        write(sealedMessage);
 
-        System.out.println("Enviei mensagem com bio ao cliente" + msg);
+        System.out.println("Enviei mensagem com bio ao cliente" + sealedMessage.toString());
     }
 
     private void sendUsersList() {

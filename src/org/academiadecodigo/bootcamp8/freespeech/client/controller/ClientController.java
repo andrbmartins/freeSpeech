@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 
 import javafx.application.Platform;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,9 +10,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -25,6 +25,7 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+
 
 import java.awt.*;
 import java.io.File;
@@ -47,10 +48,12 @@ public class ClientController implements Controller {
     @FXML private TextArea inputTextArea;
     @FXML private ListView onlineUsersList;
     @FXML private Button exitButton;
-    @FXML private MenuItem Bio_Menu;
-    @FXML private VBox Bio;
-    @FXML private ImageView Bio_Image;
-    @FXML private TextArea Bio_Data;
+    @FXML private VBox bioArea;
+    @FXML private TextField nameBio;
+    @FXML private TextField emailBio;
+    @FXML private TextField dateBirthBio;
+    @FXML private TextField dateRegistrationBio;
+
 
     private Stage stage;
     private ClientService clientService;
@@ -146,13 +149,10 @@ public class ClientController implements Controller {
     @Override
     public void setStage(Stage stage) {
 
-
         this.stage = stage;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
         this.stage.setMinWidth(Values.CLIENT_WIDTH);
         this.stage.setMaxWidth(screen.getWidth());
-
         this.stage.setMinHeight(Values.CLIENT_HEIGHT);
         this.stage.setMaxHeight(screen.getHeight());
     }
@@ -168,14 +168,28 @@ public class ClientController implements Controller {
         });
     }
 
+
     @FXML
-    void ShowBio(ActionEvent event) {
+    void getUserBio(MouseEvent event) {
         System.out.println("Send bio request to server");
-        clientService.sendBioRequest("teste");
+        Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
+        System.out.println(user.toString());
+        clientService.sendBioRequest((String) user);
+    }
+
+    @FXML
+    void startPrivateChat(MouseEvent event) {
 
     }
 
+
     public void ShowUserBio(Sendable message) {
-        // Aqui vou mandar as cenas para a Tab da bio
+
+        List<String> list = (LinkedList<String>) message.getContent(List.class);
+        nameBio.setText(list.get(0).toString());
+        emailBio.setText(list.get(1).toString());
+        dateBirthBio.setText(list.get(2).toString());
+        dateRegistrationBio.setText(list.get(3).toString());
+
     }
 }

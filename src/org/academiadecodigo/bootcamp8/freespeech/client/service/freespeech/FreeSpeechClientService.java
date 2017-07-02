@@ -43,7 +43,7 @@ public class FreeSpeechClientService implements ClientService {
     // Sends a request bio to server
     @Override
     public void sendBioRequest(String UserBio) {
-        Message<Object> message = new Message<>(UserBio);
+        Message<String> message = new Message<>(UserBio);
         writeObject(MessageType.BIO, message);
         System.out.println("Mensagem enviada de pedido de bio");
     }

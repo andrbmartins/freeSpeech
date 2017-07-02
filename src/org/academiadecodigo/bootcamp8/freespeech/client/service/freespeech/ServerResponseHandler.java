@@ -60,7 +60,7 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case BIO:
                 // Aqui vou receber a bio do USER
-                System.out.println("Recebi a mensagem com a bio " + message);
+                System.out.println("Recebi a mensagem com a bio " + message.toString());
                 clientController.ShowUserBio(message);
                 break;
         }

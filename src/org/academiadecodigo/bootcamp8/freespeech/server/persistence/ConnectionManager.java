@@ -5,6 +5,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Querys;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.*;
+import java.util.*;
 
 /**
  * Created by codecadet on 28/06/17.
@@ -26,10 +27,6 @@ public class ConnectionManager  {
 
     }
 
-    //public Connection getConnection() {
-    //return connection;
-    //}
-
     public void insertUser(String username, String password) throws SQLException {    // TESTED OK
         PreparedStatement preparedStmt = null;
         try {
@@ -39,19 +36,14 @@ public class ConnectionManager  {
             preparedStmt.setString(2, password);
             preparedStmt.execute();
             eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username );
-
-
         } catch (SQLException e) {
-
             eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTER_FAILED + " -- " + username );
             System.out.println(Values.CLIENT_REGISTER_FAILED);
-
         }
         preparedStmt.close();
     }
 
     public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
-
 
         //System.out.println("Vou autenticar este user  " + username + password);
         PreparedStatement preparedStmt = null;
@@ -79,10 +71,9 @@ public class ConnectionManager  {
     public User findUser(String username) throws SQLException {     // Needs test
 
         User user = null;
-
         PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
         preparedStmt.setString(1, username);
-        System.out.println("beofre result ");
+        System.out.println("before result ");
         ResultSet resultSet = preparedStmt.executeQuery();
 
         if(resultSet.next()) {
@@ -96,30 +87,14 @@ public class ConnectionManager  {
         return user ;
     }
 
-   /* public boolean findUserByName(String username) throws SQLException {         // Needs test
-
-        PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
-        preparedStmt.setString(1, username);
-
-        ResultSet resultSet = preparedStmt.executeQuery();
-
-        if (resultSet.next())
-            return true;
-        else
-            return false;
-
-    }*/
-
 
     public int count() throws SQLException {
 
         Statement statement = connection.createStatement();
 
-        // create a query
-        String query = "SELECT COUNT(*) FROM users";
+        //String query = "SELECT COUNT(*) FROM users";
 
-        // execute the query
-        ResultSet resultSet = statement.executeQuery(query);
+        ResultSet resultSet = statement.executeQuery(Querys.COUNT_USERS);
         if(resultSet.next())
             return resultSet.getInt(1);
         else
@@ -128,7 +103,7 @@ public class ConnectionManager  {
 
     public void eventlogger(Values.TypeEvent type_event, String message){
 
-        PreparedStatement preparedStmt = null;
+        PreparedStatement preparedStmt;
         try {
             preparedStmt = connection.prepareStatement(Querys.LOG);
             preparedStmt.setString(1,type_event.toString());
@@ -141,4 +116,24 @@ public class ConnectionManager  {
 
     }
 
+    public List<String> getUserBio(String username) throws SQLException {
+
+        System.out.println("vou executar a query para a bio com o valor de " + username);
+
+        PreparedStatement preparedStmt = connection.prepareStatement(Querys.SHOW_BIO);
+        preparedStmt.setString(1, username);
+        System.out.println("before result ");
+        ResultSet resultSet = preparedStmt.executeQuery();
+
+        if(resultSet.next()) {
+            List<String> userbio = new LinkedList<String>();
+            userbio.add(resultSet.getString("user_name"));
+            userbio.add(resultSet.getString("email"));
+            userbio.add(resultSet.getString("date_birth"));
+            //userbio.add(resultSet.getString("picture"));
+            userbio.add(resultSet.getString("date_registration"));
+            return userbio;
+        }
+       return null;
+    }
 }
