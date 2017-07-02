@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.Socket;
 import java.security.Key;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Developed @ <Academia de Código_>
@@ -153,6 +154,7 @@ public class ClientHandler implements Runnable {
                 run = false;
             }
         }
+        // Introduzir no log server que o client fez logout e se desligou
         server.logOutUser(this);
     }
 
@@ -201,7 +203,30 @@ public class ClientHandler implements Runnable {
                 server.logOutUser(this);
                 closeSocket();
                 break;
+            case BIO: {
+                System.out.println("Recebi msg de request de bio" + msg.toString());
+                // IF Message is BIO request
+                sendUserBio(msg);
+                break;
+            }
         }
+    }
+
+    // Retrieve bio from database and send to client
+    private void sendUserBio(SealedSendable msg) {
+        System.out.println("Vou mandar a mesma message que recebi para testar" + msg );
+
+        Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
+
+        System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.getContent(String.class));
+        // Aqui vou buscar a bio ha BD atraves da query (Tem de retornar a bio)
+
+        List<String> messagebio = server.getUserService().getUserBio((String) message.getContent(String.class));
+        Message<List> bio = new Message<>(messagebio);
+        SealedSendable sealedMessage = crypto.encrypt(MessageType.BIO, bio, crypto.getSymKey());
+        write(sealedMessage);
+
+        System.out.println("Enviei mensagem com bio ao cliente" + sealedMessage.toString());
     }
 
     private void changePass(SealedSendable msg, MessageType type) {

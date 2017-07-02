@@ -9,9 +9,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -48,6 +47,13 @@ public class ClientController implements Controller {
     @FXML private TextArea lobbyTextArea;
     @FXML private TextArea inputTextArea;
     @FXML private ListView onlineUsersList;
+    @FXML private Button exitButton;
+    @FXML private VBox bioArea;
+    @FXML private TextField nameBio;
+    @FXML private TextField emailBio;
+    @FXML private TextField dateBirthBio;
+    @FXML private TextField dateRegistrationBio;
+
 
     private Stage stage;
     private ClientService clientService;
@@ -159,9 +165,13 @@ public class ClientController implements Controller {
         });
     }
 
+
     @FXML
-    void ShowBio(ActionEvent event) {
-        System.out.println("Show bio");
+    void getUserBio(MouseEvent event) {
+        System.out.println("Send bio request to server");
+        Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
+        System.out.println(user.toString());
+        clientService.sendBioRequest((String) user);
     }
 
 
@@ -237,4 +247,19 @@ public class ClientController implements Controller {
 
 
 
+    @FXML
+    void startPrivateChat(MouseEvent event) {
+
+    }
+
+
+    public void ShowUserBio(Sendable message) {
+
+        List<String> list = (LinkedList<String>) message.getContent(List.class);
+        nameBio.setText(list.get(0).toString());
+        emailBio.setText(list.get(1).toString());
+        dateBirthBio.setText(list.get(2).toString());
+        dateRegistrationBio.setText(list.get(3).toString());
+
+    }
 }

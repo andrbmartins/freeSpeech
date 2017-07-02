@@ -5,6 +5,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.*;
+import java.util.*;
 
 /**
  * Developed @ <Academia de Código_>
@@ -45,6 +46,7 @@ public class ConnectionManager  {
 
 
         } catch (SQLException e) {
+
             eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_REGISTER_FAILED + " -- " + username );
             System.out.println(Values.CLIENT_REGISTER_FAILED);
             registered = false;
@@ -136,11 +138,9 @@ public class ConnectionManager  {
 
         Statement statement = connection.createStatement();
 
-        // create a query
-        String query = "SELECT COUNT(*) FROM users";
+        //String query = "SELECT COUNT(*) FROM users";
 
-        // execute the query
-        ResultSet resultSet = statement.executeQuery(query);
+        ResultSet resultSet = statement.executeQuery(Queries.COUNT_USERS);
         if(resultSet.next())
             return resultSet.getInt(1);
         else
@@ -162,4 +162,24 @@ public class ConnectionManager  {
 
     }
 
+    public List<String> getUserBio(String username) throws SQLException {
+
+        System.out.println("vou executar a query para a bio com o valor de " + username);
+
+        PreparedStatement preparedStmt = connection.prepareStatement(Queries.SHOW_BIO);
+        preparedStmt.setString(1, username);
+        System.out.println("before result ");
+        ResultSet resultSet = preparedStmt.executeQuery();
+
+        if(resultSet.next()) {
+            List<String> userbio = new LinkedList<String>();
+            userbio.add(resultSet.getString("user_name"));
+            userbio.add(resultSet.getString("email"));
+            userbio.add(resultSet.getString("date_birth"));
+            //userbio.add(resultSet.getString("picture"));
+            userbio.add(resultSet.getString("date_registration"));
+            return userbio;
+        }
+       return null;
+    }
 }

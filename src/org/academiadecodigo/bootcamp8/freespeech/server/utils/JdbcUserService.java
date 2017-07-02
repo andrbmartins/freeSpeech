@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.persistence.ConnectionMa
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 /**
@@ -68,13 +69,24 @@ public class JdbcUserService implements UserService {
             e.printStackTrace();
         }
         return recordcount;
-
-
     }
 
     @Override
     public void eventlogger(Values.TypeEvent typeEvent, String log_message ) {
         connectionManager.eventlogger(typeEvent, log_message);
+    }
+
+    @Override
+    public List<String> getUserBio(String username)  {
+
+        List<String> message = null;
+        try {
+            message = connectionManager.getUserBio(username);
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return message;
     }
 
 

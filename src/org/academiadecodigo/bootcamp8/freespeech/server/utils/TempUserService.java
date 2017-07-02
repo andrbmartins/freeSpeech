@@ -73,6 +73,11 @@ public class TempUserService implements UserService {
         return;
     }
 
+    @Override
+    public List<String> getUserBio(String username) {
+        return null;
+    }
+
 
     public static TempUserService getInstance(){
         return instance;
