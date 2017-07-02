@@ -182,8 +182,12 @@ public class ClientController implements Controller {
 
     @FXML
     void editUserInfo(ActionEvent event) {
-        new EditBioDialog().showAndWait();
-        //TODO launch dialog
+        //TODO to complete process
+        EditBioDialog bio = new EditBioDialog();
+
+        //TODO use the method by jp to retrieve bio to set on dialog text
+
+        Optional<String[]> result = bio.showAndWait();
     }
 
 
@@ -207,8 +211,6 @@ public class ClientController implements Controller {
         }
     }
 
-
-
     private boolean areFieldsValid(String[] results) {
         for (String s : results) {
             if (s.isEmpty()) {
@@ -216,10 +218,9 @@ public class ClientController implements Controller {
             }
         }
         return results[1].equals(results[2]);
-
     }
 
-    //TODO to remove after the correct implementation of logout or exit. Just here so I don't freak out everytime i need to quit :)
+    //TODO still not working properly
     @FXML
     void onLogOut(ActionEvent event) {
         clientService.sendLogOut();

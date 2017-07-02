@@ -5,7 +5,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -45,7 +44,7 @@ public class Server {
     }
 
     /**
-     * Initializates de serverSocket, the threadPool and the UserService
+     * Initializes the serverSocket, the threadPool and the UserService
      *
      * @throws IOException
      */
@@ -83,7 +82,7 @@ public class Server {
     }
 
     /**
-     * closes de ServerSocket...
+     * closes the ServerSocket...
      */
     public void closeServerSocket() {
         if (serverSocket != null) {
@@ -108,6 +107,7 @@ public class Server {
      */
     public void addActiveUser(ClientHandler client) {
         loggedUsers.add(client);
+        updateList();
     }
 
     /**
@@ -118,7 +118,18 @@ public class Server {
      */
     public void logOutUser(ClientHandler client) {
         loggedUsers.remove(client);
-        //TODO kill this thread
+        updateList();
+    }
+
+    /**
+     * Sends updated list of users online to every user online
+     */
+    public void updateList() {
+        Message<List> message = new Message<>(getUsersOnlineList());
+        for (ClientHandler c : loggedUsers) {
+            c.sendUsersList(message);
+        }
+
     }
 
     /**
@@ -162,14 +173,11 @@ public class Server {
      * @return
      */
     public List<String> getUsersOnlineList() {
-
-        //TODO think of a better idea
         List<String> usersList = new LinkedList<>();
 
         for (ClientHandler c : loggedUsers) {
             usersList.add(c.getName());
         }
-
         return usersList;
     }
 

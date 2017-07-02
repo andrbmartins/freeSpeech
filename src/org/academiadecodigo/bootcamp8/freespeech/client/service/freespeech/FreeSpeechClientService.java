@@ -5,7 +5,6 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
@@ -42,7 +41,7 @@ public class FreeSpeechClientService implements ClientService {
     @Override
     public void sendListRequest() {
         Message<Object> message = new Message<>("");
-        writeObject(MessageType.REQUEST_USERS_ONLINE, message);
+        writeObject(MessageType.USERS_ONLINE, message);
     }
 
     @Override

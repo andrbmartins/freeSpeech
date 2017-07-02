@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.Socket;
 import java.security.Key;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Developed @ <Academia de Código_>
@@ -32,7 +31,6 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
         crypto.setSymKey(key);
-
         this.clientSocket = clientSocket;
         this.server = server;
         run = true;
@@ -42,16 +40,20 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-
         communication.openStreams(clientSocket);
         exchangeKeys();
+        init();
 
+    }
+
+    private void init() {
         authenticateClient();
-        notifyNewUser();
+        //notifyNewUser();
         server.addActiveUser(this);
 
         readFromClient();
     }
+
 
     private void exchangeKeys() {
 
@@ -82,8 +84,6 @@ public class ClientHandler implements Runnable {
                     clientName = map.get(Values.NAME_KEY);
                 } else {
                     message = Values.LOGIN_FAIL;
-                    //authenticateClient();
-
                 }
             }
 
@@ -134,13 +134,14 @@ public class ClientHandler implements Runnable {
         return false;
     }
 
-    private void notifyNewUser() {
+    //TODO deprecated because there is newer faster method
+   /* private void notifyNewUser() {
 
         Message<String> message = new Message<>(Values.NEW_USER);
         SealedSendable sealedMessage = crypto.encrypt(MessageType.NOTIFICATION, message, crypto.getSymKey());
 
         server.writeToAll(sealedMessage);
-    }
+    }*/
 
     private void readFromClient() {
         SealedSendable msg;
@@ -153,7 +154,6 @@ public class ClientHandler implements Runnable {
             }
         }
         server.logOutUser(this);
-        closeSocket();
     }
 
 
@@ -177,9 +177,10 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
-            case REQUEST_USERS_ONLINE:
+                //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete switch
+            /*case USERS_ONLINE:
                 sendUsersList();
-                break;
+                break;*/
             case GET_BIO:
                 //TODO
                 break;
@@ -190,6 +191,7 @@ public class ClientHandler implements Runnable {
                 changePass(msg, type);
                 break;
             case LOGOUT:
+                //TODO not fully working yet
                 write(msg);
                 server.logOutUser(this);
                 break;
@@ -197,6 +199,7 @@ public class ClientHandler implements Runnable {
                 run = false;
                 write(msg);
                 server.logOutUser(this);
+                closeSocket();
                 break;
         }
     }
@@ -217,13 +220,20 @@ public class ClientHandler implements Runnable {
         communication.sendMessage(sealedMsg);
     }
 
-    private void sendUsersList() {
+
+    public void sendUsersList(Message userList) {
+        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList, crypto.getSymKey());
+        write(sealedSendable);
+    }
+
+    //TODO remove method which is now obsolete by the above method
+  /*  private void sendUsersList() {
 
         List<String> list = server.getUsersOnlineList();
         Message<List> message = new Message<>(list);
-        SealedSendable sealedSendable = crypto.encrypt(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymKey());
+        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, message, crypto.getSymKey());
         write(sealedSendable);
-    }
+    }*/
 
     public void write(SealedSendable sendable) {
         communication.sendMessage(sendable);

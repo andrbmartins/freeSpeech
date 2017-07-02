@@ -2,12 +2,8 @@ package org.academiadecodigo.bootcamp8.freespeech.client.utils;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.PasswordField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 /**
  * Developed @ <Academia de Código_>
@@ -15,41 +11,80 @@ import javafx.util.Callback;
  * <Code Cadet> PedroMAlves
  */
 public class EditBioDialog extends Dialog {
-    private PasswordField passwordField;
+    private TextField username;
+    private TextField email;
+    private TextField birthdate;
+    private TextArea bio;
+
 
     public EditBioDialog() {
-        setTitle("Credential Manager");
-        setHeaderText("You must login in order to access Admin App");
+        setTitle("freeSpeech - Public profile");
+        setHeaderText("Edit your public profile here. You can also change your username here");
 
-        ButtonType passwordButtonType = new ButtonType("Login", ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().addAll(passwordButtonType, ButtonType.CANCEL);
+        ButtonType setBio = new ButtonType("Edit bio", ButtonBar.ButtonData.OK_DONE);
+        getDialogPane().getButtonTypes().addAll(setBio, ButtonType.CANCEL);
 
-        passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
+        username = new TextField();
+        email = new TextField();
+        birthdate = new TextField();
+        bio = new TextArea();
 
-        HBox hBox = new HBox();
-        hBox.getChildren().add(passwordField);
-        hBox.setPadding(new Insets(20));
+        Label user = new Label("Username");
+        Label mail = new Label("Email");
+        Label date = new Label("Date of birth");
+        Label bio1 = new Label("Your awesomeness");
+        Label max = new Label("500 characters max...");
 
-        HBox.setHgrow(passwordField, Priority.ALWAYS);
+        GridPane grid = new GridPane();
 
-        getDialogPane().setContent(hBox);
+        grid.add(user, 0, 0);
+        grid.add(username, 1, 0);
+        grid.add(mail, 0, 1);
+        grid.add(email, 1, 1);
+        grid.add(date, 0, 2);
+        grid.add(birthdate, 1, 2);
+        grid.add(bio1, 0, 3);
+        grid.add(bio, 1, 3, 1, 4);
+        grid.add(max, 1, 7);
+        grid.setHgap(40);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(40));
 
+
+        getDialogPane().setContent(grid);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                passwordField.requestFocus();
+                username.requestFocus();
             }
         });
 
-        setResultConverter(new Callback<ButtonType, String>() {
+        setResultConverter(new Callback<ButtonType, String[]>() {
             @Override
-            public String call(ButtonType param) {
-                if (param == passwordButtonType) {
-                    return passwordField.getText();
+            public String[] call(ButtonType param) {
+                if (param == setBio) {
+                    String[] result = {username.getText(), email.getText(),
+                            birthdate.getText(), bio.getText()};
+                    return result;
                 }
-                return null;           }
+                return null;
+            }
         });
     }
 
+    public void setUsername(String username) {
+        this.username.setText(username);
+    }
+
+    public void setEmail(String email) {
+        this.email.setText(email);
+    }
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate.setText(birthdate);
+    }
+
+    public void setBio(String bio) {
+        this.bio.setText(bio);
+    }
 }

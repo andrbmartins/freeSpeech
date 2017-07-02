@@ -54,7 +54,7 @@ public class ServerResponseHandler implements Runnable {
             case DATA:
                 //TODO
                 break;
-            case REQUEST_USERS_ONLINE:
+            case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
