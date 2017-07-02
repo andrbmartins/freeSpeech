@@ -19,23 +19,27 @@ import java.util.regex.Pattern;
  */
 
 public class ServerResponseHandler implements Runnable {
-
+    boolean run = true;
     private ClientService clientService;
     private ClientController clientController;
 
     public ServerResponseHandler(ClientService clientService, ClientController clientController) {
         this.clientService = clientService;
         this.clientController = clientController;
+        //run = true;
     }
 
     @Override
     public void run() {
 
-        while (true) {
+
+        while (run) {
             SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
             Sendable message = Session.getCrypto().decryptSendable(sealedMessage, Session.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
+
+
     }
 
     private void process(MessageType type, Sendable message) {
@@ -61,6 +65,13 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case PASS_CHANGE:
                 notifyUser(message);
+                break;
+            case LOGOUT:
+                run = false;
+                break;
+            case EXIT:
+                run = false;
+                Session.close();
                 break;
         }
     }
@@ -105,6 +116,6 @@ public class ServerResponseHandler implements Runnable {
         String info = (String) msg.getContent(String.class);
 
         clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.PASS_MANAGER, info);
-
     }
+
 }

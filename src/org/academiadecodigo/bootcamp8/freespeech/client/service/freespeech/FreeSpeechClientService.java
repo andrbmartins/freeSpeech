@@ -62,6 +62,12 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
+    public void sendExit() {
+        Message<String> message = new Message<>(new String(" "));
+        writeObject(MessageType.EXIT, message);
+    }
+
+    @Override
     public void changePassword(String[] passSet) {
         Map<String, String> messageContent = new HashMap<>();
 

@@ -23,10 +23,7 @@ import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.ChangePassDialog;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.EditBioDialog;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
@@ -231,6 +228,7 @@ public class ClientController implements Controller {
 
     @FXML
     void onExit(ActionEvent event) {
+        clientService.sendExit();
         Navigation.getInstance().close();
     }
 

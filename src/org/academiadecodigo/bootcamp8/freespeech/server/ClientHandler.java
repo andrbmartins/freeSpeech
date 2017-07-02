@@ -27,6 +27,7 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
+    boolean run;
 
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
@@ -34,6 +35,7 @@ public class ClientHandler implements Runnable {
 
         this.clientSocket = clientSocket;
         this.server = server;
+        run = true;
         //TODO do we really need 2 more layers of encapsulation?
         communication = new CommunicationService();
     }
@@ -143,13 +145,17 @@ public class ClientHandler implements Runnable {
     private void readFromClient() {
         SealedSendable msg;
 
-        while ((msg = communication.retrieveMessage()) != null) {
-            handleMessage(msg);
+        while (run) {
+            if ((msg = communication.retrieveMessage()) != null) {
+                handleMessage(msg);
+            } else {
+                run = false;
+            }
         }
-
         server.logOutUser(this);
         closeSocket();
     }
+
 
     private void handleMessage(SealedSendable msg) {
 
@@ -184,7 +190,12 @@ public class ClientHandler implements Runnable {
                 changePass(msg, type);
                 break;
             case LOGOUT:
-                System.out.println("here");
+                write(msg);
+                server.logOutUser(this);
+                break;
+            case EXIT:
+                run = false;
+                write(msg);
                 server.logOutUser(this);
                 break;
         }

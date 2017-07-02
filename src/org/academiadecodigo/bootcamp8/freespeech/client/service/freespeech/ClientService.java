@@ -32,4 +32,6 @@ public interface ClientService extends Service {
     void sendLogOut();
 
     void changePassword(String[] passSet);
+
+    void sendExit();
 }
