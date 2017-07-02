@@ -174,13 +174,32 @@ public class ClientHandler implements Runnable {
             case REQUEST_USERS_ONLINE:
                 sendUsersList();
                 break;
+            case GET_BIO:
+                //TODO
+                break;
             case BIO_UPDATE:
                 //TODO
                 break;
             case PASS_CHANGE:
-                //TODO
+                changePass(msg, type);
                 break;
         }
+    }
+
+    private void changePass(SealedSendable msg, MessageType type) {
+        Sendable<HashMap> sendable;
+        sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
+        HashMap<String, String> map = sendable.getContent(HashMap.class);
+        Sendable<String> message;
+        if (server.getUserService().changePassword(clientName, map.get(Values.PASSWORD_KEY),
+                map.get(Values.NEW_PASSWORD))) {
+            message = new Message<>(Values.PASS_CHANGED);
+        } else {
+            message = new Message<>(Values.PASS_NOT_CHANGED);
+        }
+
+        SealedSendable sealedMsg = crypto.encrypt(type, message, crypto.getSymKey());
+        communication.sendMessage(sealedMsg);
     }
 
     private void sendUsersList() {

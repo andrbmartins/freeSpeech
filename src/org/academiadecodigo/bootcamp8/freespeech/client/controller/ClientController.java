@@ -23,6 +23,9 @@ import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.ChangePassDialog;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.EditBioDialog;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
@@ -36,6 +39,7 @@ import java.util.List;
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> PedroMAlves
  */
 
 //TODO documentation
@@ -71,6 +75,7 @@ public class ClientController implements Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
 
         rooms.put(getSelectedTab(), lobbyTextArea);
         setDraggableTopBar();
@@ -150,8 +155,6 @@ public class ClientController implements Controller {
 
     @Override
     public void setStage(Stage stage) {
-
-
         this.stage = stage;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -177,5 +180,70 @@ public class ClientController implements Controller {
     void ShowBio(ActionEvent event) {
         System.out.println("Show bio");
     }
+
+
+    @FXML
+    void editUserInfo(ActionEvent event) {
+        new EditBioDialog().showAndWait();
+        //TODO launch dialog
+    }
+
+
+    @FXML
+    void changePassword(ActionEvent event) {
+        //TODO check the Intellij yellow warning for 'change.showAndWait()' with André or Filipe
+        ChangePassDialog change = new ChangePassDialog();
+        boolean exit = false;
+        while (!exit) {
+
+            Optional<String[]> result = change.showAndWait();
+
+            if (!result.isPresent()) {
+                return;
+            }
+            if (areFieldsValid(result.get())) {
+                clientService.changePassword(result.get());
+                return;
+            }
+            userPromptExternal(Alert.AlertType.ERROR, DialogText.INVALID_FIELDS, DialogText.INVALID_FORM);
+        }
+    }
+
+
+
+    private boolean areFieldsValid(String[] results) {
+        for (String s : results) {
+            if (s.isEmpty()) {
+                return false;
+            }
+        }
+        return results[1].equals(results[2]);
+
+    }
+
+    //TODO to remove after the correct implementation of logout or exit. Just here so I don't freak out everytime i need to quit :)
+    @FXML
+    void onLogOut(ActionEvent event) {
+        System.exit(0);
+    }
+
+    public void userPromptExternal(Alert.AlertType alertType, String title, String content) {
+        Platform.runLater(new Runnable() {
+            public void run() {
+            userPrompt1(alertType, title, content);
+            }
+        });
+
+    }
+
+    public Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        return alert.showAndWait();
+    }
+
+
 
 }

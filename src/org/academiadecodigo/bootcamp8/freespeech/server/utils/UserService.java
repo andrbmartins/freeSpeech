@@ -21,4 +21,6 @@ public interface UserService {
     int count();
 
     void eventlogger(Values.TypeEvent typeEvent, String log_message);
+
+    boolean changePassword(String user, String oldPass, String newPass);
 }

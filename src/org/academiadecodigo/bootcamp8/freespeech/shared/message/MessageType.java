@@ -17,6 +17,7 @@ public enum MessageType {
     REQUEST_USERS_ONLINE,
     NOTIFICATION,
     KEY,
+    GET_BIO,
     BIO_UPDATE,
     PASS_CHANGE
 }

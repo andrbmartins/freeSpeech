@@ -1,19 +1,16 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.utils.JdbcUserService;
-import org.academiadecodigo.bootcamp8.freespeech.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
-import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +25,6 @@ import java.util.concurrent.Executors;
  */
 
 public class Server {
-
     private int port;
     private ServerSocket serverSocket;
     private Key symKey;
@@ -65,11 +61,6 @@ public class Server {
 
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
-        //userService = TempUserService.getInstance();
-        userService = JdbcUserService.getInstance();
-        //System.out.println("Fora do init ");
-
-
 
     }
 
@@ -181,4 +172,11 @@ public class Server {
 
         return usersList;
     }
+
+
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
 }

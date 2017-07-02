@@ -22,6 +22,7 @@ public class Values {
 
     public static final String NAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+    public static final String NEW_PASSWORD = "newPassword";
     public static final String DESTINY = "to";
 
     public static final String LOGIN_OK = "Successfully logged in!";
@@ -29,6 +30,8 @@ public class Values {
     public static final String REGISTER_OK = "Successfully registered.";
     public static final String REGISTER_FAIL = "Username unavailable";
     public static final String UNMATCHED_PASSWORD = "Passwords don't match.";
+    public static final String PASS_NOT_CHANGED = "Incorrect password. Not able to change your password.";
+    public static final String PASS_CHANGED = "Successfully updated your password";
 
     public static final String INVALID_INPUT = "Invalid input.";
 

@@ -47,6 +47,12 @@ public class TempUserService implements UserService {
     }
 
     @Override
+    public boolean changePassword(String user, String oldPass, String newPass) {
+        return false;
+    }
+
+
+    @Override
     public User getUser(String username) {
         for (User u : registeredUsers) {
             if (username.equals(u.getUsername())) {

@@ -59,7 +59,9 @@ public class ConnectionManager  {
         return registered;
     }
 
-    public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
+    //TODO bellow method is not needed nor utilized since the findUser method bellow does the trick
+
+   /* public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
 
         PreparedStatement preparedStmt = null;
         try {
@@ -81,7 +83,7 @@ public class ConnectionManager  {
         // Insert in log - Login Sucess
         return true;
 
-    }
+    }*/
 
     public User findUser(String username) throws SQLException {     // Needs test
 
@@ -99,23 +101,33 @@ public class ConnectionManager  {
             user = new User(usernameValue, passwordValue);
             System.out.println(user.toString());
         }
-        //System.out.println(user.toString());
+        preparedStmt.close();
         return user ;
     }
 
-   /* public boolean findUserByName(String username) throws SQLException {         // Needs test
-
-        PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
-        preparedStmt.setString(1, username);
-
-        ResultSet resultSet = preparedStmt.executeQuery();
-
-        if (resultSet.next())
-            return true;
-        else
-            return false;
-
-    }*/
+    public boolean changePass(String username, String newPass) {
+        boolean passChanged = true;
+        PreparedStatement preparedStmt = null;
+        try {
+            preparedStmt = connection.prepareStatement(Querys.ALTER_PASSWORD);
+            preparedStmt.setString(1, newPass);
+            preparedStmt.setString(2, username);
+            preparedStmt.execute();
+        } catch (SQLException e1) {
+            eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_PASSORD + "--" + username);
+            e1.printStackTrace();
+            passChanged = false;
+        } finally {
+            try {
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return passChanged;
+    }
 
 
     public int count() throws SQLException {

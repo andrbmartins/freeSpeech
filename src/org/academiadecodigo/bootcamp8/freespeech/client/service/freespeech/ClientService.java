@@ -28,4 +28,6 @@ public interface ClientService extends Service {
     void sendUserData(File file);
 
     void sendListRequest();
+
+    void changePassword(String[] passSet);
 }

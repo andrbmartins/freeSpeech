@@ -1,11 +1,12 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
+import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.util.regex.Matcher;
@@ -58,6 +59,9 @@ public class ServerResponseHandler implements Runnable {
             case PRIVATE_TEXT:
                 //TODO
                 break;
+            case PASS_CHANGE:
+                notifyUser(message);
+                break;
         }
     }
 
@@ -95,5 +99,12 @@ public class ServerResponseHandler implements Runnable {
             result = result.concat(matcher.group(4));
         }
         return result;
+    }
+
+    public void notifyUser(Sendable msg) {
+        String info = (String) msg.getContent(String.class);
+
+        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.PASS_MANAGER, info);
+
     }
 }
