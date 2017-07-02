@@ -61,8 +61,6 @@ public class Server {
         crypto.generateSymKey();
         symKey = crypto.getSymKey();
 
-        System.out.println("SERVER SYM KEY " + symKey);
-
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
         //userService = TempUserService.getInstance();
@@ -84,7 +82,6 @@ public class Server {
         userService.eventlogger(Values.TypeEvent.SERVER, Values.SERVER_START);
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            System.out.println("LOGGED");
             //TODO log new client
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey));
             userService.eventlogger(Values.TypeEvent.CLIENT, Values.CONNECT_CLIENT + "--" + clientSocket.toString());

@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.persistence;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
-import org.academiadecodigo.bootcamp8.freespeech.shared.Querys;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.*;
@@ -35,7 +35,7 @@ public class ConnectionManager  {
         PreparedStatement preparedStmt = null;
         try {
             //System.out.println(password.length());
-            preparedStmt = connection.prepareStatement(Querys.INSERT_USER);
+            preparedStmt = connection.prepareStatement(Queries.INSERT_USER);
             preparedStmt.setString(1,  username);
             preparedStmt.setString(2, password);
             preparedStmt.execute();
@@ -63,7 +63,7 @@ public class ConnectionManager  {
 
         PreparedStatement preparedStmt = null;
         try {
-            preparedStmt = connection.prepareStatement(Querys.AUTHENTICATE_USER);
+            preparedStmt = connection.prepareStatement(Queries.AUTHENTICATE_USER);
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
             ResultSet resultSet = preparedStmt.executeQuery();
@@ -87,7 +87,7 @@ public class ConnectionManager  {
 
         User user = null;
 
-        PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
+        PreparedStatement preparedStmt = connection.prepareStatement(Queries.SELECT_USER);
         preparedStmt.setString(1, username);
         System.out.println("before result ");
         ResultSet resultSet = preparedStmt.executeQuery();
@@ -105,7 +105,7 @@ public class ConnectionManager  {
 
    /* public boolean findUserByName(String username) throws SQLException {         // Needs test
 
-        PreparedStatement preparedStmt = connection.prepareStatement(Querys.SELECT_USER);
+        PreparedStatement preparedStmt = connection.prepareStatement(Queries.SELECT_USER);
         preparedStmt.setString(1, username);
 
         ResultSet resultSet = preparedStmt.executeQuery();
@@ -137,7 +137,7 @@ public class ConnectionManager  {
 
         PreparedStatement preparedStmt = null;
         try {
-            preparedStmt = connection.prepareStatement(Querys.LOG);
+            preparedStmt = connection.prepareStatement(Queries.LOG);
             preparedStmt.setString(1,type_event.toString());
             preparedStmt.setString(2, message);
             preparedStmt.execute();

@@ -4,6 +4,9 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography.CryptographyService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography.FreeSpeechCryptographyService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.FreeSpeechClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginService;
@@ -31,8 +34,7 @@ public class Client extends Application {
 
         Navigation.getInstance().setStage(primaryStage);
         defineStyle(primaryStage);
-        Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
-
+        Navigation.getInstance().loadScreen(Values.CONNECTING_SCENE);
     }
 
     private void defineStyle(Stage stage) {
@@ -40,15 +42,16 @@ public class Client extends Application {
         String css = new File(Values.STYLESHEET).toURI().toString();
         stage.initStyle(StageStyle.UNDECORATED);
         Navigation.getInstance().setCss(css);
-        stage.setTitle(Values.TITLE);
     }
 
     private void addServicesToRegister() {
 
-        LoginService login = new LoginClientService();
-        FreeSpeechClientService freeSpeech = new FreeSpeechClientService();
+        CryptographyService cryptographyService = new FreeSpeechCryptographyService();
+        LoginService loginService = new LoginClientService();
+        ClientService clientService = new FreeSpeechClientService();
 
-        RegistryService.getInstance().addService(login);
-        RegistryService.getInstance().addService(freeSpeech);
+        RegistryService.getInstance().addService(cryptographyService);
+        RegistryService.getInstance().addService(loginService);
+        RegistryService.getInstance().addService(clientService);
     }
 }

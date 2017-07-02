@@ -3,7 +3,6 @@ package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;

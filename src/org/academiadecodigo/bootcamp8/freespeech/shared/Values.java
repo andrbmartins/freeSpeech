@@ -9,12 +9,8 @@ public class Values {
     public static final String HOST = "127.0.0.1";
     public static final int SERVER_PORT = 4040;
 
-    public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
-    public static final String USER_DBSERVER = "root";
-    public static final String PASSWORD_DBSERVER = "babaji";
-
-    public static final String VIEW = "../view";
     public static final String VIEW_PATH = "../view";
+    public static final String CONNECTING_SCENE = "connection";
     public static final String LOGIN_SCENE = "login";
     public static final String USER_SCENE = "user";
 
@@ -29,20 +25,15 @@ public class Values {
     public static final String REGISTER_OK = "Successfully registered.";
     public static final String REGISTER_FAIL = "Username unavailable";
     public static final String UNMATCHED_PASSWORD = "Passwords don't match.";
-
-    public static final String INVALID_INPUT = "Invalid input.";
+    public static final String INVALID_INPUT = "Required fields are empty.";
 
     public static final String NEW_USER = "New User";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
-    public static final String TITLE = "Free Speech";
 
-
-    public static final String USER_TAKEN = "Username taken. Choose another one";
-    public static final String CHECK_PASSWORD = "Please confirm you typed the same password";
-
-    public static final String EMPTY_FIELDS = "No empty fields accepted. Thanks";
-
+    public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
+    public static final String USER_DBSERVER = "root";
+    public static final String PASSWORD_DBSERVER = "1234";
 
     public static final String SERVER_START = "SERVER START";
     public static final String SERVER_STOP = "SERVER STOP";
@@ -58,8 +49,6 @@ public class Values {
     public static final String CLIENT_PASSORD = "CLIENT CHANGED PASSWORD";
 
     public enum TypeEvent { SERVER,LOGIN, REGISTER, CLIENT, DATABASE }
-
-    //public static final String NEW_USER = "New User";
 
     public static final double LOGIN_HEIGHT = 450d;
     public static final double LOGIN_WIDTH = 350d;
