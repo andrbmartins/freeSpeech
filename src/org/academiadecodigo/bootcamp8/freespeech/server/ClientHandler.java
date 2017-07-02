@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.server.communication.Communication;
 import org.academiadecodigo.bootcamp8.freespeech.server.communication.CommunicationService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -94,6 +95,13 @@ public class ClientHandler implements Runnable {
                 }
             }
 
+            if (sealedSendable.getType() == MessageType.BIO) {
+
+
+            }
+
+
+
             Sendable<String> newSendable = new Message<>(message);
             sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
 
@@ -146,7 +154,7 @@ public class ClientHandler implements Runnable {
         while ((msg = communication.retrieveMessage()) != null) {
             handleMessage(msg);
         }
-
+        // Introduzir no log server que o client fez logout e se desligou
         server.logOutUser(this);
         closeSocket();
     }
@@ -174,7 +182,28 @@ public class ClientHandler implements Runnable {
             case REQUEST_USERS_ONLINE:
                 sendUsersList();
                 break;
+            case BIO: {
+                System.out.println("Recebi msg de request de bio" + msg.toString());
+                // IF Message is BIO request
+                sendUserBio(msg);
+
+                break;
+            }
         }
+    }
+
+    // Retrieve bio from database and send to client
+    private void sendUserBio(SealedSendable msg) {
+        System.out.println("Vou mandar a mesma message que recebi para testar" + msg );
+
+        Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
+        System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.toString());
+
+
+        //SealedSendable sealedSendable = crypto.encrypt(MessageType.BIO, msg, crypto.getSymKey());
+        write(msg);
+
+        System.out.println("Enviei mensagem com bio ao cliente" + msg);
     }
 
     private void sendUsersList() {

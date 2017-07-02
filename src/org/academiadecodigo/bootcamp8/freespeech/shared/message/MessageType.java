@@ -16,5 +16,6 @@ public enum MessageType {
     REGISTER,
     REQUEST_USERS_ONLINE,
     NOTIFICATION,
-    KEY
+    KEY,
+    BIO
 }

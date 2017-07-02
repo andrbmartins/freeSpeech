@@ -46,16 +46,11 @@ public class ClientController implements Controller {
     @FXML private TextArea lobbyTextArea;
     @FXML private TextArea inputTextArea;
     @FXML private ListView onlineUsersList;
-    @FXML
-    private Button exitButton;
-    @FXML
-    private MenuItem Bio_Menu;
-    @FXML
-    private VBox Bio;
-    @FXML
-    private ImageView Bio_Image;
-    @FXML
-    private TextArea Bio_Data;
+    @FXML private Button exitButton;
+    @FXML private MenuItem Bio_Menu;
+    @FXML private VBox Bio;
+    @FXML private ImageView Bio_Image;
+    @FXML private TextArea Bio_Data;
 
     private Stage stage;
     private ClientService clientService;
@@ -175,7 +170,12 @@ public class ClientController implements Controller {
 
     @FXML
     void ShowBio(ActionEvent event) {
-        System.out.println("Show bio");
+        System.out.println("Send bio request to server");
+        clientService.sendBioRequest("teste");
+
     }
 
+    public void ShowUserBio(Sendable message) {
+        // Aqui vou mandar as cenas para a Tab da bio
+    }
 }
