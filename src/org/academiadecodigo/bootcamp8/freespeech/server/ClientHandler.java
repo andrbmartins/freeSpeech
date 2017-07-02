@@ -1,7 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.communication.Communication;
-import org.academiadecodigo.bootcamp8.freespeech.server.communication.CommunicationService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
@@ -26,7 +24,8 @@ public class ClientHandler implements Runnable {
     private String clientName;
     private final Socket clientSocket;
     private final Server server;
-    private Communication communication;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
@@ -34,14 +33,12 @@ public class ClientHandler implements Runnable {
 
         this.clientSocket = clientSocket;
         this.server = server;
-        //TODO do we really need 2 more layers of encapsulation?
-        communication = new CommunicationService();
     }
 
     @Override
     public void run() {
 
-        communication.openStreams(clientSocket);
+        openStreams(clientSocket);
         exchangeKeys();
 
         authenticateClient();
@@ -51,10 +48,19 @@ public class ClientHandler implements Runnable {
         readFromClient();
     }
 
+    public void openStreams(Socket socket) {
+        try {
+            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void exchangeKeys() {
 
-        Stream.write(communication.getObjectOutputStream(), crypto.getPublicKey());
-        Key key = (Key) Stream.read(communication.getObjectInputStream());
+        write(crypto.getPublicKey());
+        Key key = (Key) Stream.read(objectInputStream);
         crypto.setForeignKey(key);
     }
 
@@ -67,7 +73,7 @@ public class ClientHandler implements Runnable {
         String message = "";
 
         while (!exit) {
-            sealedSendable = communication.retrieveMessage();
+            sealedSendable = Stream.readSendable(objectInputStream);
 
             //TODO check casts
             sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
@@ -80,8 +86,6 @@ public class ClientHandler implements Runnable {
                     clientName = map.get(Values.NAME_KEY);
                 } else {
                     message = Values.LOGIN_FAIL;
-                    //authenticateClient();
-
                 }
             }
 
@@ -97,14 +101,14 @@ public class ClientHandler implements Runnable {
             Sendable<String> newSendable = new Message<>(message);
             sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
 
-            communication.sendMessage(sealedSendable);
+            write(sealedSendable);
 
             if (newSendable.getContent(String.class).equals(Values.LOGIN_OK)) {
 
                 Sendable<Key> sendableKey = new Message<>(crypto.getSymKey());
                 SealedSendable keySeal = crypto.encrypt(MessageType.KEY, sendableKey, crypto.getForeignKey());
 
-                communication.sendMessage(keySeal);
+                write(keySeal);
             }
         }
     }
@@ -143,7 +147,7 @@ public class ClientHandler implements Runnable {
     private void readFromClient() {
         SealedSendable msg;
 
-        while ((msg = communication.retrieveMessage()) != null) {
+        while ((msg = Stream.readSendable(objectInputStream)) != null) {
             handleMessage(msg);
         }
 
@@ -175,10 +179,10 @@ public class ClientHandler implements Runnable {
                 sendUsersList();
                 break;
             case BIO_UPDATE:
-                //TODO
+                //TODO - what to do in this case?
                 break;
             case PASS_CHANGE:
-                //TODO
+                //TODO - what to do in this case?
                 break;
         }
     }
@@ -191,8 +195,8 @@ public class ClientHandler implements Runnable {
         write(sealedSendable);
     }
 
-    public void write(SealedSendable sendable) {
-        communication.sendMessage(sendable);
+    public void write(Object object) {
+        Stream.write(objectOutputStream, object);
     }
 
     private void closeSocket() {
@@ -208,7 +212,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public String getName() {
+    public String getClientName() {
         return clientName;
     }
 }

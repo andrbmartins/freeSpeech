@@ -158,7 +158,7 @@ public class Server {
         String destiny = content.get(Values.DESTINY);
 
         for (ClientHandler c : loggedUsers) {
-            if (c.getName().equals(destiny)) {
+            if (c.getClientName().equals(destiny)) {
                 c.write(msg);
                 break;
             }
@@ -176,7 +176,7 @@ public class Server {
         List<String> usersList = new LinkedList<>();
 
         for (ClientHandler c : loggedUsers) {
-            usersList.add(c.getName());
+            usersList.add(c.getClientName());
         }
 
         return usersList;

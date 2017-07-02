@@ -9,9 +9,9 @@ public class Values {
     public static final String HOST = "127.0.0.1";
     public static final int SERVER_PORT = 4040;
 
-    public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
+    public static final String URL_DBSERVER = "jdbc:mysql://localhost/freespeech";
     public static final String USER_DBSERVER = "root";
-    public static final String PASSWORD_DBSERVER = "babaji";
+    public static final String PASSWORD_DBSERVER = "dbLord&Master9000";
 
     public static final String VIEW = "../view";
     public static final String VIEW_PATH = "../view";

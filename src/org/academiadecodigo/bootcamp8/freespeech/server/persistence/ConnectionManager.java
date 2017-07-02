@@ -1,4 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.persistence;
+// TODO persistence package??? Wht don't call them model???
 
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Querys;
