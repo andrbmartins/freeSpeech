@@ -3,7 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeech.shared;
 /**
  * Created by Jramos on 30-06-2017.
  */
-public class Querys {
+public class Queries {
 
     public static final String AUTHENTICATE_USER = "SELECT * FROM user WHERE user_name = ? AND user_password= ?";
     public static final String SELECT_USER = "SELECT * FROM user WHERE user_name=?";

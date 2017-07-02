@@ -48,16 +48,6 @@ public class ClientController implements Controller {
     @FXML private TextArea lobbyTextArea;
     @FXML private TextArea inputTextArea;
     @FXML private ListView onlineUsersList;
-    @FXML
-    private Button exitButton;
-    @FXML
-    private MenuItem Bio_Menu;
-    @FXML
-    private VBox Bio;
-    @FXML
-    private ImageView Bio_Image;
-    @FXML
-    private TextArea Bio_Data;
 
     private Stage stage;
     private ClientService clientService;
@@ -116,11 +106,6 @@ public class ClientController implements Controller {
     }
 
     @FXML
-    void onTabClicked(Event event) {
-        currentRoom = rooms.get(getSelectedTab());
-    }
-
-    @FXML
     void onSend(ActionEvent event) {
         clientService.sendUserText(inputTextArea);
     }
@@ -148,7 +133,7 @@ public class ClientController implements Controller {
     }
 
     public TextArea getCurrentRoom() {
-        return currentRoom;
+        return rooms.get(getSelectedTab());
     }
 
     @Override

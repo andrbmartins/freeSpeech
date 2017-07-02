@@ -1,15 +1,15 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.login;
 
+import org.academiadecodigo.bootcamp8.freespeech.client.controller.LoginController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.Key;
+import java.util.Map;
 
 /**
  * Developed @ <Academia de Código_>
@@ -20,30 +20,42 @@ import java.security.Key;
 
 public class LoginClientService implements LoginService {
 
-    private Socket clientSocket;
-
-    @Override
-    public void makeConnection(String server, int port) {
-
-        try {
-            clientSocket = new Socket(server, port);
-            Session.getInstance().setUserSocket(clientSocket);
-            exchangeKeys();
-
-        } catch (IOException e) {
-            //TODO - unable to connect message
-        }
-    }
-
-    private void exchangeKeys() {
-        Key foreignKey = (Key) Stream.read(Session.getInput());
-        Session.getCrypto().setForeignKey(foreignKey);
-        Stream.write(Session.getOutput(), Session.getCrypto().getPublicKey());
-    }
-
     @Override
     public String getName() {
         return LoginService.class.getSimpleName();
     }
 
+    @Override
+    public void sendMessage(MessageType messageType, Map<String, String> messageContent) {
+        Message<Map> message = new Message<>(messageContent);
+        //TODO this on service
+        SealedSendable sealed = Session.getCrypto().encrypt(messageType,
+                message, Session.getCrypto().getForeignKey());
+
+        Stream.write(Session.getOutput(), sealed);
+    }
+
+    @Override
+    public Sendable<String> readMessage() {
+        SealedSendable serverRsp = Stream.readSendable(Session.getInput());
+
+        return (Sendable<String>) Session.getCrypto().decryptWithPrivate(serverRsp);
+    }
+
+    @Override
+    public void receiveSymKey() {
+        SealedSendable s = Stream.readSendable(Session.getInput());
+
+        Sendable<Key> key = (Sendable<Key>) Session.getCrypto().decryptWithPrivate(s);
+        Session.getCrypto().setSymKey(key.<Key>getContent(Key.class));
+    }
+
+    @Override
+    public void exit() {
+        Message<String> message = new Message<>("");
+        SealedSendable sealed = Session.getCrypto().encrypt(MessageType.EXIT,
+                message, Session.getCrypto().getForeignKey());
+
+        Stream.write(Session.getOutput(), sealed);
+    }
 }

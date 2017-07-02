@@ -11,10 +11,10 @@ public class Values {
 
     public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DBSERVER = "root";
-    public static final String PASSWORD_DBSERVER = "";
+    public static final String PASSWORD_DBSERVER = "babaji";
 
-    public static final String VIEW = "../view";
     public static final String VIEW_PATH = "../view";
+    public static final String CONNECTING_SCENE = "connection";
     public static final String LOGIN_SCENE = "login";
     public static final String USER_SCENE = "user";
 
@@ -33,12 +33,11 @@ public class Values {
     public static final String PASS_NOT_CHANGED = "Incorrect password. Not able to change your password.";
     public static final String PASS_CHANGED = "Successfully updated your password";
 
-    public static final String INVALID_INPUT = "Invalid input.";
+    public static final String INVALID_INPUT = "Required fields are empty.";
 
     public static final String NEW_USER = "New User";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
-    public static final String TITLE = "Free Speech";
 
 
     public static final String USER_TAKEN = "Username taken. Choose another one";
@@ -61,8 +60,6 @@ public class Values {
     public static final String CLIENT_PASSORD = "CLIENT CHANGED PASSWORD";
 
     public enum TypeEvent { SERVER,LOGIN, REGISTER, CLIENT, DATABASE }
-
-    //public static final String NEW_USER = "New User";
 
     public static final double LOGIN_HEIGHT = 450d;
     public static final double LOGIN_WIDTH = 350d;
