@@ -29,5 +29,7 @@ public interface ClientService extends Service {
 
     void sendListRequest();
 
+    void sendLogOut();
+
     void changePassword(String[] passSet);
 }

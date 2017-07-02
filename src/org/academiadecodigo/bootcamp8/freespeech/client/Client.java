@@ -51,4 +51,9 @@ public class Client extends Application {
         RegistryService.getInstance().addService(login);
         RegistryService.getInstance().addService(freeSpeech);
     }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+    }
 }

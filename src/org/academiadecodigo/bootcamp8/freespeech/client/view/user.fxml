@@ -44,6 +44,7 @@
             <Button fx:id="file" mnemonicParsing="false" onAction="#onFile" text="File" GridPane.columnIndex="2" />
             <Button mnemonicParsing="false" onAction="#editUserInfo" text="Edit Bio" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
             <Button mnemonicParsing="false" onAction="#changePassword" text="Change Password" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Button mnemonicParsing="false" onAction="#onExit" text="Exit" GridPane.columnIndex="3" GridPane.halignment="RIGHT" />
          </children>
       </GridPane>
        <ListView fx:id="onlineUsersList" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" GridPane.rowSpan="3">

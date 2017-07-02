@@ -26,6 +26,7 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.Clien
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.ChangePassDialog;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.EditBioDialog;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
@@ -224,7 +225,13 @@ public class ClientController implements Controller {
     //TODO to remove after the correct implementation of logout or exit. Just here so I don't freak out everytime i need to quit :)
     @FXML
     void onLogOut(ActionEvent event) {
-        System.exit(0);
+        clientService.sendLogOut();
+        Navigation.getInstance().back();
+    }
+
+    @FXML
+    void onExit(ActionEvent event) {
+        Navigation.getInstance().close();
     }
 
     public void userPromptExternal(Alert.AlertType alertType, String title, String content) {

@@ -18,6 +18,7 @@ import java.util.Map;
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> PedroMAlves
  */
 
 //TODO documentation
@@ -52,6 +53,12 @@ public class FreeSpeechClientService implements ClientService {
 
         Message<List> message = new Message<>(byteList);
         writeObject(MessageType.DATA, message);
+    }
+
+    @Override
+    public void sendLogOut() {
+        Message<String> message = new Message<>(new String(" "));
+        writeObject(MessageType.LOGOUT, message);
     }
 
     @Override

@@ -117,8 +117,8 @@ public class Server {
      * @param client
      */
     public void logOutUser(ClientHandler client) {
-
         loggedUsers.remove(client);
+        //TODO kill this thread
     }
 
     /**

@@ -183,6 +183,10 @@ public class ClientHandler implements Runnable {
             case PASS_CHANGE:
                 changePass(msg, type);
                 break;
+            case LOGOUT:
+                System.out.println("here");
+                server.logOutUser(this);
+                break;
         }
     }
 

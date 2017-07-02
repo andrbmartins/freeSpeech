@@ -19,5 +19,6 @@ public enum MessageType {
     KEY,
     GET_BIO,
     BIO_UPDATE,
-    PASS_CHANGE
+    PASS_CHANGE,
+    LOGOUT
 }
