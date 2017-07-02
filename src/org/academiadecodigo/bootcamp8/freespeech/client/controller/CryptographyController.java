@@ -92,7 +92,7 @@ public class CryptographyController implements Controller {
     }
 
     private synchronized void connectToServer() {
-        cryptographyService.connect(Values.HOST, Values.SERVER_PORT);
+       // cryptographyService.connect(Values.HOST, Values.SERVER_PORT);
 
         Platform.runLater(new Runnable() {
             @Override
