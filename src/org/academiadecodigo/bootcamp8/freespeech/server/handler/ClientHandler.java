@@ -1,8 +1,9 @@
-package org.academiadecodigo.bootcamp8.freespeech.server;
+package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.Server;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
-import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
@@ -26,7 +27,7 @@ public class ClientHandler implements Runnable {
     private final Server server;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-    boolean run;
+    private boolean run;
 
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
@@ -48,7 +49,7 @@ public class ClientHandler implements Runnable {
     private void init() {
         authenticateClient();
         //notifyNewUser();
-        server.addActiveUser(this);
+        server.addUser(this);
 
         readFromClient();
     }
@@ -161,7 +162,7 @@ public class ClientHandler implements Runnable {
             }
         }
         // Introduzir no log server que o client fez logout e se desligou
-        server.logOutUser(this);
+        server.remUser(this);
     }
 
     private void handleMessage(SealedSendable msg) {
@@ -184,7 +185,7 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
-                //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete switch
+            //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete switch
             /*case USERS_ONLINE:
                 sendUsersList();
                 break;*/
@@ -201,12 +202,12 @@ public class ClientHandler implements Runnable {
             case LOGOUT:
                 //TODO not fully working yet
                 write(msg);
-                server.logOutUser(this);
+                server.remUser(this);
                 break;
             case EXIT:
                 run = false;
                 write(msg);
-                server.logOutUser(this);
+                server.remUser(this);
                 closeSocket();
                 break;
             case BIO: {
@@ -220,7 +221,7 @@ public class ClientHandler implements Runnable {
 
     // Retrieve bio from database and send to client
     private void sendUserBio(SealedSendable msg) {
-        System.out.println("Vou mandar a mesma message que recebi para testar" + msg );
+        System.out.println("Vou mandar a mesma message que recebi para testar" + msg);
 
         Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
 
@@ -252,7 +253,7 @@ public class ClientHandler implements Runnable {
     }
 
 
-    public void sendUsersList(Message userList) {
+    public void sendUsersList(Sendable userList) {
         SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList, crypto.getSymKey());
         write(sealedSendable);
     }

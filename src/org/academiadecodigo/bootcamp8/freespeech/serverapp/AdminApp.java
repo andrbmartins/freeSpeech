@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp;
+package org.academiadecodigo.bootcamp8.freespeech.serverapp;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -6,10 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.controller.AdminController;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.DataBaseReader;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.WriteToFile;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.JdbcConnectionManager;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.controller.AdminController;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.DataBaseReader;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.WriteToFile;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.JdbcConnectionManager;
 
 /**
  * Developed @ <Academia de Código_>

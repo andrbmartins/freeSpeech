@@ -1,5 +1,7 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.utils;
+package org.academiadecodigo.bootcamp8.freespeech.server.service.user;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
+import org.academiadecodigo.bootcamp8.freespeech.server.service.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public interface UserService {
 
     int count();
 
-    void eventlogger(Values.TypeEvent typeEvent, String log_message);
+    void eventlogger(TypeEvent typeEvent, String log_message);
 
     boolean changePassword(String user, String oldPass, String newPass);
 

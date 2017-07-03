@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.utils;
+package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
 import java.io.Serializable;
 
@@ -25,6 +25,5 @@ public class User implements Serializable {
     public String getPassword() {
         return password;
     }
-
 
 }

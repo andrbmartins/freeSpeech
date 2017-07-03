@@ -1,6 +1,6 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
+package org.academiadecodigo.bootcamp8.freespeech.serverapp.service;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.Utils;
 import java.io.*;
 
 /**

@@ -1,6 +1,8 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.utils;
+package org.academiadecodigo.bootcamp8.freespeech.server.service.user;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
+import org.academiadecodigo.bootcamp8.freespeech.server.service.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.SQLException;
@@ -12,7 +14,6 @@ import java.util.List;
  */
 public class JdbcUserService implements UserService {
     private ConnectionManager connectionManager;
-
 
     public JdbcUserService() {
         //TODO this is the problem !
@@ -72,7 +73,7 @@ public class JdbcUserService implements UserService {
     }
 
     @Override
-    public void eventlogger(Values.TypeEvent typeEvent, String log_message ) {
+    public void eventlogger(TypeEvent typeEvent, String log_message ) {
         connectionManager.eventlogger(typeEvent, log_message);
     }
 

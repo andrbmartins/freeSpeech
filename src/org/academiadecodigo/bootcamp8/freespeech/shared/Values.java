@@ -52,8 +52,6 @@ public class Values {
     public static final String CLIENT_REGISTER_FAILED = "FAILED TO REGISTER USER";
     public static final String CLIENT_PASSORD = "CLIENT CHANGED PASSWORD";
 
-    public enum TypeEvent { SERVER,LOGIN, REGISTER, CLIENT, DATABASE }
-
     public static final double LOGIN_HEIGHT = 450d;
     public static final double LOGIN_WIDTH = 350d;
     public static final double CLIENT_WIDTH = 900d;
