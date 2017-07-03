@@ -20,6 +20,11 @@ public class Stream {
      */
     public static void write(ObjectOutputStream out, Object message) {
 
+        // Don't allow send of null messages
+        if (message == null) {
+            return;
+        }
+
         try {
 
             out.writeObject(message);
