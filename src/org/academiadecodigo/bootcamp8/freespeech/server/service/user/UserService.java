@@ -1,8 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.service.user;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
-import org.academiadecodigo.bootcamp8.freespeech.server.service.logger.TypeEvent;
-import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
 
 import java.util.List;
 

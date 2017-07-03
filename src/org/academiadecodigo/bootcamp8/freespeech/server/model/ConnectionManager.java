@@ -1,6 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.service.logger.TypeEvent;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
