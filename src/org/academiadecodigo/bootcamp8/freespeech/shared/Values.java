@@ -22,6 +22,7 @@ public class Values {
 
     public static final String NAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+    public static final String TAB_ID = "Tab Id";
     public static final String DESTINY = "to";
     public static final String MESSAGE = "text";
 
@@ -57,6 +58,7 @@ public class Values {
     public static final String CLIENT_REGISTED = "CLIENT REGISTERED";
     public static final String CLIENT_REGISTER_FAILED = "FAILED TO REGISTER USER";
     public static final String CLIENT_PASSORD = "CLIENT CHANGED PASSWORD";
+    public static final String SEPARATOR_CHARACTER = ",";
 
     public enum TypeEvent { SERVER,LOGIN, REGISTER, CLIENT, DATABASE }
 

@@ -8,9 +8,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Developed @ <Academia de Código_>
@@ -38,7 +36,7 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
-    public void sendPrivateText(TextArea textArea, String destiny) {
+    public void sendPrivateText(TextArea textArea, String tabId, Set<String> destinySet) {
 
         if (textArea.getText().isEmpty()) {
             return;
@@ -47,14 +45,27 @@ public class FreeSpeechClientService implements ClientService {
         String text = Session.getInstance().getUsername() + ": " + textArea.getText();
 
         HashMap<String,String> map = new HashMap<>();
-        map.put(Values.DESTINY,destiny);
-        map.put(Values.MESSAGE, text);
+        map.put(Values.TAB_ID, tabId);
+        map.put(Values.DESTINY,parseSetToString(destinySet));
+        map.put(Values.MESSAGE,text);
+
+        System.out.println(map.toString());
 
         Message<HashMap<String,String>> message = new Message<>(map);
-        //Message<String> message = new Message<>(text);
         writeObject(MessageType.PRIVATE_TEXT, message);
 
         textArea.clear();
+    }
+
+    private String parseSetToString(Set<String> destinySet) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String s : destinySet){
+            stringBuilder.append(s + Values.SEPARATOR_CHARACTER);
+        }
+
+        return stringBuilder.toString();
     }
 
     @Override
@@ -74,7 +85,7 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
-    public void sendPrivateData(File file, String destiny) {
+    public void sendPrivateData(File file, List<String> destinyList) {
 
     }
 

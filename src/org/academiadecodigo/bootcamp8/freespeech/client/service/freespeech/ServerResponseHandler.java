@@ -7,11 +7,12 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +44,10 @@ public class ServerResponseHandler implements Runnable {
 
     private void process(MessageType type, Sendable message) {
 
+        System.out.println(type.toString());
+        System.out.println(message.toString());
+        System.out.println();
+
         switch (type) {
             case NOTIFICATION:
                 clientService.sendListRequest();
@@ -68,15 +73,33 @@ public class ServerResponseHandler implements Runnable {
 
     private void printPrivateChat(Sendable message) {
 
-        String user = (String) ((HashMap<String,String>)message.getContent(HashMap.class)).get(Values.DESTINY);
-        String text = (String) ((HashMap<String,String>)message.getContent(HashMap.class)).get(Values.MESSAGE);
+        HashMap<String,String> map = (HashMap<String,String>)message.<HashMap<String,String>>getContent(HashMap.class);
 
-        text = wipeWhiteSpaces(text);
+        String tabId = map.get(Values.TAB_ID);
+        String destinyString = map.get(Values.DESTINY);
+        String text = map.get(Values.MESSAGE);
+        TextArea textArea;
+        Set<String> destinySet = parseStringToSet(destinyString);
 
-        ((TextArea)(clientController.getDestinyRoom(user).getContent())).appendText((((TextArea)(clientController.getDestinyRoom(user).getContent())).getText().isEmpty() ? "" : "\n") + text);
+        if((textArea = clientController.getDestinyRoom(tabId)) != null){
+            clientController.updateUsersSet(tabId,destinySet);
 
-        //clientController.addMessageToTab(user,text);
+        }else{
+            clientController.createReceivedTab(destinySet,tabId);
+            textArea = clientController.getDestinyRoom(tabId);
+        }
+            textArea.appendText((textArea.getText().isEmpty() ? "" :"\n") + text);
+    }
 
+    private Set<String> parseStringToSet(String destinyString) {
+
+        HashSet<String> set = new HashSet<>();
+
+        for(String s : destinyString.split(Values.SEPARATOR_CHARACTER)){
+            set.add(s);
+        }
+
+        return set;
     }
 
     private void printToRoom(Sendable message) {

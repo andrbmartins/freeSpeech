@@ -30,6 +30,8 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -66,14 +68,16 @@ public class ClientController implements Controller {
     private Stage stage;
     private ClientService clientService;
     private Map<Tab, TextArea> rooms;
-    private Map<String, Tab> tabNames;
+    private Map<String, Tab> tabId;
+    private Map<String,Set<String>> usersPerTab;
     //private TextArea currentRoom; //TODO can i not use this?
     private Tab currentTab;
     private double[] position;
 
     public ClientController() {
         rooms = new HashMap<>();
-        tabNames = new HashMap<>();
+        tabId = new HashMap<>();
+        usersPerTab = new HashMap<>();
         position = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
     }
@@ -84,7 +88,7 @@ public class ClientController implements Controller {
         Tab tab = getSelectedTab();
 
         rooms.put(tab, lobbyTextArea);
-        tabNames.put(tab.getText(), tab);
+        tabId.put(tab.getText(), tab);
 
         setDraggableTopBar();
         focusUserInput();
@@ -135,6 +139,7 @@ public class ClientController implements Controller {
 
     @FXML
     void onActionPrivateChat(ActionEvent event) {
+
         String name = (String) onlineUsersList.getSelectionModel().getSelectedItem().toString();
         String clientName = Session.getInstance().getUsername();
 
@@ -153,8 +158,7 @@ public class ClientController implements Controller {
             System.out.println("mensagem da tab Lobby --" + currentTab.getText());
             clientService.sendUserText(inputTextArea);
         } else {
-            System.out.println("mensagem da tab " + currentTab.getText());
-            clientService.sendPrivateText(inputTextArea, currentTab.getText());
+
         }
     }
 
@@ -172,9 +176,10 @@ public class ClientController implements Controller {
             if (currentTab.getText().equals("Lobby")) {
                 System.out.println("mensagem da tab Lobby --" + currentTab.getText());
                 clientService.sendUserText(inputTextArea);
+
             } else {
-                System.out.println("mensagem da tab " + currentTab.getText());
-                clientService.sendPrivateText(inputTextArea, currentTab.getText());
+                String tabID = currentTab.getId();
+                clientService.sendPrivateText(inputTextArea,tabID,usersPerTab.get(tabID));
             }
 
             //clientService.sendUserText(inputTextArea);
@@ -227,66 +232,72 @@ public class ClientController implements Controller {
         System.out.println("Show bio");
     }
 
-
-    public void addMessageToTab(String user, String text) {
-
-        System.out.println("CHAT PRIVADO PARA " + user);
-
-        if (!tabNames.containsKey(user)) {
-
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("tab the user " + user + "ainda nao existe");
-                    createNewTab(user);
-                    //adds the text to the textArea of the tab that has as name the String user
-                    rooms.get(tabNames.get(user)).appendText(text);
-                }
-            });
-
-        } else {
-
-            //adds the text to the textArea of the tab that has as name the String user
-            rooms.get(tabNames.get(user)).appendText(text);
-        }
-
-    }
-
     private void createNewTab(String user) {
 
-        Tab tab = new Tab(user);
+        //gets current time in the that I want
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        Date date = new Date();
+
+        String id = Session.getInstance().getUsername() +
+                "_" + user + dateFormat.format(date);
+
+        Tab tab = new Tab("label " + id);
+        tab.setId(id);
+
         TextArea textArea = new TextArea();
         textArea.appendText("");
         tab.setContent(textArea);
 
-        //add teh onAction event to the tab
+        //add the onAction event to the tab
         tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
 
-        tabNames.put(user, tab);
+        tabId.put(id, tab);
         rooms.put(tab, textArea);
+        //creating the data to update usersPerTab
+        HashSet<String> set = new HashSet<>();
+        set.add(user);
+        set.add(Session.getInstance().getUsername());
+        usersPerTab.put(id,set);
 
         tabPane.getTabs().add(tab);
     }
 
-    public Tab getDestinyRoom(String user) {
+    public void createReceivedTab(Set<String> users, String id) {
 
-        if (tabNames.get(user) == null) {
+        Tab tab = new Tab("label " + id);
+        tab.setId(id);
 
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    createNewTab(user);
-                }
-            };
+        TextArea textArea = new TextArea();
+        textArea.appendText("");
+        textArea.setEditable(false);
+        tab.setContent(textArea);
 
-            Platform.runLater(runnable);
-            int i = 0;
-            while (tabNames.get(user) == null) {
-                i++;
+        //add the onAction event to the tab
+        tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
+
+        tabId.put(id, tab);
+        rooms.put(tab, textArea);
+        usersPerTab.put(id,users);
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                tabPane.getTabs().add(tab);
             }
-            System.out.println(i);
-        }
+        };
 
-        return tabNames.get(user);
+        Platform.runLater(runnable);
+
+        while (!tabPane.getTabs().contains(tab)){}
+
+    }
+
+    public TextArea getDestinyRoom(String tabId) {
+        Tab tab = this.tabId.get(tabId);
+        return (tab != null)? rooms.get(tab) : null;
+    }
+
+    public void updateUsersSet(String tabId, Set<String> destinySet) {
+        usersPerTab.replace(tabId,destinySet);
     }
 }

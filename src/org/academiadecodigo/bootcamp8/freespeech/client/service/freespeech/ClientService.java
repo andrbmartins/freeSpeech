@@ -9,6 +9,8 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import javax.crypto.SealedObject;
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Developed @ <Academia de Código_>
@@ -25,11 +27,11 @@ public interface ClientService extends Service {
      */
     void sendUserText(TextArea textField);
 
-    void sendPrivateText(TextArea textArea, String destiny);
+    void sendPrivateText(TextArea textArea, String tabID, Set<String> destinySet);
 
     void sendUserData(File file);
 
-    void sendPrivateData(File file, String destiny);
+    void sendPrivateData(File file, List<String> destinyList);
 
     void sendListRequest();
 }

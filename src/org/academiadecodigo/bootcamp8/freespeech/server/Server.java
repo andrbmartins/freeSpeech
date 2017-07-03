@@ -9,14 +9,13 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -155,14 +154,31 @@ public class Server {
         HashMap<String, String> content;
         //TODO check casts
         content = (HashMap<String, String>) msg.getContent(symKey).getContent(HashMap.class);
-        String destiny = content.get(Values.DESTINY);
+        String destinyString = content.get(Values.DESTINY);
 
+        Set<String> destinySet = parseStringToSet(destinyString);
+
+        System.out.println("SERVER DESTINY SET: " + destinySet.toString());
+
+        System.out.println("loggedUsers size is " + loggedUsers.size());
         for (ClientHandler c : loggedUsers) {
-            if (c.getClientName().equals(destiny)) {
+            System.out.println("checking ig user " + c.getClientName() + "will recieve message");
+            if (destinySet.contains(c.getClientName())) {
+                System.out.println("user " + c.getClientName() + " WILL recieve a message");
                 c.write(msg);
-                break;
             }
         }
+    }
+
+    private Set<String> parseStringToSet(String destinyString) {
+
+        HashSet<String> set = new HashSet<>();
+
+        for(String s : destinyString.split(Values.SEPARATOR_CHARACTER)){
+            set.add(s);
+        }
+
+        return set;
     }
 
     /**
