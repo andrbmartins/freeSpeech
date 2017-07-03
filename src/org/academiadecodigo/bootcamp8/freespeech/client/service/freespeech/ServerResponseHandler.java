@@ -1,6 +1,9 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -10,8 +13,13 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,13 +70,72 @@ public class ServerResponseHandler implements Runnable {
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
-                //TODO
+                saveRecievedFile(message);
                 break;
             case PRIVATE_TEXT:
                 //TODO
                 printPrivateChat(message);
                 break;
         }
+    }
+
+    private void saveRecievedFile(Sendable message) {
+
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                HashMap<String, List<Byte>> map;
+                map = (HashMap<String, List<Byte>>) message.<HashMap<String, List<Byte>>>getContent(HashMap.class);
+                List<Byte> extensionList = map.get(Values.FILE_EXTENSION);
+                String fileExtension = new String(parseListToByteArray(extensionList));
+                List<Byte> byteList = map.get(Values.MESSAGE);
+
+
+                FileChooser fileChooser = new FileChooser();
+                //fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("extension",fileExtension));
+                fileChooser.setInitialFileName("untitled." + fileExtension);
+                File file = fileChooser.showSaveDialog(new Stage());
+
+
+                try {
+                    file.createNewFile();
+                    byteListToFile(parseListToByteArray(byteList), file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+        Platform.runLater(runnable);
+
+    }
+
+    private byte[] parseListToByteArray(List<Byte> byteList) {
+        byte[] bytes = new byte[byteList.size()];
+
+        for(int i = 0; i < bytes.length; i++){
+            bytes[i] = byteList.get(i);
+        }
+
+        return bytes;
+    }
+
+    private void byteListToFile(byte[] byteArray, File file) {
+
+        try {
+            FileOutputStream stream = new FileOutputStream(file);
+            stream.write(byteArray);
+            stream.flush();
+            stream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void printPrivateChat(Sendable message) {

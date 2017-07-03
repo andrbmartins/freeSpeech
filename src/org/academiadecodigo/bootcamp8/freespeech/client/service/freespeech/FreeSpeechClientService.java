@@ -8,6 +8,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -75,18 +76,39 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
-    public void sendUserData(File file) {
+    public void sendUserData(File file, String destiny, String origin) {
+
+        String fileExtension = file.getName();
+        fileExtension = fileExtension.substring(fileExtension.lastIndexOf(".") + 1);
+
+        System.out.println("file extension: " + fileExtension);
 
         byte[] buffer = fileToByteArray(file);
         List<Byte> byteList = byteArrayToList(buffer);
+        HashMap<String, List<Byte>> map = new HashMap<>();
 
-        Message<List> message = new Message<>(byteList);
-        writeObject(MessageType.DATA, message);
+        List<Byte> destinyList = parseByteArrayToList(destiny.getBytes());
+        List<Byte> originList = parseByteArrayToList(origin.getBytes());
+        List<Byte> extensionList = parseByteArrayToList(fileExtension.getBytes());
+
+        map.put(Values.DESTINY, destinyList);
+        map.put(Values.ORIGIN, originList);
+        map.put(Values.FILE_EXTENSION, extensionList);
+        map.put(Values.MESSAGE, byteList);
+
+        Message<HashMap<String, List<Byte>>> message = new Message<>(map);
+        writeObject(MessageType.PRIVATE_DATA, message);
     }
 
-    @Override
-    public void sendPrivateData(File file, List<String> destinyList) {
+    private List<Byte> parseByteArrayToList(byte[] bytes) {
 
+        ArrayList<Byte> byteList = new ArrayList<>();
+
+        for (Byte b : bytes){
+            byteList.add(b);
+        }
+
+        return byteList;
     }
 
     /**

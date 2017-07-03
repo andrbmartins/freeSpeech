@@ -24,7 +24,9 @@ public class Values {
     public static final String PASSWORD_KEY = "password";
     public static final String TAB_ID = "Tab Id";
     public static final String DESTINY = "to";
+    public static final String ORIGIN = "from";
     public static final String MESSAGE = "text";
+    public static final String FILE_EXTENSION = "file extension";
 
     public static final String LOGIN_OK = "Successfully logged in!";
     public static final String LOGIN_FAIL = "Unable to login.";

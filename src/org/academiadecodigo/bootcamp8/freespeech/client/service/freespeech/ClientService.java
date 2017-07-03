@@ -29,9 +29,7 @@ public interface ClientService extends Service {
 
     void sendPrivateText(TextArea textArea, String tabID, Set<String> destinySet);
 
-    void sendUserData(File file);
-
-    void sendPrivateData(File file, List<String> destinyList);
+    void sendUserData(File file, String destiny, String origin);
 
     void sendListRequest();
 }

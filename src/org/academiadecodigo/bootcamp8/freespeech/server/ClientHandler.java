@@ -162,6 +162,7 @@ public class ClientHandler implements Runnable {
         switch (type) {
 
             case DATA:
+                //TODO bye bye I guess
             case TEXT:
                 server.writeToAll(msg);
                 break;
@@ -172,6 +173,7 @@ public class ClientHandler implements Runnable {
                 //TODO log
                 throw new IllegalArgumentException("You've already Register");
             case PRIVATE_DATA:
+                server.sendFile(msg);
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;

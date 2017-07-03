@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
@@ -196,5 +197,30 @@ public class Server {
         }
 
         return usersList;
+    }
+
+    public void sendFile(SealedSendable msg) {
+
+        HashMap<String,List<Byte>> content;
+        content = (HashMap<String,List<Byte>>)msg.getContent(symKey).getContent(HashMap.class);
+
+        String destiny = new String(parseByteListToArray(content.get(Values.DESTINY)));
+
+        for (ClientHandler c : loggedUsers){
+            if(c.getClientName().equals(destiny)){
+                c.write(msg);
+                break;
+            }
+        }
+    }
+
+    private byte[] parseByteListToArray(List<Byte> byteList) {
+        byte[] bytes = new byte[byteList.size()];
+
+        for (int i = 0; i < bytes.length; i++){
+            bytes[i] = byteList.get(i);
+        }
+
+        return bytes;
     }
 }

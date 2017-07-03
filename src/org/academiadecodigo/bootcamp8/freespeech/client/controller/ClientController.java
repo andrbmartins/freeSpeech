@@ -64,6 +64,8 @@ public class ClientController implements Controller {
     private ImageView Bio_Image;
     @FXML
     private TextArea Bio_Data;
+    @FXML
+    private Button addToChatButton;
 
     private Stage stage;
     private ClientService clientService;
@@ -147,6 +149,23 @@ public class ClientController implements Controller {
             createNewTab(name);
 
         }
+        addToChatButton.setDisable(false);
+        addToChatButton.setVisible(true);
+    }
+
+    @FXML
+    void onAddToChatAction(ActionEvent event) {
+
+        String name = onlineUsersList.getSelectionModel().getSelectedItem().toString();
+
+        String tabId = tabPane.getSelectionModel().getSelectedItem().getId();
+        Set<String > userSet =usersPerTab.get(tabId);
+
+        if(!userSet.contains(name)){
+            userSet.add(name);
+            usersPerTab.replace(tabId,userSet);
+        }
+
     }
 
     @FXML
@@ -190,10 +209,12 @@ public class ClientController implements Controller {
     @FXML
     void onFile(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-
         File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            clientService.sendUserData(file);
+
+        String destiny = onlineUsersList.getSelectionModel().getSelectedItem().toString();
+
+        if (file != null && destiny != null) {
+            clientService.sendUserData(file, destiny, Session.getInstance().getUsername());
         }
     }
 
@@ -299,5 +320,15 @@ public class ClientController implements Controller {
 
     public void updateUsersSet(String tabId, Set<String> destinySet) {
         usersPerTab.replace(tabId,destinySet);
+    }
+
+
+    public File filePopUPWindow() {
+
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showSaveDialog(stage);
+
+        return file;
+
     }
 }
