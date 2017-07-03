@@ -65,6 +65,7 @@ public class ClientController implements Controller {
         rooms = new HashMap<>();
         position = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
+
     }
 
     @Override

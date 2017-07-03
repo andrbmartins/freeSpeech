@@ -24,6 +24,8 @@ import java.util.Map;
 
 public class FreeSpeechClientService implements ClientService {
 
+    private final int MAX_FILE_SIZE = 52428800; //50 MB
+
     @Override
     public void sendUserText(TextArea textArea) {
 
@@ -55,6 +57,12 @@ public class FreeSpeechClientService implements ClientService {
 
     @Override
     public void sendUserData(File file) {
+
+        if (file.length() > MAX_FILE_SIZE) {
+            //TODO popup for user
+            System.out.println("file too big");
+            return;
+        }
 
         byte[] buffer = fileToByteArray(file);
         List<Byte> byteList = byteArrayToList(buffer);

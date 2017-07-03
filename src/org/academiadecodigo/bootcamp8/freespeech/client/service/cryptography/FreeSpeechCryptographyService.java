@@ -23,9 +23,11 @@ public class FreeSpeechCryptographyService implements CryptographyService {
     public void connect(String server, int port) {
 
         try {
-            Socket clientSocket = new Socket(server, port);
-            Session.getInstance().setUserSocket(clientSocket);
-            exchangeKeys();
+            //synchronized (Platform.class) {
+                Socket clientSocket = new Socket(server, port);
+                Session.getInstance().setUserSocket(clientSocket);
+                exchangeKeys();
+            //}
 
         } catch (IOException e) {
             //TODO - unable to connect message

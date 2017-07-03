@@ -11,36 +11,36 @@
     -fx-spacing: 30;
 }
 
-#nameLabel,
-#emailLabel,
-#passwordLabel {
-    -fx-padding: 40 0 0 0;
+#closeButton {
+    -fx-background-image: url("icons/exit.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
 }
 
-.menu-button {
-    -fx-background-radius: 20 20 20 20;
-    -fx-background-color: black;
+#fileButton {
+    -fx-background-image: url("icons/file.png");
 }
 
-.menu-button .context-menu {
-    -fx-text-fill: #000000;
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
+#loginButton {
+    -fx-background-image: url("icons/login.png");
 }
 
-.menu-item,
-.menu-item:hover {
-    -fx-background-color: white;
+#backButton {
+    -fx-background-image: url("icons/back.png");
 }
 
-.menu-item .label {
-    -fx-text-fill: #000000;
+#registerButton {
+    -fx-background-image: url("icons/register.png");
+}
+
+#confirmButton {
+    -fx-background-image: url("icons/confirm.png");
 }
 
 .text-field {
     -fx-max-width: 20em;
-
 }
 
 .label {
@@ -76,9 +76,12 @@
 }
 
 .button {
-    -fx-background-color: red;
-    -fx-text-fill: #FFFFFF;
-    -fx-background-radius: 20 20 20 20;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 50px;
+
 }
 
 .text-area,

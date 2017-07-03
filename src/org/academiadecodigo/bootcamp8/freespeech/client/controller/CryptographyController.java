@@ -82,7 +82,7 @@ public class CryptographyController implements Controller {
     }
 
     private void createBackgroundThread() {
-        //TODO need concurrency tests.
+        //TODO needs concurrency tests.
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -91,7 +91,7 @@ public class CryptographyController implements Controller {
         }).start();
     }
 
-    private synchronized void connectToServer() {
+    private void connectToServer() {
         cryptographyService.connect(Values.HOST, Values.SERVER_PORT);
 
         Platform.runLater(new Runnable() {

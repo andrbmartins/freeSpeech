@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 /**
  * Developed @ <Academia de Código_>
@@ -18,8 +20,13 @@ public class EditBioDialog extends Dialog {
 
 
     public EditBioDialog() {
+
+        Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
+        stage.initStyle(StageStyle.UNDECORATED);
+
         setTitle("freeSpeech - Public profile");
         setHeaderText("Edit your public profile here. You can also change your username here");
+
 
         ButtonType setBio = new ButtonType("Edit bio", ButtonBar.ButtonData.OK_DONE);
         getDialogPane().getButtonTypes().addAll(setBio, ButtonType.CANCEL);

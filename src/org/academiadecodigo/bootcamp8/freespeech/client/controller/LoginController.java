@@ -56,6 +56,8 @@ public class LoginController implements Controller {
         position = new double[2];
         loginService = RegistryService.getInstance().get(LoginService.class);
         setDraggable();
+
+
     }
 
     private void setDraggable() {
@@ -83,8 +85,8 @@ public class LoginController implements Controller {
         if (confirmPassword.isVisible()) {
             passwordConfirmation(false);
             passwordField.setText("");
-            loginButton.setText("Login");
-            registerButton.setText("Register");
+            loginButton.setId("loginButton");
+            registerButton.setId("registerButton");
             serverMessageLabel.setText("");
             return;
         }
@@ -118,8 +120,8 @@ public class LoginController implements Controller {
             passwordConfirmation(true);
             passwordField.setText("");
             confirmPassword.setText("");
-            loginButton.setText("Back");
-            registerButton.setText("Confirm");
+            loginButton.setId("backButton");
+            registerButton.setId("confirmButton");
             serverMessageLabel.setText("");
             return;
         }

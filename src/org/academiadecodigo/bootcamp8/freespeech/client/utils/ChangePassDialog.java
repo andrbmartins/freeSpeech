@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 
 /**
@@ -18,6 +20,10 @@ public class ChangePassDialog extends Dialog{
     private PasswordField confirmPass;
 
     public ChangePassDialog() {
+
+        Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
+        stage.initStyle(StageStyle.UNDECORATED);
+
         setTitle("freeSpeech Password Change");
         setHeaderText("Confirm your current password and enter new one");
 
