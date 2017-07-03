@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.Server;
+import org.academiadecodigo.bootcamp8.freespeech.server.service.user.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
@@ -27,13 +28,15 @@ public class ClientHandler implements Runnable {
     private final Server server;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private UserService userService;
     private boolean run;
 
-    public ClientHandler(Server server, Socket clientSocket, Key key) {
+    public ClientHandler(Server server, Socket clientSocket, Key key, UserService userService) {
         crypto = new Crypto();
         crypto.setSymKey(key);
         this.clientSocket = clientSocket;
         this.server = server;
+        this.userService = userService;
         run = true;
     }
 
@@ -124,18 +127,18 @@ public class ClientHandler implements Runnable {
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
 
-        return server.getUserService().authenticate(username, password);
+        return userService.authenticate(username, password);
     }
 
     private boolean makeRegistry(HashMap<String, String> mapR) {
 
         String username = mapR.get(Values.NAME_KEY);
 
-        synchronized (server.getUserService()) {
+        synchronized (userService) {
 
-            if (server.getUserService().getUser(username) == null) {
+            if (userService.getUser(username) == null) {
 
-                return server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
+                return userService.addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
 
             }
         }
@@ -148,11 +151,11 @@ public class ClientHandler implements Runnable {
         while (run) {
             if ((msg = Stream.readSendable(objectInputStream)) != null) {
                 handleMessage(msg);
-            } else {
-                run = false;
+                continue;
             }
+            run = false;
         }
-        // Introduzir no log server que o client fez logout e se desligou
+
         server.removeUser(this);
     }
 
@@ -166,39 +169,19 @@ public class ClientHandler implements Runnable {
             case TEXT:
                 server.writeToAll(msg);
                 break;
-            case LOGIN:
-                //TODO log
-                throw new IllegalArgumentException("You've already Logged In");
-            case REGISTER:
-                //TODO log
-                throw new IllegalArgumentException("You've already Register");
             case PRIVATE_DATA:
             case PRIVATE_TEXT:
                 server.write(msg);
-                break;
-            //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete switch
-            /*case USERS_ONLINE:
-                sendUsersList();
-                break;*/
-            case GET_BIO:
-                //TODO
                 break;
             case BIO_UPDATE:
                 //TODO - what to do in this case?
                 break;
             case PASS_CHANGE:
-                //TODO - what to do in this case?
                 changePass(msg, type);
-                break;
-            case LOGOUT:
-                //TODO not fully working yet
-                write(msg);
-                server.removeUser(this);
                 break;
             case EXIT:
                 run = false;
                 write(msg);
-                server.removeUser(this);
                 closeSocket();
                 break;
             case BIO: {
@@ -219,7 +202,7 @@ public class ClientHandler implements Runnable {
         System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.getContent(String.class));
         // Aqui vou buscar a bio ha BD atraves da query (Tem de retornar a bio)
 
-        List<String> messagebio = server.getUserService().getUserBio((String) message.getContent(String.class));
+        List<String> messagebio = userService.getUserBio((String) message.getContent(String.class));
         Message<List> bio = new Message<>(messagebio);
         SealedSendable sealedMessage = crypto.encrypt(MessageType.BIO, bio, crypto.getSymKey());
         write(sealedMessage);
@@ -232,7 +215,7 @@ public class ClientHandler implements Runnable {
         sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
         HashMap<String, String> map = sendable.getContent(HashMap.class);
         Sendable<String> message;
-        if (server.getUserService().changePassword(clientName, map.get(Values.PASSWORD_KEY),
+        if (userService.changePassword(clientName, map.get(Values.PASSWORD_KEY),
                 map.get(Values.NEW_PASSWORD))) {
             message = new Message<>(Values.PASS_CHANGED);
         } else {

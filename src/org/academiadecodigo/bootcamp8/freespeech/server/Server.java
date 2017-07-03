@@ -96,7 +96,7 @@ public class Server {
 
         while (true) {
             Socket clientSocket = socket.accept();
-            cachedPool.submit(new ClientHandler(this, clientSocket, symKey));
+            cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService));
             userService.eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
         }
 
