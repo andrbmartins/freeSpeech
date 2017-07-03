@@ -55,6 +55,7 @@ public class Server {
         Crypto crypto = new Crypto();
         crypto.generateSymKey();
         symKey = crypto.getSymKey();
+        System.out.println("Generated symKey, ready to accept client connections");
 
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();

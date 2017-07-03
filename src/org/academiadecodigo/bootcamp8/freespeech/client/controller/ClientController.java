@@ -65,12 +65,10 @@ public class ClientController implements Controller {
         rooms = new HashMap<>();
         position = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
-
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
 
         rooms.put(getSelectedTab(), lobbyTextArea);
         setDraggableTopBar();
@@ -119,6 +117,7 @@ public class ClientController implements Controller {
 
     @FXML
     void onSendKey(KeyEvent event) {
+
         if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
             inputTextArea.appendText("\n");
             return;
@@ -145,6 +144,7 @@ public class ClientController implements Controller {
 
     @Override
     public void setStage(Stage stage) {
+
         this.stage = stage;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -166,15 +166,15 @@ public class ClientController implements Controller {
         });
     }
 
-
     @FXML
     void getUserBio(MouseEvent event) {
+
         System.out.println("Send bio request to server");
         Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
+        //onlineUsersList.getSelectionModel().getSelectedItem();
         System.out.println(user.toString());
         clientService.sendBioRequest((String) user);
     }
-
 
     @FXML
     void editUserInfo(ActionEvent event) {
@@ -185,7 +185,6 @@ public class ClientController implements Controller {
 
         Optional<String[]> result = bio.showAndWait();
     }
-
 
     @FXML
     void changePassword(ActionEvent event) {
@@ -247,20 +246,23 @@ public class ClientController implements Controller {
     }
 
 
-
     @FXML
     void startPrivateChat(MouseEvent event) {
 
     }
 
-
     public void ShowUserBio(Sendable message) {
 
         List<String> list = (LinkedList<String>) message.getContent(List.class);
-        nameBio.setText(list.get(0).toString());
-        emailBio.setText(list.get(1).toString());
-        dateBirthBio.setText(list.get(2).toString());
-        dateRegistrationBio.setText(list.get(3).toString());
+
+        if (list.isEmpty()) {
+            return;
+        }
+
+        nameBio.setText(list.get(0));
+        emailBio.setText(list.get(1));
+        dateBirthBio.setText(list.get(2));
+        dateRegistrationBio.setText(list.get(3));
 
     }
 }
