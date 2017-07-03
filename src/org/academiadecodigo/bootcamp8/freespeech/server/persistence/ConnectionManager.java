@@ -21,24 +21,18 @@ public class ConnectionManager  {
         try {
             connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
             eventlogger(Values.TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
-            } catch (SQLException e) {
+
+        } catch (SQLException e) {
             eventlogger(Values.TypeEvent.DATABASE, Values.SERVER_DBDISCONNECT);
-            System.out.println(Values.SERVER_DBDISCONNECT);
-            //e.printStackTrace();
         }
-        System.out.println(connection.toString());
 
     }
 
-    //public Connection getConnection() {
-    //return connection;
-    //}
 
     public boolean insertUser(String username, String password) {    // TESTED OK
         boolean registered = true;
         PreparedStatement preparedStmt = null;
         try {
-            //System.out.println(password.length());
             preparedStmt = connection.prepareStatement(Queries.INSERT_USER);
             preparedStmt.setString(1,  username);
             preparedStmt.setString(2, password);
@@ -64,34 +58,8 @@ public class ConnectionManager  {
         return registered;
     }
 
-    //TODO bellow method is not needed nor utilized since the findUser method bellow does the trick
-
-   /* public boolean authenticateUser(String username, String password) throws SQLException {  // TESTED OK
-
-        PreparedStatement preparedStmt = null;
-        try {
-            preparedStmt = connection.prepareStatement(Queries.AUTHENTICATE_USER);
-            preparedStmt.setString(1, username);
-            preparedStmt.setString(2, password);
-            ResultSet resultSet = preparedStmt.executeQuery();
-            if (!resultSet.next()) {
-                preparedStmt.close();
-                // Insert in log - Login Failed
-                eventlogger(Values.TypeEvent.LOGIN, Values.CLIENT_LOGINFAILED + "--" + username );
-                return false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        preparedStmt.close();
-        eventlogger(Values.TypeEvent.LOGIN, Values.CLIENT_LOGINOK + "--" + username );
-        // Insert in log - Login Sucess
-        return true;
-
-    }*/
 
     public User findUser(String username) throws SQLException {     // Needs test
-
         User user = null;
 
         PreparedStatement preparedStmt = connection.prepareStatement(Queries.SELECT_USER);
@@ -113,14 +81,16 @@ public class ConnectionManager  {
     public boolean changePass(String username, String newPass) {
         boolean passChanged = true;
         PreparedStatement preparedStmt = null;
+
         try {
             preparedStmt = connection.prepareStatement(Queries.ALTER_PASSWORD);
             preparedStmt.setString(1, newPass);
             preparedStmt.setString(2, username);
             preparedStmt.execute();
+
         } catch (SQLException e1) {
             eventlogger(Values.TypeEvent.CLIENT, Values.CLIENT_PASSORD + "--" + username);
-            e1.printStackTrace();
+            //e1.printStackTrace();
             passChanged = false;
         } finally {
             try {
@@ -128,6 +98,7 @@ public class ConnectionManager  {
                     preparedStmt.close();
                 }
             } catch (SQLException e) {
+                //TODO event logger
                 e.printStackTrace();
             }
         }
@@ -136,10 +107,7 @@ public class ConnectionManager  {
 
 
     public int count() throws SQLException {
-
         Statement statement = connection.createStatement();
-
-        //String query = "SELECT COUNT(*) FROM users";
 
         ResultSet resultSet = statement.executeQuery(Queries.COUNT_USERS);
         if(resultSet.next())
@@ -148,6 +116,7 @@ public class ConnectionManager  {
             return 0;
     }
 
+    //TODO make this event logger a utilitary class but keep method here
     public void eventlogger(Values.TypeEvent type_event, String message){
 
         PreparedStatement preparedStmt = null;

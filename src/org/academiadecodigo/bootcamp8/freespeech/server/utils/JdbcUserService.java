@@ -11,8 +11,6 @@ import java.util.List;
  * Created by Jramos on 29-06-2017.
  */
 public class JdbcUserService implements UserService {
-
-    private static JdbcUserService instance = new JdbcUserService();
     private ConnectionManager connectionManager;
 
 
@@ -89,10 +87,4 @@ public class JdbcUserService implements UserService {
         return message;
     }
 
-
-    /// public String getname(){
-   //     return UserService.class.getSimpleName();
-   // }
-
-   public static JdbcUserService getInstance(){ return instance; }
 }
