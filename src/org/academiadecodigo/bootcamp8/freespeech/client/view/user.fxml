@@ -41,7 +41,7 @@
         </rowConstraints>
          <children>
             <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout" GridPane.columnIndex="3" />
-            <Button fx:id="file" mnemonicParsing="false" onAction="#onFile" text="File" GridPane.columnIndex="2" />
+            <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" GridPane.columnIndex="2" />
          </children>
       </GridPane>
        <ListView fx:id="onlineUsersList" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" GridPane.rowSpan="3">

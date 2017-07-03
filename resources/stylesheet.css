@@ -19,6 +19,10 @@
     -fx-max-height: 30px;
 }
 
+#fileButton {
+    -fx-background-image: url("icons/file.png");
+}
+
 #loginButton {
     -fx-background-image: url("icons/login.png");
 }
