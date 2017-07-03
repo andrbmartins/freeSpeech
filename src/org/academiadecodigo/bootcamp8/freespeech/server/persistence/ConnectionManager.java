@@ -17,6 +17,7 @@ public class ConnectionManager  {
     private Connection connection;
 
     public ConnectionManager() {
+        System.out.println("new manager");
         try {
             connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
             eventlogger(Values.TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
@@ -25,6 +26,8 @@ public class ConnectionManager  {
             System.out.println(Values.SERVER_DBDISCONNECT);
             //e.printStackTrace();
         }
+
+        //TODO connecting twice ?
         System.out.println(connection.toString());
 
     }

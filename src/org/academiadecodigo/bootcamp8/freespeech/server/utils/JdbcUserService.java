@@ -17,6 +17,8 @@ public class JdbcUserService implements UserService {
 
 
     public JdbcUserService() {
+        //TODO this is the problem !
+        System.out.println("new service");
         this.connectionManager = new ConnectionManager();
     }
 
