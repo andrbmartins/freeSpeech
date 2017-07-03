@@ -1,5 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.persistence;
-// TODO persistence package??? Wht don't call them model???
+package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
@@ -150,6 +149,7 @@ public class ConnectionManager  {
             userbio.add(resultSet.getString("date_registration"));
             return userbio;
         }
-       return null;
+
+       return new LinkedList<>();
     }
 }

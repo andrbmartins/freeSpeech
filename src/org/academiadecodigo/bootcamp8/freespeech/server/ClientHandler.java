@@ -47,6 +47,7 @@ public class ClientHandler implements Runnable {
 
     private void init() {
         authenticateClient();
+        //notifyNewUser();
         server.addActiveUser(this);
 
         readFromClient();
@@ -163,7 +164,6 @@ public class ClientHandler implements Runnable {
         server.logOutUser(this);
     }
 
-
     private void handleMessage(SealedSendable msg) {
 
         MessageType type = msg.getType();
@@ -184,7 +184,7 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
-                //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete entry from switch
+                //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete switch
             /*case USERS_ONLINE:
                 sendUsersList();
                 break;*/
@@ -195,6 +195,7 @@ public class ClientHandler implements Runnable {
                 //TODO - what to do in this case?
                 break;
             case PASS_CHANGE:
+                //TODO - what to do in this case?
                 changePass(msg, type);
                 break;
             case LOGOUT:
@@ -217,7 +218,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
+    // Retrieve bio from database and send to client
     private void sendUserBio(SealedSendable msg) {
         System.out.println("Vou mandar a mesma message que recebi para testar" + msg );
 
@@ -235,7 +236,6 @@ public class ClientHandler implements Runnable {
     }
 
     private void changePass(SealedSendable msg, MessageType type) {
-
         Sendable<HashMap> sendable;
         sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
         HashMap<String, String> map = sendable.getContent(HashMap.class);

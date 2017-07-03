@@ -1,6 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.utils;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.persistence.ConnectionManager;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.SQLException;
@@ -15,6 +15,8 @@ public class JdbcUserService implements UserService {
 
 
     public JdbcUserService() {
+        //TODO this is the problem !
+        System.out.println("new service");
         this.connectionManager = new ConnectionManager();
     }
 
