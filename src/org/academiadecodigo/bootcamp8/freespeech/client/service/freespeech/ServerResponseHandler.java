@@ -24,18 +24,18 @@ import java.util.regex.Pattern;
  */
 
 public class ServerResponseHandler implements Runnable {
-    boolean run = true;
+    private boolean run;
     private ClientService clientService;
     private ClientController clientController;
 
     public ServerResponseHandler(ClientService clientService, ClientController clientController) {
+        run = true;
         this.clientService = clientService;
         this.clientController = clientController;
     }
 
     @Override
     public void run() {
-
 
         while (run) {
             SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
@@ -56,16 +56,16 @@ public class ServerResponseHandler implements Runnable {
                 printToRoom(message);
                 break;
             case DATA:
-                //TODO
+                //TODO - Empty switch case ???
                 break;
             case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
-                //TODO
+                //TODO - Empty switch case ???
                 break;
             case PRIVATE_TEXT:
-                //TODO
+                //TODO - Empty switch case ???
                 break;
             case PASS_CHANGE:
                 passChangeNotify(message);
@@ -107,9 +107,9 @@ public class ServerResponseHandler implements Runnable {
         //Every word character, digit, whitespace, punctuation and symbol
         //A single character, punctuation or symbol
 
-        //TODO allow specials characs
-
-        Pattern pattern = Pattern.compile("(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])");
+        //TODO allow specials char
+        String regex = "(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])";
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
         String result = "";
