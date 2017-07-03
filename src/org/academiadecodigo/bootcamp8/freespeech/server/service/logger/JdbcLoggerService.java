@@ -7,5 +7,6 @@ package org.academiadecodigo.bootcamp8.freespeech.server.service.logger;
  */
 public class JdbcLoggerService implements LoggerService {
 
+    // TODO implement
 
 }

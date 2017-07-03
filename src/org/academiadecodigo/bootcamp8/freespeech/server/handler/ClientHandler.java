@@ -142,15 +142,6 @@ public class ClientHandler implements Runnable {
         return false;
     }
 
-    //TODO deprecated because there is newer faster method
-   /* private void notifyNewUser() {
-
-        Message<String> message = new Message<>(Values.NEW_USER);
-        SealedSendable sealedMessage = crypto.encrypt(MessageType.NOTIFICATION, message, crypto.getSymKey());
-
-        server.writeToAll(sealedMessage);
-    }*/
-
     private void readFromClient() {
         SealedSendable msg;
 
@@ -162,7 +153,7 @@ public class ClientHandler implements Runnable {
             }
         }
         // Introduzir no log server que o client fez logout e se desligou
-        server.remUser(this);
+        server.removeUser(this);
     }
 
     private void handleMessage(SealedSendable msg) {
@@ -202,12 +193,12 @@ public class ClientHandler implements Runnable {
             case LOGOUT:
                 //TODO not fully working yet
                 write(msg);
-                server.remUser(this);
+                server.removeUser(this);
                 break;
             case EXIT:
                 run = false;
                 write(msg);
-                server.remUser(this);
+                server.removeUser(this);
                 closeSocket();
                 break;
             case BIO: {
@@ -257,15 +248,6 @@ public class ClientHandler implements Runnable {
         SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList, crypto.getSymKey());
         write(sealedSendable);
     }
-
-    //TODO remove method which is now obsolete by the above method
-  /*  private void sendUsersList() {
-
-        List<String> list = server.getUsersOnlineList();
-        Message<List> message = new Message<>(list);
-        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, message, crypto.getSymKey());
-        write(sealedSendable);
-    }*/
 
     public void write(Object object) {
         Stream.write(objectOutputStream, object);

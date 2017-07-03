@@ -33,6 +33,7 @@ public class Server {
     private int port;
     private ServerSocket socket;
     private Key symKey;
+    // TODO change to loggerService
     private UserService userService;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
 
@@ -63,6 +64,9 @@ public class Server {
 
     }
 
+    /**
+     * Generate the global symmetric key
+     */
     private void generateSymKey() {
         Crypto crypto = new Crypto();
         crypto.generateSymKey();
@@ -70,6 +74,9 @@ public class Server {
         System.out.println("Generated symKey, ready to accept client connections");
     }
 
+    /**
+     * Initialize the input console for the server
+     */
     private void startConsole() {
         Thread thread = new Thread(new ConsoleHandler(this));
         thread.setName("Console Handler");
@@ -110,7 +117,7 @@ public class Server {
      *
      * @param client to remove
      */
-    public void remUser(ClientHandler client) {
+    public void removeUser(ClientHandler client) {
         loggedUsers.remove(client);
         updateList();
     }
