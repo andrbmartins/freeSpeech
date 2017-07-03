@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.service;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
 
@@ -20,11 +21,13 @@ public interface UserService {
 
     int count();
 
-    void eventlogger(TypeEvent typeEvent, String log_message);
+    //void eventlogger(TypeEvent typeEvent, String log_message);
 
     boolean changePassword(String user, String oldPass, String newPass);
 
     List<String> getUserBio(String username);
 
     boolean deleteAccount(String clientName, String pass);
+
+    ConnectionManager getConnectionManager();
 }

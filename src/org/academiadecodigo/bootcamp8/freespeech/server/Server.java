@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ClientHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ConsoleHandler;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
@@ -35,6 +36,7 @@ public class Server {
     private ServerSocket socket;
     private Key symKey;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
+    private Logger logger;
 
     public Server(int port) {
         this.port = port;
@@ -93,11 +95,15 @@ public class Server {
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
         UserService userService = new JdbcUserService();
+        Logger logger = new Logger(userService.getConnectionManager().getConnection());
+
+
 
         while (true) {
             Socket clientSocket = socket.accept();
-            cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService));
-            userService.eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
+            cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService, logger));
+            logger.eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
+
         }
 
     }

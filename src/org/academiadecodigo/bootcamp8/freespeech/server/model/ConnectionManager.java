@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -27,6 +28,7 @@ public class ConnectionManager {
 
     }
 
+    public Connection getConnection(){return connection;}
 
     public boolean insertUser(String username, String password) {    // TESTED OK
         boolean registered = true;
@@ -36,12 +38,11 @@ public class ConnectionManager {
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
             preparedStmt.execute();
-            eventlogger(TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username);
+
 
 
         } catch (SQLException e) {
 
-            eventlogger(TypeEvent.CLIENT, Values.CLIENT_REGISTER_FAILED + " -- " + username);
             System.out.println(Values.CLIENT_REGISTER_FAILED);
             registered = false;
 
@@ -54,6 +55,7 @@ public class ConnectionManager {
                 e.printStackTrace();
             }
         }
+
         return registered;
     }
 
@@ -88,8 +90,7 @@ public class ConnectionManager {
             preparedStmt.execute();
 
         } catch (SQLException e1) {
-            eventlogger(TypeEvent.CLIENT, Values.CLIENT_PASSORD + "--" + username);
-            //e1.printStackTrace();
+            e1.printStackTrace();
             passChanged = false;
         } finally {
             try {
@@ -115,7 +116,7 @@ public class ConnectionManager {
             preparedStmt.execute();
 
         } catch (SQLException e1) {
-            eventlogger(TypeEvent.CLIENT, Values.ACCOUNT_DELETED + "--" + username);
+
             deleted = false;
         } finally {
             try {
@@ -142,7 +143,7 @@ public class ConnectionManager {
             return 0;
     }
 
-    //TODO make this event logger a utilitary class but keep method here
+   //TODO make this event logger a utilitary class but keep method here
     public void eventlogger(TypeEvent type_event, String message) {
 
         PreparedStatement preparedStmt = null;
@@ -179,4 +180,7 @@ public class ConnectionManager {
 
         return new LinkedList<>();
     }
+
+
+
 }

@@ -20,8 +20,11 @@ public class JdbcUserService implements UserService {
         this.connectionManager = new ConnectionManager();
     }
 
+    public ConnectionManager getConnectionManager() {
+        return connectionManager;
+    }
 
-   @Override
+    @Override
     public boolean authenticate(String username, String password) {
        User user = getUser(username);
        return user != null && user.getPassword().equals(password);
@@ -71,10 +74,10 @@ public class JdbcUserService implements UserService {
         return recordCount;
     }
 
-    @Override
+  /*  @Override
     public void eventlogger(TypeEvent typeEvent, String log_message ) {
         connectionManager.eventlogger(typeEvent, log_message);
-    }
+    }*/
 
     @Override
     public List<String> getUserBio(String username)  {

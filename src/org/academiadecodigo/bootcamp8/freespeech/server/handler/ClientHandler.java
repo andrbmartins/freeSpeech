@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.Server;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
@@ -30,13 +31,15 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream objectInputStream;
     private UserService userService;
     private boolean run;
+    private Logger logger;
 
-    public ClientHandler(Server server, Socket clientSocket, Key key, UserService userService) {
+    public ClientHandler(Server server, Socket clientSocket, Key key, UserService userService, Logger logger) {
         crypto = new Crypto();
         crypto.setSymKey(key);
         this.clientSocket = clientSocket;
         this.server = server;
         this.userService = userService;
+        this.logger = logger;
         run = true;
     }
 
@@ -47,7 +50,6 @@ public class ClientHandler implements Runnable {
         exchangeKeys();
         authenticateClient();
         server.addUser(this);
-
         readFromClient();
 
 
@@ -103,6 +105,7 @@ public class ClientHandler implements Runnable {
                     message = Values.REGISTER_FAIL;
                 }
             }
+
 
             Sendable<String> newSendable = new Message<>(message);
             sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
