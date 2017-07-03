@@ -71,16 +71,18 @@ public class FreeSpeechClientService implements ClientService {
         writeObject(MessageType.DATA, message);
     }
 
-    @Override
-    public void sendLogOut() {
-        Message<String> message = new Message<>(new String(" "));
-        writeObject(MessageType.LOGOUT, message);
-    }
 
     @Override
     public void sendExit() {
-        Message<String> message = new Message<>(new String(" "));
+        Message<String> message = new Message<>(" ");
         writeObject(MessageType.EXIT, message);
+    }
+
+
+    public void deleteAccount (String password) {
+
+        Message<String> message = new Message<>(HashService.getHash(password));
+        writeObject(MessageType.DELETE_ACCOUNT, message);
     }
 
     @Override

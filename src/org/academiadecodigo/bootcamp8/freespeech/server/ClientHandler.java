@@ -41,17 +41,13 @@ public class ClientHandler implements Runnable {
 
         openStreams(clientSocket);
         exchangeKeys();
-        init();
-
-    }
-
-    private void init() {
         authenticateClient();
-        //notifyNewUser();
         server.addActiveUser(this);
-
         readFromClient();
+
+
     }
+
 
     public void openStreams(Socket socket) {
         try {
@@ -141,14 +137,6 @@ public class ClientHandler implements Runnable {
         return false;
     }
 
-    //TODO deprecated because there is newer faster method
-   /* private void notifyNewUser() {
-
-        Message<String> message = new Message<>(Values.NEW_USER);
-        SealedSendable sealedMessage = crypto.encrypt(MessageType.NOTIFICATION, message, crypto.getSymKey());
-
-        server.writeToAll(sealedMessage);
-    }*/
 
     private void readFromClient() {
         SealedSendable msg;
@@ -184,24 +172,11 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
-                //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete switch
-            /*case USERS_ONLINE:
-                sendUsersList();
-                break;*/
-            case GET_BIO:
-                //TODO
-                break;
             case BIO_UPDATE:
                 //TODO - what to do in this case?
                 break;
             case PASS_CHANGE:
-                //TODO - what to do in this case?
                 changePass(msg, type);
-                break;
-            case LOGOUT:
-                //TODO not fully working yet
-                write(msg);
-                server.logOutUser(this);
                 break;
             case EXIT:
                 run = false;
@@ -209,14 +184,23 @@ public class ClientHandler implements Runnable {
                 server.logOutUser(this);
                 closeSocket();
                 break;
-            case BIO: {
+            case BIO:
                 System.out.println("Recebi msg de request de bio" + msg.toString());
                 // IF Message is BIO request
                 sendUserBio(msg);
                 break;
-            }
+            case DELETE_ACCOUNT:
+                if (deleteAccount(msg, type)){
+                    run = false;
+                    server.logOutUser(this);
+                    closeSocket();
+                }
+                break;
+
+
         }
     }
+
 
     // Retrieve bio from database and send to client
     private void sendUserBio(SealedSendable msg) {
@@ -251,20 +235,29 @@ public class ClientHandler implements Runnable {
         write(sealedMsg);
     }
 
+    private boolean deleteAccount(SealedSendable msg, MessageType type) {
+        Sendable<String> sendable = (Sendable<String>) crypto.decrypt(msg, crypto.getSymKey());
+        String pass = sendable.getContent(String.class);
+        Sendable<String> response;
+        boolean deleted;
+
+        if (server.getUserService().deleteAccount(clientName, pass)) {
+            response = new Message<>(Values.ACC_DELETED);
+            deleted = true;
+        } else {
+            response = new Message<>(Values.NOT_VALIDATED);
+            deleted = false;
+        }
+
+        SealedSendable sealedMsg = crypto.encrypt(type, response, crypto.getSymKey());
+        write(sealedMsg);
+        return deleted;
+    }
 
     public void sendUsersList(Message userList) {
         SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList, crypto.getSymKey());
         write(sealedSendable);
     }
-
-    //TODO remove method which is now obsolete by the above method
-  /*  private void sendUsersList() {
-
-        List<String> list = server.getUsersOnlineList();
-        Message<List> message = new Message<>(list);
-        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, message, crypto.getSymKey());
-        write(sealedSendable);
-    }*/
 
     public void write(Object object) {
         Stream.write(objectOutputStream, object);

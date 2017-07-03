@@ -42,17 +42,28 @@ import java.util.List;
 //TODO documentation
 public class ClientController implements Controller {
 
-    @FXML private TabPane tabPane;
-    @FXML private GridPane topBar;
-    @FXML private TextArea lobbyTextArea;
-    @FXML private TextArea inputTextArea;
-    @FXML private ListView onlineUsersList;
-    @FXML private Button exitButton;
-    @FXML private VBox bioArea;
-    @FXML private TextField nameBio;
-    @FXML private TextField emailBio;
-    @FXML private TextField dateBirthBio;
-    @FXML private TextField dateRegistrationBio;
+    @FXML
+    private TabPane tabPane;
+    @FXML
+    private GridPane topBar;
+    @FXML
+    private TextArea lobbyTextArea;
+    @FXML
+    private TextArea inputTextArea;
+    @FXML
+    private ListView onlineUsersList;
+    @FXML
+    private Button exitButton;
+    @FXML
+    private VBox bioArea;
+    @FXML
+    private TextField nameBio;
+    @FXML
+    private TextField emailBio;
+    @FXML
+    private TextField dateBirthBio;
+    @FXML
+    private TextField dateRegistrationBio;
 
 
     private Stage stage;
@@ -180,10 +191,20 @@ public class ClientController implements Controller {
     void editUserInfo(ActionEvent event) {
         //TODO to complete process
         EditBioDialog bio = new EditBioDialog();
-
         //TODO use the method by jp to retrieve bio to set on dialog text
 
         Optional<String[]> result = bio.showAndWait();
+        if (result.isPresent() && result.get()[0].equals(DialogText.DELETE_ACCOUNT)) {
+            confirmDelete();
+        }
+    }
+
+    private void confirmDelete() {
+        DeleteAccountDialog delete = new DeleteAccountDialog();
+        Optional<String> password = delete.showAndWait();
+        if (password.isPresent()) {
+            clientService.deleteAccount(password.get());
+        }
     }
 
     @FXML
@@ -215,13 +236,6 @@ public class ClientController implements Controller {
         return results[1].equals(results[2]);
     }
 
-    //TODO still not working properly
-    @FXML
-    void onLogOut(ActionEvent event) {
-        clientService.sendLogOut();
-        Navigation.getInstance().back();
-    }
-
     @FXML
     void onExit(ActionEvent event) {
         clientService.sendExit();
@@ -231,7 +245,9 @@ public class ClientController implements Controller {
     public void userPromptExternal(Alert.AlertType alertType, String title, String content) {
         Platform.runLater(new Runnable() {
             public void run() {
-            userPrompt1(alertType, title, content);
+                Optional<ButtonType> r = userPrompt1(alertType, title, content);
+                //stage.close();
+                //Navigation.getInstance().close();
             }
         });
 

@@ -28,10 +28,11 @@ public class Values {
     public static final String UNMATCHED_PASSWORD = "Passwords don't match.";
     public static final String PASS_NOT_CHANGED = "Incorrect password. Not able to change your password.";
     public static final String PASS_CHANGED = "Successfully updated your password";
+    public static final String ACC_DELETED = "Your account was deleted. We are sorry to see you go. Come back when" +
+            " you get tired of Slack Police!!!";
+    public static final String NOT_VALIDATED = "Unable to delete your account. Please check your password";
 
     public static final String INVALID_INPUT = "Required fields are empty.";
-
-    public static final String NEW_USER = "New User";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
 
@@ -51,6 +52,7 @@ public class Values {
     public static final String CLIENT_REGISTED = "CLIENT REGISTERED";
     public static final String CLIENT_REGISTER_FAILED = "FAILED TO REGISTER USER";
     public static final String CLIENT_PASSORD = "CLIENT CHANGED PASSWORD";
+    public static final String ACCOUNT_DELETED = "USER ACCOUNT DELETED";
 
     public enum TypeEvent { SERVER,LOGIN, REGISTER, CLIENT, DATABASE }
 

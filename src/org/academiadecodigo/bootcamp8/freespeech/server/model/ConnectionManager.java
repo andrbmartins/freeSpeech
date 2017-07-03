@@ -105,6 +105,33 @@ public class ConnectionManager  {
     }
 
 
+    public boolean deleteAccount(String username) {
+        boolean deleted = true;
+        PreparedStatement preparedStmt = null;
+
+        try {
+            preparedStmt = connection.prepareStatement(Queries.DELETE_USER);
+            preparedStmt.setString(1, username);
+            preparedStmt.execute();
+
+        } catch (SQLException e1) {
+            eventlogger(Values.TypeEvent.CLIENT, Values.ACCOUNT_DELETED + "--" + username);
+            deleted = false;
+        } finally {
+            try {
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
+            } catch (SQLException e) {
+                //TODO event logger
+                e.printStackTrace();
+            }
+        }
+        return deleted;
+    }
+
+
+
     public int count() throws SQLException {
         Statement statement = connection.createStatement();
 

@@ -20,7 +20,7 @@ public enum MessageType {
     GET_BIO,
     BIO_UPDATE,
     PASS_CHANGE,
-    LOGOUT,
     EXIT,
-    BIO
+    BIO,
+    DELETE_ACCOUNT
 }

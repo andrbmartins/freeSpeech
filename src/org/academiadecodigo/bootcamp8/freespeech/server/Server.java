@@ -3,7 +3,6 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class Server {
     private ExecutorService cachedPool;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
 
-
+    //TODO it is possible to log with the same user many times...
 
     public Server(int port) {
         this.port = port;
@@ -70,12 +69,12 @@ public class Server {
      */
 
     public void start() throws IOException {
-        userService.eventlogger(Values.TypeEvent.SERVER, Values.SERVER_START);
+        userService.eventLogger(Values.TypeEvent.SERVER, Values.SERVER_START);
         while (true) {
             Socket clientSocket = serverSocket.accept();
             //TODO log new client
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey));
-            userService.eventlogger(Values.TypeEvent.CLIENT, Values.CONNECT_CLIENT + "--" + clientSocket.toString());
+            userService.eventLogger(Values.TypeEvent.CLIENT, Values.CONNECT_CLIENT + "--" + clientSocket.toString());
         }
     }
 
@@ -87,7 +86,7 @@ public class Server {
             try {
                 //TODO log server off
                 serverSocket.close();
-                userService.eventlogger(Values.TypeEvent.SERVER, Values.SERVER_STOP);
+                userService.eventLogger(Values.TypeEvent.SERVER, Values.SERVER_STOP);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -176,6 +175,7 @@ public class Server {
         for (ClientHandler c : loggedUsers) {
             usersList.add(c.getClientName());
         }
+        usersList.sort(null);
         return usersList;
     }
 

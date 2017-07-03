@@ -15,16 +15,15 @@ public interface UserService {
 
     boolean addUser(User user);
 
-    //TODO check if this is needed
-    void removeUser(String username);
-
     User getUser(String username);
 
     int count();
 
-    void eventlogger(Values.TypeEvent typeEvent, String log_message);
+    void eventLogger(Values.TypeEvent typeEvent, String log_message);
 
     boolean changePassword(String user, String oldPass, String newPass);
 
     List<String> getUserBio(String username);
+
+    boolean deleteAccount(String clientName, String pass);
 }

@@ -13,7 +13,6 @@ import javafx.util.Callback;
  * <Code Cadet> PedroMAlves
  */
 public class EditBioDialog extends Dialog {
-    private TextField username;
     private TextField email;
     private TextField birthdate;
     private TextArea bio;
@@ -29,14 +28,13 @@ public class EditBioDialog extends Dialog {
 
 
         ButtonType setBio = new ButtonType("Edit bio", ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().addAll(setBio, ButtonType.CANCEL);
+        ButtonType deleteAccount = new ButtonType("Delete Account", ButtonBar.ButtonData.OTHER);
+        getDialogPane().getButtonTypes().addAll(setBio, deleteAccount, ButtonType.CANCEL);
 
-        username = new TextField();
         email = new TextField();
         birthdate = new TextField();
         bio = new TextArea();
 
-        Label user = new Label("Username");
         Label mail = new Label("Email");
         Label date = new Label("Date of birth");
         Label bio1 = new Label("Your awesomeness");
@@ -44,15 +42,13 @@ public class EditBioDialog extends Dialog {
 
         GridPane grid = new GridPane();
 
-        grid.add(user, 0, 0);
-        grid.add(username, 1, 0);
-        grid.add(mail, 0, 1);
-        grid.add(email, 1, 1);
-        grid.add(date, 0, 2);
-        grid.add(birthdate, 1, 2);
-        grid.add(bio1, 0, 3);
-        grid.add(bio, 1, 3, 1, 4);
-        grid.add(max, 1, 7);
+        grid.add(mail, 0, 0);
+        grid.add(email, 1, 0);
+        grid.add(date, 0, 1);
+        grid.add(birthdate, 1, 1);
+        grid.add(bio1, 0, 2);
+        grid.add(bio, 1, 2, 1, 4);
+        grid.add(max, 1, 6);
         grid.setHgap(40);
         grid.setVgap(10);
         grid.setPadding(new Insets(40));
@@ -62,7 +58,7 @@ public class EditBioDialog extends Dialog {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                username.requestFocus();
+                email.requestFocus();
             }
         });
 
@@ -70,17 +66,17 @@ public class EditBioDialog extends Dialog {
             @Override
             public String[] call(ButtonType param) {
                 if (param == setBio) {
-                    String[] result = {username.getText(), email.getText(),
+                    String[] result = {email.getText(),
                             birthdate.getText(), bio.getText()};
+                    return result;
+                }
+                if (param == deleteAccount) {
+                    String [] result = {DialogText.DELETE_ACCOUNT};
                     return result;
                 }
                 return null;
             }
         });
-    }
-
-    public void setUsername(String username) {
-        this.username.setText(username);
     }
 
     public void setEmail(String email) {

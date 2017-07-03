@@ -1,14 +1,19 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
+import javax.print.attribute.standard.MediaSize;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +31,6 @@ public class ServerResponseHandler implements Runnable {
     public ServerResponseHandler(ClientService clientService, ClientController clientController) {
         this.clientService = clientService;
         this.clientController = clientController;
-        //run = true;
     }
 
     @Override
@@ -64,22 +68,22 @@ public class ServerResponseHandler implements Runnable {
                 //TODO
                 break;
             case PASS_CHANGE:
-                notifyUser(message);
-                break;
-            case LOGOUT:
-                run = false;
+                passChangeNotify(message);
                 break;
             case EXIT:
                 run = false;
                 Session.close();
                 break;
             case BIO:
-                // Aqui vou receber a bio do USER
                 System.out.println("Recebi a mensagem com a bio " + message.toString());
                 clientController.ShowUserBio(message);
                 break;
+            case DELETE_ACCOUNT:
+                accDeleteNotify(message);
+                break;
         }
     }
+
 
     private void printToRoom(Sendable message) {
 
@@ -117,10 +121,26 @@ public class ServerResponseHandler implements Runnable {
         return result;
     }
 
-    public void notifyUser(Sendable msg) {
+    public void passChangeNotify(Sendable msg) {
         String info = (String) msg.getContent(String.class);
 
-        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.PASS_MANAGER, info);
+        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+    }
+
+    private void accDeleteNotify(Sendable message) {
+        String info = (String) message.getContent(String.class);
+        if (info.equals(Values.ACC_DELETED)) {
+            run = false;
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Navigation.getInstance().loadScreen(Values.CONNECTING_SCENE);
+                }
+            });
+            return;
+        }
+        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+
     }
 
 }
