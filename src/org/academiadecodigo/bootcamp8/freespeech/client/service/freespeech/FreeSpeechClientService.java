@@ -2,12 +2,14 @@ package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,10 +28,31 @@ public class FreeSpeechClientService implements ClientService {
         if (textArea.getText().isEmpty()) {
             return;
         }
+
         String text = Session.getInstance().getUsername() + ": " + textArea.getText();
 
         Message<String> message = new Message<>(text);
         writeObject(MessageType.TEXT, message);
+
+        textArea.clear();
+    }
+
+    @Override
+    public void sendPrivateText(TextArea textArea, String destiny) {
+
+        if (textArea.getText().isEmpty()) {
+            return;
+        }
+
+        String text = Session.getInstance().getUsername() + ": " + textArea.getText();
+
+        HashMap<String,String> map = new HashMap<>();
+        map.put(Values.DESTINY_USER,destiny);
+        map.put(Values.MESSAGE, text);
+
+        Message<HashMap<String,String>> message = new Message<>(map);
+        //Message<String> message = new Message<>(text);
+        writeObject(MessageType.PRIVATE_TEXT, message);
 
         textArea.clear();
     }
@@ -48,6 +71,11 @@ public class FreeSpeechClientService implements ClientService {
 
         Message<List> message = new Message<>(byteList);
         writeObject(MessageType.DATA, message);
+    }
+
+    @Override
+    public void sendPrivateData(File file, String destiny) {
+
     }
 
     /**

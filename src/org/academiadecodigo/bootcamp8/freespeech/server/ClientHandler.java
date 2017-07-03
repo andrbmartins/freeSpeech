@@ -185,7 +185,7 @@ public class ClientHandler implements Runnable {
 
     public void write(SealedSendable sendable) {
         //TODO to remove after tests completed
-        System.out.println(sendable);
+        System.out.println(sendable.getType());
         communication.sendMessage(sendable);
     }
 

@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Controller {
 
-
     //TODO Cyrille indicou e com razão que a aplicaçao nao tem botão para fechar.
 
     @FXML

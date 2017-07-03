@@ -25,7 +25,11 @@ public interface ClientService extends Service {
      */
     void sendUserText(TextArea textField);
 
+    void sendPrivateText(TextArea textArea, String destiny);
+
     void sendUserData(File file);
+
+    void sendPrivateData(File file, String destiny);
 
     void sendListRequest();
 }

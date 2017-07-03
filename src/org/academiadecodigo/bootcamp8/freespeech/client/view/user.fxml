@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <GridPane fx:id="clientPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="854.0" prefHeight="480.0" prefWidth="854.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController">
   <columnConstraints>
@@ -45,13 +46,15 @@
                   <TextArea fx:id="lobbyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
                </content>
                </Tab>
-               <Tab fx:id="privateTab" onSelectionChanged="#onTabClicked" text="Private">
-
-               </Tab>
            </tabs>
        </TabPane>
       <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
       <Button fx:id="send" mnemonicParsing="false" onAction="#onSend" text="Send" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-      <Button fx:id="file" mnemonicParsing="false" onAction="#onFile" text="File" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+         <children>
+            <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#onActionPrivateChat" prefHeight="27.0" prefWidth="292.0" text="Start a private chat" />
+            <Button fx:id="file" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onFile" text="Send a file" />
+         </children>
+      </VBox>
    </children>
 </GridPane>

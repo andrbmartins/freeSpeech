@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 
+import com.sun.tools.internal.ws.wsdl.document.soap.SOAPUse;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,6 +9,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -19,6 +21,7 @@ import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
@@ -47,12 +50,15 @@ public class ClientController implements Controller {
     private TextArea inputTextArea;
     @FXML
     private ListView onlineUsersList;
+    @FXML
+    private Button privateChatButton;
 
     private Stage stage;
     private ClientService clientService;
     private Map<Tab, TextArea> rooms;
-    private Map<String,Tab> tabNames;
-    private TextArea currentRoom; //TODO can i not use this?
+    private Map<String, Tab> tabNames;
+    //private TextArea currentRoom; //TODO can i not use this?
+    private Tab currentTab;
     private double[] position;
 
     public ClientController() {
@@ -68,13 +74,15 @@ public class ClientController implements Controller {
         Tab tab = getSelectedTab();
 
         rooms.put(tab, lobbyTextArea);
-        tabNames.put(tab.getText(),tab);
+        tabNames.put(tab.getText(), tab);
 
         setDraggableTopBar();
         focusUserInput();
-        currentRoom = lobbyTextArea;
+        currentTab = tab;
+        //currentRoom = lobbyTextArea;
         new Thread(new ServerResponseHandler(clientService, this)).start();
         clientService.sendListRequest();
+
     }
 
     private Tab getSelectedTab() {
@@ -111,12 +119,34 @@ public class ClientController implements Controller {
 
     @FXML
     void onTabClicked(Event event) {
-        currentRoom = rooms.get(getSelectedTab());
+        currentTab = getSelectedTab();
+        //currentRoom = rooms.get(getSelectedTab());
+    }
+
+    @FXML
+    void onActionPrivateChat(ActionEvent event) {
+        String name = (String) onlineUsersList.getSelectionModel().getSelectedItem().toString();
+        String clientName = Session.getInstance().getUsername();
+
+        if (!clientName.equals(name)) {
+            createNewTab(name);
+
+        }
     }
 
     @FXML
     void onSend(ActionEvent event) {
-        clientService.sendUserText(inputTextArea);
+
+        System.out.println("parent: " + currentTab);
+        System.out.println("parent ID: " + currentTab.getText());
+        if (currentTab.getText().equals("Lobby")) {
+            System.out.println("mensagem da tab Lobby --" + currentTab.getText());
+            clientService.sendUserText(inputTextArea);
+        }
+        else {
+            System.out.println("mensagem da tab " + currentTab.getText());
+            clientService.sendPrivateText(inputTextArea,currentTab.getText());
+        }
     }
 
     @FXML
@@ -126,7 +156,20 @@ public class ClientController implements Controller {
             return;
         }
         if (event.getCode() == KeyCode.ENTER) {
-            clientService.sendUserText(inputTextArea);
+
+            System.out.println("parent: " + currentTab);
+            System.out.println("parent ID: " + currentTab.getText());
+
+            if (currentTab.getText().equals("Lobby")) {
+                System.out.println("mensagem da tab Lobby --" + currentTab.getText());
+                clientService.sendUserText(inputTextArea);
+            }
+            else {
+                System.out.println("mensagem da tab " + currentTab.getText());
+                clientService.sendPrivateText(inputTextArea,currentTab.getText());
+            }
+
+            //clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
         }
     }
@@ -141,8 +184,9 @@ public class ClientController implements Controller {
         }
     }
 
-    public TextArea getCurrentRoom() {
-        return currentRoom;
+    public Tab getCurrentRoom() {
+        return currentTab;
+        //return currentRoom;
     }
 
     @Override
@@ -172,10 +216,13 @@ public class ClientController implements Controller {
 
     public void addMessageToTab(String user, String text) {
 
-        if(!tabNames.containsKey(user)){
+        System.out.println("CHAT PRIVADO PARA " + user);
+        if (!tabNames.containsKey(user)) {
+            System.out.println("tab the user " + user + "ainda nao existe");
             createNewTab(user);
         }
 
+        //adds the text to the textArea of the tab that has as name the String user
         rooms.get(tabNames.get(user)).appendText(text);
 
     }
@@ -184,8 +231,15 @@ public class ClientController implements Controller {
 
         Tab tab = new Tab(user);
         TextArea textArea = new TextArea();
+        textArea.appendText("");
+        tab.setContent(textArea);
 
-        tabNames.put(user,tab);
-        rooms.put(tab,textArea);
+        //add teh onAction event to the tab
+        tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
+
+        tabNames.put(user, tab);
+        rooms.put(tab, textArea);
+
+        tabPane.getTabs().add(tab);
     }
 }

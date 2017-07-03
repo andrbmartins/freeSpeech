@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
+import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -10,6 +11,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,7 +89,8 @@ public class ServerResponseHandler implements Runnable {
 
         String text = (String) message.getContent(String.class);
         text = wipeWhiteSpaces(text);
-        clientController.getCurrentRoom().appendText((clientController.getCurrentRoom().getText().isEmpty() ? "" : "\n") + text);
+
+        ((TextArea)(clientController.getCurrentRoom().getContent())).appendText((((TextArea)(clientController.getCurrentRoom().getContent())).getText().isEmpty() ? "" : "\n") + text);
     }
 
     /**
