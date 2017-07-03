@@ -47,7 +47,7 @@ public class FreeSpeechClientService implements ClientService {
         String text = Session.getInstance().getUsername() + ": " + textArea.getText();
 
         HashMap<String,String> map = new HashMap<>();
-        map.put(Values.DESTINY_USER,destiny);
+        map.put(Values.DESTINY,destiny);
         map.put(Values.MESSAGE, text);
 
         Message<HashMap<String,String>> message = new Message<>(map);
@@ -116,29 +116,15 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     //TODO - logout
-    public void closeClientSocket() {
-        Session.close();
-    }
 
-    //@Override
-    public void writeObject(MessageType type, Sendable message) {
+    private void writeObject(MessageType type, Sendable message) {
 
         SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message, Session.getCrypto().getSymKey());
-
         Stream.write(Session.getOutput(), sealedMessage);
     }
 
     @Override
     public String getName() {
         return ClientService.class.getSimpleName();
-    }
-
-    @Override
-    public void writeObject(MessageType messageType, SealedSendable message) {
-        Stream.write(Session.getOutput(), message);
-    }
-
-    private Crypto getCrypto() {
-        return Session.getCrypto();
     }
 }

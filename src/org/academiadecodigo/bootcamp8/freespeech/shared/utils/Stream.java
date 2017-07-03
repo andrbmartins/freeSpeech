@@ -1,7 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
 import java.io.*;
 
@@ -20,6 +19,11 @@ public class Stream {
      * @param message object to send
      */
     public static void write(ObjectOutputStream out, Object message) {
+
+        // Don't allow send of null messages
+        if (message == null) {
+            return;
+        }
 
         try {
 
@@ -46,7 +50,7 @@ public class Stream {
         try {
 
             object = in.readObject();
-
+            System.out.println(object.toString());
         } catch (IOException e) {
             System.err.println("Error on trying to open object stream :: " + e.getMessage());
         } catch (ClassNotFoundException e) {

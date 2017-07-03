@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.utils;
 
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +12,8 @@ import java.util.List;
  */
 
 public class TempUserService implements UserService {
+
+    //TODO is this needed?
 
     private static TempUserService instance = new TempUserService();
     private List<User> registeredUsers;
@@ -25,12 +29,13 @@ public class TempUserService implements UserService {
     }
 
     @Override
-    public void addUser(User user) {
+    public boolean addUser(User user) {
 
         if (getUser(user.getUsername()) == null) {
            registeredUsers.add(user);
+           return true;
         }
-
+        return false;
     }
 
     @Override
@@ -39,7 +44,6 @@ public class TempUserService implements UserService {
             return;
         }
         registeredUsers.remove(getUser(username));
-
     }
 
     @Override
@@ -58,9 +62,13 @@ public class TempUserService implements UserService {
         return registeredUsers.size();
     }
 
+    @Override
+    public void eventlogger(Values.TypeEvent server, String serverStart) {
+        return;
+    }
+
 
     public static TempUserService getInstance(){
-
         return instance;
     }
 

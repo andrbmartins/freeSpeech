@@ -1,6 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 
-import com.sun.tools.internal.ws.wsdl.document.soap.SOAPUse;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,11 +9,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -51,7 +53,15 @@ public class ClientController implements Controller {
     @FXML
     private ListView onlineUsersList;
     @FXML
-    private Button privateChatButton;
+    private Button exitButton;
+    @FXML
+    private MenuItem Bio_Menu;
+    @FXML
+    private VBox Bio;
+    @FXML
+    private ImageView Bio_Image;
+    @FXML
+    private TextArea Bio_Data;
 
     private Stage stage;
     private ClientService clientService;
@@ -142,10 +152,9 @@ public class ClientController implements Controller {
         if (currentTab.getText().equals("Lobby")) {
             System.out.println("mensagem da tab Lobby --" + currentTab.getText());
             clientService.sendUserText(inputTextArea);
-        }
-        else {
+        } else {
             System.out.println("mensagem da tab " + currentTab.getText());
-            clientService.sendPrivateText(inputTextArea,currentTab.getText());
+            clientService.sendPrivateText(inputTextArea, currentTab.getText());
         }
     }
 
@@ -163,10 +172,9 @@ public class ClientController implements Controller {
             if (currentTab.getText().equals("Lobby")) {
                 System.out.println("mensagem da tab Lobby --" + currentTab.getText());
                 clientService.sendUserText(inputTextArea);
-            }
-            else {
+            } else {
                 System.out.println("mensagem da tab " + currentTab.getText());
-                clientService.sendPrivateText(inputTextArea,currentTab.getText());
+                clientService.sendPrivateText(inputTextArea, currentTab.getText());
             }
 
             //clientService.sendUserText(inputTextArea);
@@ -214,16 +222,33 @@ public class ClientController implements Controller {
         });
     }
 
+    @FXML
+    void ShowBio(ActionEvent event) {
+        System.out.println("Show bio");
+    }
+
+
     public void addMessageToTab(String user, String text) {
 
         System.out.println("CHAT PRIVADO PARA " + user);
-        if (!tabNames.containsKey(user)) {
-            System.out.println("tab the user " + user + "ainda nao existe");
-            createNewTab(user);
-        }
 
-        //adds the text to the textArea of the tab that has as name the String user
-        rooms.get(tabNames.get(user)).appendText(text);
+        if (!tabNames.containsKey(user)) {
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("tab the user " + user + "ainda nao existe");
+                    createNewTab(user);
+                    //adds the text to the textArea of the tab that has as name the String user
+                    rooms.get(tabNames.get(user)).appendText(text);
+                }
+            });
+
+        } else {
+
+            //adds the text to the textArea of the tab that has as name the String user
+            rooms.get(tabNames.get(user)).appendText(text);
+        }
 
     }
 
@@ -241,5 +266,27 @@ public class ClientController implements Controller {
         rooms.put(tab, textArea);
 
         tabPane.getTabs().add(tab);
+    }
+
+    public Tab getDestinyRoom(String user) {
+
+        if (tabNames.get(user) == null) {
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    createNewTab(user);
+                }
+            };
+
+            Platform.runLater(runnable);
+            int i = 0;
+            while (tabNames.get(user) == null) {
+                i++;
+            }
+            System.out.println(i);
+        }
+
+        return tabNames.get(user);
     }
 }

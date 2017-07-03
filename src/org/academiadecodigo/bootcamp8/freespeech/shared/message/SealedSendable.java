@@ -29,11 +29,7 @@ public interface SealedSendable extends Serializable {
      *
      * @param key the key to decrypt the content
      * @return the decrypt content with type Sendable
-     * @throws ClassNotFoundException Nonexistent class
-     * @throws NoSuchAlgorithmException Invalid algorithm
-     * @throws InvalidKeyException Invalid key
-     * @throws IOException Input / output exception
      */
-    Sendable getContent(Key key) throws ClassNotFoundException, NoSuchAlgorithmException, InvalidKeyException, IOException;
+    Sendable getContent(Key key);
 
 }

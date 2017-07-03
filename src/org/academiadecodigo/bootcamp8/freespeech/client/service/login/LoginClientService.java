@@ -11,77 +11,39 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.security.Key;
 
-
 /**
  * Developed @ <Academia de Código_>
  * Created by
- * <Code Cadet> Filipe Santos Sá, PedroMAlves
+ * <Code Cadet> JPM Ramos
+ * <Code Cadet> PedroMAlves
  */
 
 public class LoginClientService implements LoginService {
 
     private Socket clientSocket;
-    private boolean connectionServer;
 
+    @Override
     public void makeConnection(String server, int port) {
 
         try {
-
-            InetAddress address = InetAddress.getByName(server);
-            System.out.println(address);
-
-            if (!connectionServer) {
-                clientSocket = new Socket(server, port);
-                Session.getInstance().setUserSocket(clientSocket);
-
-                Key foreignKey = (Key) Stream.read(Session.getInput());
-                Session.getCrypto().setForeignKey(foreignKey);
-                Stream.write(Session.getOutput(), Session.getCrypto().getPublicKey());
-
-
-            } else {
-                System.out.println("Client already connected");
-            }
+            clientSocket = new Socket(server, port);
+            Session.getInstance().setUserSocket(clientSocket);
+            exchangeKeys();
 
         } catch (IOException e) {
-            connectionServer = false;
-            return;
-        }
-        connectionServer = true;
-
-    }
-
-    @Override
-    public void closeClientSocket() {
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            //TODO - unable to connect message
         }
     }
 
-    @Override
-    public boolean getConnectionServer() {
-        return connectionServer;
+    private void exchangeKeys() {
+        Key foreignKey = (Key) Stream.read(Session.getInput());
+        Session.getCrypto().setForeignKey(foreignKey);
+        Stream.write(Session.getOutput(), Session.getCrypto().getPublicKey());
     }
 
     @Override
     public String getName() {
         return LoginService.class.getSimpleName();
-    }
-
-    @Override
-    public void writeObject(MessageType messageType, SealedSendable message) {
-
-        Stream.write(Session.getOutput(), message);
-    }
-
-
-    @Override
-    public Sendable readObject() {
-
-        SealedSendable sealedSendable = Stream.readSendable(Session.getInput());
-        return Session.getCrypto().decryptSendable(sealedSendable);
     }
 
 }

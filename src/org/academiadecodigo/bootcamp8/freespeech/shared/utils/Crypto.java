@@ -96,23 +96,7 @@ public class Crypto {
      * @return Object
      */
     public Object decrypt(SealedSendable sealed, Key key) {
-
-        Object object = null;
-
-        try {
-
-            object = sealed.getContent(key);
-
-        } catch (IOException e) {
-            System.err.println("Failure on de-encapsulate object :: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("Invalid cast due to unrecognized object :: " + e.getMessage());
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            System.err.println("Failure on decrypt operation :: " + e.getMessage());
-        }
-
-        return object;
-
+        return sealed.getContent(key);
     }
 
     /**
@@ -131,7 +115,7 @@ public class Crypto {
      * Utilizes the private key
      *
      * @param sealed the object to decrypt
-     * @param key decryption key
+     * @param key    decryption key
      * @return Sendable
      */
     public Sendable decryptSendable(SealedSendable sealed, Key key) {
