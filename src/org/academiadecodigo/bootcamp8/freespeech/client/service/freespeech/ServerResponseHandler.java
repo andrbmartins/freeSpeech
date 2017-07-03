@@ -48,9 +48,6 @@ public class ServerResponseHandler implements Runnable {
     private void process(MessageType type, Sendable message) {
 
         switch (type) {
-            case NOTIFICATION:
-                clientService.sendListRequest();
-                break;
             case TEXT:
                 printToRoom(message);
                 break;
@@ -73,9 +70,11 @@ public class ServerResponseHandler implements Runnable {
                 run = false;
                 Session.close();
                 break;
+            case OWN_BIO:
+                clientController.setOwnBio(message);
             case BIO:
                 System.out.println("Recebi a mensagem com a bio " + message.toString());
-                clientController.ShowUserBio(message);
+                clientController.showUserBio(message);
                 break;
             case DELETE_ACCOUNT:
                 accDeleteNotify(message);

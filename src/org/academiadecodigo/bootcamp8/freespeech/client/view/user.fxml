@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -41,8 +38,8 @@
         </rowConstraints>
          <children>
             <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout" GridPane.columnIndex="3" />
-            <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" GridPane.columnIndex="2" />
-            <Button mnemonicParsing="false" onAction="#editUserInfo" text="Edit Bio" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+            <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.columnIndex="2" />
+            <Button mnemonicParsing="false" onAction="#editUserInfo" text="My Profile" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
             <Button mnemonicParsing="false" onAction="#changePassword" text="Change Password" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
             <Button mnemonicParsing="false" onAction="#onExit" text="Exit" GridPane.columnIndex="3" GridPane.halignment="RIGHT" />
          </children>
@@ -79,12 +76,10 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="dateRegistrationBio" disable="true" editable="false">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
+            <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0" />
             <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" text="Chat" />
+            <Button mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile" />
+            <Button mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account" />
          </children>
       </VBox>
    </children>

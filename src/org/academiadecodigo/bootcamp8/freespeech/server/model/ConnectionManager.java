@@ -37,6 +37,9 @@ public class ConnectionManager {
             preparedStmt.setString(2, password);
             preparedStmt.execute();
             eventlogger(TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username);
+            preparedStmt = connection.prepareStatement(Queries.INSERT_INTO_BIO);
+            preparedStmt.setString(1, username);
+            preparedStmt.executeUpdate();
 
 
         } catch (SQLException e) {
@@ -160,11 +163,8 @@ public class ConnectionManager {
 
     public List<String> getUserBio(String username) throws SQLException {
 
-        System.out.println("vou executar a query para a bio com o valor de " + username);
-
         PreparedStatement preparedStmt = connection.prepareStatement(Queries.SHOW_BIO);
         preparedStmt.setString(1, username);
-        System.out.println("before result ");
         ResultSet resultSet = preparedStmt.executeQuery();
 
         if (resultSet.next()) {
@@ -172,11 +172,10 @@ public class ConnectionManager {
             userbio.add(resultSet.getString("user_name"));
             userbio.add(resultSet.getString("email"));
             userbio.add(resultSet.getString("date_birth"));
-            //userbio.add(resultSet.getString("picture"));
-            userbio.add(resultSet.getString("date_registration"));
+            userbio.add(resultSet.getString("bio"));
             return userbio;
         }
-
+        preparedStmt.close();
         return new LinkedList<>();
     }
 }

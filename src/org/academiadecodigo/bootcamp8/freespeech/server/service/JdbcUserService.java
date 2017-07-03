@@ -84,6 +84,7 @@ public class JdbcUserService implements UserService {
             message = connectionManager.getUserBio(username);
             
         } catch (SQLException e) {
+            //TODO eventlogger here
             e.printStackTrace();
         }
         return message;

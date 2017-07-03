@@ -25,15 +25,14 @@ public interface ClientService extends Service {
      */
     void sendUserText(TextArea textField);
 
-    void sendBioRequest(String UserBio);
+    void sendBioRequest(MessageType type, String username);
 
     void sendUserData(File file);
-
-    void sendListRequest();
 
     void changePassword(String[] passSet);
 
     void sendExit();
 
     void deleteAccount(String password);
+
 }

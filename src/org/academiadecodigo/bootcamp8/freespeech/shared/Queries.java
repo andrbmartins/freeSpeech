@@ -12,7 +12,7 @@ public class Queries {
     public static final String INSERT_USER =  "INSERT INTO user(user_name, user_password) VALUES(?, ?)";
     public static final String COUNT_USERS = "SELECT COUNT(*) FROM users";
 
-
+    public static final String INSERT_INTO_BIO = "INSERT INTO bio(user_name, date_registration) VALUES (?, now())";
     public static final String INSERT_BIO = "INSERT INTO bio(user_name, email, date_birth, picture, date_registration) VALUES (?, ?, ?, ?, now())";
     public static final String UPDATE_BIO = "UPDATE bio SET email = ? , date_birth = ? , picture = ? WHERE user_name = ? ";
     public static final String DELETE_BIO = "DELETE FROM bio WHERE user_name = ?";

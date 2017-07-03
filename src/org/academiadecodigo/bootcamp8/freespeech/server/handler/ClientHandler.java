@@ -170,6 +170,8 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
+            case OWN_BIO:
+                sendUserBio(msg);
             case BIO_UPDATE:
                 //TODO - what to do in this case?
                 break;
@@ -200,19 +202,15 @@ public class ClientHandler implements Runnable {
 
     // Retrieve bio from database and send to client
     private void sendUserBio(SealedSendable msg) {
-        System.out.println("Vou mandar a mesma message que recebi para testar" + msg);
 
         Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
 
-        System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.getContent(String.class));
-        // Aqui vou buscar a bio ha BD atraves da query (Tem de retornar a bio)
-
         List<String> messagebio = userService.getUserBio((String) message.getContent(String.class));
+
         Message<List> bio = new Message<>(messagebio);
-        SealedSendable sealedMessage = crypto.encrypt(MessageType.BIO, bio, crypto.getSymKey());
+        SealedSendable sealedMessage = crypto.encrypt(msg.getType(), bio, crypto.getSymKey());
         write(sealedMessage);
 
-        System.out.println("Enviei mensagem com bio ao cliente" + sealedMessage.toString());
     }
 
     private void changePass(SealedSendable msg, MessageType type) {

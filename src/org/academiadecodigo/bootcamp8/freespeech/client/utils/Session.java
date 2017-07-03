@@ -16,7 +16,7 @@ import java.net.Socket;
 
 public class Session {
 
-    private String username;
+    private static String username;
     private Socket userSocket;
     private Crypto cryptographer;
     private ObjectInputStream inputStream;
@@ -86,7 +86,7 @@ public class Session {
         return getInstance().cryptographer;
     }
 
-    public String getUsername() {
+    public static String getUsername() {
         return username;
     }
 
