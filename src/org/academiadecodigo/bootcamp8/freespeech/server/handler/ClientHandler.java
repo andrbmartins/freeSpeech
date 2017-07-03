@@ -1,8 +1,10 @@
-package org.academiadecodigo.bootcamp8.freespeech.server;
+package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.Server;
+import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
-import org.academiadecodigo.bootcamp8.freespeech.server.utils.User;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
@@ -26,13 +28,15 @@ public class ClientHandler implements Runnable {
     private final Server server;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-    boolean run;
+    private UserService userService;
+    private boolean run;
 
-    public ClientHandler(Server server, Socket clientSocket, Key key) {
+    public ClientHandler(Server server, Socket clientSocket, Key key, UserService userService) {
         crypto = new Crypto();
         crypto.setSymKey(key);
         this.clientSocket = clientSocket;
         this.server = server;
+        this.userService = userService;
         run = true;
     }
 
@@ -42,7 +46,8 @@ public class ClientHandler implements Runnable {
         openStreams(clientSocket);
         exchangeKeys();
         authenticateClient();
-        server.addActiveUser(this);
+        server.addUser(this);
+
         readFromClient();
 
 
@@ -119,18 +124,18 @@ public class ClientHandler implements Runnable {
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
 
-        return server.getUserService().authenticate(username, password);
+        return userService.authenticate(username, password);
     }
 
     private boolean makeRegistry(HashMap<String, String> mapR) {
 
         String username = mapR.get(Values.NAME_KEY);
 
-        synchronized (server.getUserService()) {
+        synchronized (userService) {
 
-            if (server.getUserService().getUser(username) == null) {
+            if (userService.getUser(username) == null) {
 
-                return server.getUserService().addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
+                return userService.addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
 
             }
         }
@@ -144,12 +149,12 @@ public class ClientHandler implements Runnable {
         while (run) {
             if ((msg = Stream.readSendable(objectInputStream)) != null) {
                 handleMessage(msg);
-            } else {
-                run = false;
+                continue;
             }
+            run = false;
         }
-        // Introduzir no log server que o client fez logout e se desligou
-        server.logOutUser(this);
+
+        server.removeUser(this);
     }
 
     private void handleMessage(SealedSendable msg) {
@@ -158,17 +163,10 @@ public class ClientHandler implements Runnable {
 
         switch (type) {
 
-            case DATA:
             case TEXT:
                 server.writeToAll(msg);
                 break;
-            case LOGIN:
-                //TODO log
-                throw new IllegalArgumentException("You've already Logged In");
-            case REGISTER:
-                //TODO log
-                throw new IllegalArgumentException("You've already Register");
-            case PRIVATE_DATA:
+            case DATA:
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
@@ -181,7 +179,6 @@ public class ClientHandler implements Runnable {
             case EXIT:
                 run = false;
                 write(msg);
-                server.logOutUser(this);
                 closeSocket();
                 break;
             case BIO:
@@ -192,7 +189,7 @@ public class ClientHandler implements Runnable {
             case DELETE_ACCOUNT:
                 if (deleteAccount(msg, type)){
                     run = false;
-                    server.logOutUser(this);
+                    server.removeUser(this);
                     closeSocket();
                 }
                 break;
@@ -201,17 +198,16 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
     // Retrieve bio from database and send to client
     private void sendUserBio(SealedSendable msg) {
-        System.out.println("Vou mandar a mesma message que recebi para testar" + msg );
+        System.out.println("Vou mandar a mesma message que recebi para testar" + msg);
 
         Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
 
         System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.getContent(String.class));
         // Aqui vou buscar a bio ha BD atraves da query (Tem de retornar a bio)
 
-        List<String> messagebio = server.getUserService().getUserBio((String) message.getContent(String.class));
+        List<String> messagebio = userService.getUserBio((String) message.getContent(String.class));
         Message<List> bio = new Message<>(messagebio);
         SealedSendable sealedMessage = crypto.encrypt(MessageType.BIO, bio, crypto.getSymKey());
         write(sealedMessage);
@@ -224,7 +220,7 @@ public class ClientHandler implements Runnable {
         sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
         HashMap<String, String> map = sendable.getContent(HashMap.class);
         Sendable<String> message;
-        if (server.getUserService().changePassword(clientName, map.get(Values.PASSWORD_KEY),
+        if (userService.changePassword(clientName, map.get(Values.PASSWORD_KEY),
                 map.get(Values.NEW_PASSWORD))) {
             message = new Message<>(Values.PASS_CHANGED);
         } else {
@@ -241,7 +237,7 @@ public class ClientHandler implements Runnable {
         Sendable<String> response;
         boolean deleted;
 
-        if (server.getUserService().deleteAccount(clientName, pass)) {
+        if (userService.deleteAccount(clientName, pass)) {
             response = new Message<>(Values.ACC_DELETED);
             deleted = true;
         } else {
@@ -254,7 +250,7 @@ public class ClientHandler implements Runnable {
         return deleted;
     }
 
-    public void sendUsersList(Message userList) {
+    public void sendUsersList(Sendable userList) {
         SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList, crypto.getSymKey());
         write(sealedSendable);
     }

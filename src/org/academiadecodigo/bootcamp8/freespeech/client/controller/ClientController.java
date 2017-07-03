@@ -209,10 +209,9 @@ public class ClientController implements Controller {
 
     @FXML
     void changePassword(ActionEvent event) {
-        //TODO check the Intellij yellow warning for 'change.showAndWait()' with André or Filipe
         ChangePassDialog change = new ChangePassDialog();
-        boolean exit = false;
-        while (!exit) {
+
+        while (true) {
 
             Optional<String[]> result = change.showAndWait();
 
@@ -253,7 +252,7 @@ public class ClientController implements Controller {
 
     }
 
-    public Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
+    private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);

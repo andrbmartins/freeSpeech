@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.controller;
+package org.academiadecodigo.bootcamp8.freespeech.serverapp.controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,11 +8,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.DataBaseReader;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.Utils;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.DataBaseReader;
 import javafx.fxml.FXML;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.PasswordDialog;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.WriteToFile;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.PasswordDialog;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.WriteToFile;
 
 import java.io.File;
 import java.net.URL;

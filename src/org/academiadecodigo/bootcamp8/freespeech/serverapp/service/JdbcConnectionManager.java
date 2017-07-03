@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
+package org.academiadecodigo.bootcamp8.freespeech.serverapp.service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
