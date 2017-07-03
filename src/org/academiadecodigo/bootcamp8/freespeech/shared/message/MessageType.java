@@ -22,5 +22,5 @@ public enum MessageType {
     PASS_CHANGE,
     EXIT,
     BIO,
-    DELETE_ACCOUNT
+    REPORT, DELETE_ACCOUNT
 }

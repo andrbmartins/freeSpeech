@@ -280,4 +280,11 @@ public class ClientController implements Controller {
         dateRegistrationBio.setText(list.get(3));
 
     }
+
+    @FXML
+    void onReport(ActionEvent event) {
+        String userToReport = onlineUsersList.getSelectionModel().getSelectedItem().toString();
+        clientService.sendReport(userToReport);
+
+    }
 }

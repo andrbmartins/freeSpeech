@@ -91,7 +91,7 @@ public class LoginController implements Controller {
             return;
         }
 
-        passwordConfirmation(false);
+        //passwordConfirmation(false);
 
         if (emptyFields(false)) {
             serverMessageLabel.setText(Values.INVALID_INPUT);

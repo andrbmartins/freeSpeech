@@ -162,7 +162,13 @@ public class ClientHandler implements Runnable {
         MessageType type = msg.getType();
 
         switch (type) {
-
+            case REPORT:
+                //TODO make this a method and log it
+                Sendable<String> message = crypto.decryptSendable(msg, crypto.getSymKey());
+                String reportedUser = message.getContent(String.class);
+                System.out.println("REPORTED " + reportedUser);
+                System.out.println(reportedUser.getClass().getSimpleName());
+                break;
             case TEXT:
                 server.writeToAll(msg);
                 break;

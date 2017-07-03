@@ -6,12 +6,16 @@
     -fx-font: 10pt Helvetica;
 }
 
-#buttonBox {
-    -fx-alignment: center;
-    -fx-spacing: 30;
+.button {
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 50px;
 }
 
-#closeButton {
+#closeButton,
+#exitButton {
     -fx-background-image: url("icons/exit.png");
     -fx-pref-width: 30px;
     -fx-pref-height: 30px;
@@ -75,14 +79,7 @@
     -fx-background-insets: 0 1 0 -1;
 }
 
-.button {
-    -fx-pref-height: 50px;
-    -fx-pref-width: 50px;
-    -fx-background-color: transparent;
-    -fx-background-repeat: no-repeat;
-    -fx-background-size: 50px;
 
-}
 
 .text-area,
 .text-area:focused .content {

@@ -20,11 +20,11 @@ import java.util.Map;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO documentation
+//TODO documentation - file manager singleton?
 
 public class FreeSpeechClientService implements ClientService {
 
-    private final int MAX_FILE_SIZE = 52428800; //50 MB
+
 
     @Override
     public void sendUserText(TextArea textArea) {
@@ -58,6 +58,8 @@ public class FreeSpeechClientService implements ClientService {
     @Override
     public void sendUserData(File file) {
 
+        final int MAX_FILE_SIZE = 52428800; //50 MB
+
         if (file.length() > MAX_FILE_SIZE) {
             //TODO popup for user
             System.out.println("file too big");
@@ -83,6 +85,12 @@ public class FreeSpeechClientService implements ClientService {
 
         Message<String> message = new Message<>(HashService.getHash(password));
         writeObject(MessageType.DELETE_ACCOUNT, message);
+    }
+
+    @Override
+    public void sendReport(String userToReport) {
+        Message<String> message = new Message<>(userToReport);
+        writeObject(MessageType.REPORT, message);
     }
 
     @Override

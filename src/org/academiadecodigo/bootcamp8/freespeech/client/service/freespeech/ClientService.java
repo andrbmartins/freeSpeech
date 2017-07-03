@@ -36,4 +36,6 @@ public interface ClientService extends Service {
     void sendExit();
 
     void deleteAccount(String password);
+
+    void sendReport(String userToReport);
 }
