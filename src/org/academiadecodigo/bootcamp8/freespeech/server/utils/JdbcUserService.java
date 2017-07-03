@@ -4,14 +4,13 @@ import org.academiadecodigo.bootcamp8.freespeech.server.persistence.ConnectionMa
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 /**
  * Created by Jramos on 29-06-2017.
  */
 public class JdbcUserService implements UserService {
-
-    //ConnectionManager connectionManager;
 
     private static JdbcUserService instance = new JdbcUserService();
     private ConnectionManager connectionManager;
@@ -24,17 +23,9 @@ public class JdbcUserService implements UserService {
 
    @Override
     public boolean authenticate(String username, String password) {
-
-        System.out.println("Inside JDBC service");
-        try {
-            if (connectionManager.authenticateUser(username,password))
-                return true;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+       User user = getUser(username);
+       return user != null && user.getPassword().equals(password);
+   }
 
 
     @Override
@@ -49,20 +40,23 @@ public class JdbcUserService implements UserService {
 
     @Override
     public User getUser(String username) {
-        System.out.println(username);
-        return findByname(username);
-    }
-
-
-    public User findByname(String username) {
         User user= null;
-        System.out.println(username);
         try {
             user = connectionManager.findUser(username);
         } catch (SQLException e) {
+            //TODO log  this stacktrace since it is sql exception
             e.printStackTrace();
         }
         return user;
+    }
+
+    @Override
+    public boolean changePassword(String username, String oldPass, String newPass) {
+        if (authenticate(username, oldPass)) {
+            connectionManager.changePass(username, newPass);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -75,13 +69,24 @@ public class JdbcUserService implements UserService {
             e.printStackTrace();
         }
         return recordcount;
-
-
     }
 
     @Override
     public void eventlogger(Values.TypeEvent typeEvent, String log_message ) {
         connectionManager.eventlogger(typeEvent, log_message);
+    }
+
+    @Override
+    public List<String> getUserBio(String username)  {
+
+        List<String> message = null;
+        try {
+            message = connectionManager.getUserBio(username);
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return message;
     }
 
 

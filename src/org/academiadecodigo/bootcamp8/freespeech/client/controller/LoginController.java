@@ -104,6 +104,8 @@ public class LoginController implements Controller {
         if (serverResponse.getContent(String.class).equals(Values.LOGIN_OK)) {
             loginService.receiveSymKey();
             Session.getInstance().setUsername(nameField.getText());
+            //TODO method to reset fields for when logout is requested
+            //resetFields();
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
             return;
         }

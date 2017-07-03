@@ -1,19 +1,15 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.utils.JdbcUserService;
-import org.academiadecodigo.bootcamp8.freespeech.server.utils.TempUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
-import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +24,6 @@ import java.util.concurrent.Executors;
  */
 
 public class Server {
-
     private int port;
     private ServerSocket serverSocket;
     private Key symKey;
@@ -49,7 +44,7 @@ public class Server {
     }
 
     /**
-     * Initializates de serverSocket, the threadPool and the UserService
+     * Initializes the serverSocket, the threadPool and the UserService
      *
      * @throws IOException
      */
@@ -63,11 +58,6 @@ public class Server {
 
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
-        //userService = TempUserService.getInstance();
-        userService = JdbcUserService.getInstance();
-        //System.out.println("Fora do init ");
-
-
 
     }
 
@@ -89,7 +79,7 @@ public class Server {
     }
 
     /**
-     * closes de ServerSocket...
+     * closes the ServerSocket...
      */
     public void closeServerSocket() {
         if (serverSocket != null) {
@@ -114,6 +104,7 @@ public class Server {
      */
     public void addActiveUser(ClientHandler client) {
         loggedUsers.add(client);
+        updateList();
     }
 
     /**
@@ -123,8 +114,19 @@ public class Server {
      * @param client
      */
     public void logOutUser(ClientHandler client) {
-
         loggedUsers.remove(client);
+        updateList();
+    }
+
+    /**
+     * Sends updated list of users online to every user online
+     */
+    public void updateList() {
+        Message<List> message = new Message<>(getUsersOnlineList());
+        for (ClientHandler c : loggedUsers) {
+            c.sendUsersList(message);
+        }
+
     }
 
     /**
@@ -168,14 +170,18 @@ public class Server {
      * @return
      */
     public List<String> getUsersOnlineList() {
-
-        //TODO think of a better idea
         List<String> usersList = new LinkedList<>();
 
         for (ClientHandler c : loggedUsers) {
             usersList.add(c.getName());
         }
-
         return usersList;
     }
+
+
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
 }

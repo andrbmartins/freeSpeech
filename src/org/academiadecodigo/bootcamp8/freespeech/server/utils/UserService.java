@@ -2,6 +2,8 @@ package org.academiadecodigo.bootcamp8.freespeech.server.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
+import java.util.List;
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -21,4 +23,8 @@ public interface UserService {
     int count();
 
     void eventlogger(Values.TypeEvent typeEvent, String log_message);
+
+    boolean changePassword(String user, String oldPass, String newPass);
+
+    List<String> getUserBio(String username);
 }

@@ -1,11 +1,12 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
+import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.util.regex.Matcher;
@@ -18,23 +19,27 @@ import java.util.regex.Pattern;
  */
 
 public class ServerResponseHandler implements Runnable {
-
+    boolean run = true;
     private ClientService clientService;
     private ClientController clientController;
 
     public ServerResponseHandler(ClientService clientService, ClientController clientController) {
         this.clientService = clientService;
         this.clientController = clientController;
+        //run = true;
     }
 
     @Override
     public void run() {
 
-        while (true) {
+
+        while (run) {
             SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
             Sendable message = Session.getCrypto().decryptSendable(sealedMessage, Session.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
+
+
     }
 
     private void process(MessageType type, Sendable message) {
@@ -49,7 +54,7 @@ public class ServerResponseHandler implements Runnable {
             case DATA:
                 //TODO
                 break;
-            case REQUEST_USERS_ONLINE:
+            case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
@@ -57,6 +62,21 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case PRIVATE_TEXT:
                 //TODO
+                break;
+            case PASS_CHANGE:
+                notifyUser(message);
+                break;
+            case LOGOUT:
+                run = false;
+                break;
+            case EXIT:
+                run = false;
+                Session.close();
+                break;
+            case BIO:
+                // Aqui vou receber a bio do USER
+                System.out.println("Recebi a mensagem com a bio " + message.toString());
+                clientController.ShowUserBio(message);
                 break;
         }
     }
@@ -96,4 +116,11 @@ public class ServerResponseHandler implements Runnable {
         }
         return result;
     }
+
+    public void notifyUser(Sendable msg) {
+        String info = (String) msg.getContent(String.class);
+
+        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.PASS_MANAGER, info);
+    }
+
 }

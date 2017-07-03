@@ -20,7 +20,7 @@ public class JdbcConnectionManager {
 
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql:///freespeech", "root", "1234");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/freespeech", "root", "");
             }
         } catch (SQLException ex) {
             System.out.println("Connection to database failed : " + ex.getMessage());

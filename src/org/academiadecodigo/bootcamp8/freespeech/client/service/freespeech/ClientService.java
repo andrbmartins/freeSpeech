@@ -25,7 +25,15 @@ public interface ClientService extends Service {
      */
     void sendUserText(TextArea textField);
 
+    void sendBioRequest(String UserBio);
+
     void sendUserData(File file);
 
     void sendListRequest();
+
+    void sendLogOut();
+
+    void changePassword(String[] passSet);
+
+    void sendExit();
 }

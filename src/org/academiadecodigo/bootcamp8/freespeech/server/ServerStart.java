@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.JdbcUserService;
+
 import java.io.IOException;
 
 /**
@@ -20,6 +22,8 @@ public class ServerStart {
         else {
             server = new Server(Integer.parseInt(args[0]));
         }
+
+        server.setUserService(new JdbcUserService());
         try {
             server.init();
             server.start();

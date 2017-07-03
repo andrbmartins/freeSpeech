@@ -14,11 +14,13 @@ public enum MessageType {
     PRIVATE_TEXT, //content will be an hashmap with 2 entries ( "to" : <destiny_name> ; "message" : <message_to_send>). both values can be encrypted
     LOGIN,
     REGISTER,
-    REQUEST_USERS_ONLINE,
+    USERS_ONLINE,
     NOTIFICATION,
     KEY,
+    GET_BIO,
     BIO_UPDATE,
     PASS_CHANGE,
     LOGOUT,
-    EXIT
+    EXIT,
+    BIO
 }

@@ -27,29 +27,34 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
     private Communication communication;
+    boolean run;
 
     public ClientHandler(Server server, Socket clientSocket, Key key) {
         crypto = new Crypto();
         crypto.setSymKey(key);
-
         this.clientSocket = clientSocket;
         this.server = server;
+        run = true;
         //TODO do we really need 2 more layers of encapsulation?
         communication = new CommunicationService();
     }
 
     @Override
     public void run() {
-
         communication.openStreams(clientSocket);
         exchangeKeys();
+        init();
 
+    }
+
+    private void init() {
         authenticateClient();
-        notifyNewUser();
+        //notifyNewUser();
         server.addActiveUser(this);
 
         readFromClient();
     }
+
 
     private void exchangeKeys() {
 
@@ -80,8 +85,6 @@ public class ClientHandler implements Runnable {
                     clientName = map.get(Values.NAME_KEY);
                 } else {
                     message = Values.LOGIN_FAIL;
-                    //authenticateClient();
-
                 }
             }
 
@@ -132,24 +135,29 @@ public class ClientHandler implements Runnable {
         return false;
     }
 
-    private void notifyNewUser() {
+    //TODO deprecated because there is newer faster method
+   /* private void notifyNewUser() {
 
         Message<String> message = new Message<>(Values.NEW_USER);
         SealedSendable sealedMessage = crypto.encrypt(MessageType.NOTIFICATION, message, crypto.getSymKey());
 
         server.writeToAll(sealedMessage);
-    }
+    }*/
 
     private void readFromClient() {
         SealedSendable msg;
 
-        while ((msg = communication.retrieveMessage()) != null) {
-            handleMessage(msg);
+        while (run) {
+            if ((msg = communication.retrieveMessage()) != null) {
+                handleMessage(msg);
+            } else {
+                run = false;
+            }
         }
-
+        // Introduzir no log server que o client fez logout e se desligou
         server.logOutUser(this);
-        closeSocket();
     }
+
 
     private void handleMessage(SealedSendable msg) {
 
@@ -171,25 +179,86 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
-            case REQUEST_USERS_ONLINE:
+                //TODO NO LONGER REQUESTED BUT ALWAYS SENT ON STATE CHANGE Delete switch
+            /*case USERS_ONLINE:
                 sendUsersList();
+                break;*/
+            case GET_BIO:
+                //TODO
                 break;
             case BIO_UPDATE:
                 //TODO
                 break;
             case PASS_CHANGE:
-                //TODO
+                changePass(msg, type);
                 break;
+            case LOGOUT:
+                //TODO not fully working yet
+                write(msg);
+                server.logOutUser(this);
+                break;
+            case EXIT:
+                run = false;
+                write(msg);
+                server.logOutUser(this);
+                closeSocket();
+                break;
+            case BIO: {
+                System.out.println("Recebi msg de request de bio" + msg.toString());
+                // IF Message is BIO request
+                sendUserBio(msg);
+                break;
+            }
         }
     }
 
-    private void sendUsersList() {
+    // Retrieve bio from database and send to client
+    private void sendUserBio(SealedSendable msg) {
+        System.out.println("Vou mandar a mesma message que recebi para testar" + msg );
+
+        Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
+
+        System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.getContent(String.class));
+        // Aqui vou buscar a bio ha BD atraves da query (Tem de retornar a bio)
+
+        List<String> messagebio = server.getUserService().getUserBio((String) message.getContent(String.class));
+        Message<List> bio = new Message<>(messagebio);
+        SealedSendable sealedMessage = crypto.encrypt(MessageType.BIO, bio, crypto.getSymKey());
+        write(sealedMessage);
+
+        System.out.println("Enviei mensagem com bio ao cliente" + sealedMessage.toString());
+    }
+
+    private void changePass(SealedSendable msg, MessageType type) {
+        Sendable<HashMap> sendable;
+        sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
+        HashMap<String, String> map = sendable.getContent(HashMap.class);
+        Sendable<String> message;
+        if (server.getUserService().changePassword(clientName, map.get(Values.PASSWORD_KEY),
+                map.get(Values.NEW_PASSWORD))) {
+            message = new Message<>(Values.PASS_CHANGED);
+        } else {
+            message = new Message<>(Values.PASS_NOT_CHANGED);
+        }
+
+        SealedSendable sealedMsg = crypto.encrypt(type, message, crypto.getSymKey());
+        communication.sendMessage(sealedMsg);
+    }
+
+
+    public void sendUsersList(Message userList) {
+        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList, crypto.getSymKey());
+        write(sealedSendable);
+    }
+
+    //TODO remove method which is now obsolete by the above method
+  /*  private void sendUsersList() {
 
         List<String> list = server.getUsersOnlineList();
         Message<List> message = new Message<>(list);
-        SealedSendable sealedSendable = crypto.encrypt(MessageType.REQUEST_USERS_ONLINE, message, crypto.getSymKey());
+        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, message, crypto.getSymKey());
         write(sealedSendable);
-    }
+    }*/
 
     public void write(SealedSendable sendable) {
         communication.sendMessage(sendable);

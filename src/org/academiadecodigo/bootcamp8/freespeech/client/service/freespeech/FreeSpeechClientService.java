@@ -1,18 +1,23 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> PedroMAlves
  */
 
 //TODO documentation
@@ -38,8 +43,17 @@ public class FreeSpeechClientService implements ClientService {
     @Override
     public void sendListRequest() {
         Message<Object> message = new Message<>("");
-        writeObject(MessageType.REQUEST_USERS_ONLINE, message);
+        writeObject(MessageType.USERS_ONLINE, message);
     }
+
+    // Sends a request bio to server
+    @Override
+    public void sendBioRequest(String UserBio) {
+        Message<String> message = new Message<>(UserBio);
+        writeObject(MessageType.BIO, message);
+        System.out.println("Mensagem enviada de pedido de bio");
+    }
+
 
     @Override
     public void sendUserData(File file) {
@@ -55,6 +69,31 @@ public class FreeSpeechClientService implements ClientService {
 
         Message<List> message = new Message<>(byteList);
         writeObject(MessageType.DATA, message);
+    }
+
+    @Override
+    public void sendLogOut() {
+        Message<String> message = new Message<>(new String(" "));
+        writeObject(MessageType.LOGOUT, message);
+    }
+
+    @Override
+    public void sendExit() {
+        Message<String> message = new Message<>(new String(" "));
+        writeObject(MessageType.EXIT, message);
+    }
+
+    @Override
+    public void changePassword(String[] passSet) {
+        Map<String, String> messageContent = new HashMap<>();
+
+        messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passSet[0]));
+        messageContent.put(Values.NEW_PASSWORD, HashService.getHash(passSet[1]));
+
+        Message<Map> message = new Message<>(messageContent);
+
+        writeObject(MessageType.PASS_CHANGE, message);
+
     }
 
 

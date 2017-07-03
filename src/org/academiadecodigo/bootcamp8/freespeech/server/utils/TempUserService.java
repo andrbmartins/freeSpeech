@@ -47,6 +47,12 @@ public class TempUserService implements UserService {
     }
 
     @Override
+    public boolean changePassword(String user, String oldPass, String newPass) {
+        return false;
+    }
+
+
+    @Override
     public User getUser(String username) {
         for (User u : registeredUsers) {
             if (username.equals(u.getUsername())) {
@@ -65,6 +71,11 @@ public class TempUserService implements UserService {
     @Override
     public void eventlogger(Values.TypeEvent server, String serverStart) {
         return;
+    }
+
+    @Override
+    public List<String> getUserBio(String username) {
+        return null;
     }
 
 

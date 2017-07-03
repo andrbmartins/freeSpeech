@@ -9,9 +9,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -23,6 +22,7 @@ import javafx.stage.Stage;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
@@ -36,6 +36,7 @@ import java.util.List;
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> PedroMAlves
  */
 
 //TODO documentation
@@ -46,6 +47,13 @@ public class ClientController implements Controller {
     @FXML private TextArea lobbyTextArea;
     @FXML private TextArea inputTextArea;
     @FXML private ListView onlineUsersList;
+    @FXML private Button exitButton;
+    @FXML private VBox bioArea;
+    @FXML private TextField nameBio;
+    @FXML private TextField emailBio;
+    @FXML private TextField dateBirthBio;
+    @FXML private TextField dateRegistrationBio;
+
 
     private Stage stage;
     private ClientService clientService;
@@ -62,6 +70,7 @@ public class ClientController implements Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
 
         rooms.put(getSelectedTab(), lobbyTextArea);
         setDraggableTopBar();
@@ -157,9 +166,101 @@ public class ClientController implements Controller {
         });
     }
 
+
     @FXML
-    void ShowBio(ActionEvent event) {
-        System.out.println("Show bio");
+    void getUserBio(MouseEvent event) {
+        System.out.println("Send bio request to server");
+        Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
+        System.out.println(user.toString());
+        clientService.sendBioRequest((String) user);
     }
 
+
+    @FXML
+    void editUserInfo(ActionEvent event) {
+        //TODO to complete process
+        EditBioDialog bio = new EditBioDialog();
+
+        //TODO use the method by jp to retrieve bio to set on dialog text
+
+        Optional<String[]> result = bio.showAndWait();
+    }
+
+
+    @FXML
+    void changePassword(ActionEvent event) {
+        //TODO check the Intellij yellow warning for 'change.showAndWait()' with André or Filipe
+        ChangePassDialog change = new ChangePassDialog();
+        boolean exit = false;
+        while (!exit) {
+
+            Optional<String[]> result = change.showAndWait();
+
+            if (!result.isPresent()) {
+                return;
+            }
+            if (areFieldsValid(result.get())) {
+                clientService.changePassword(result.get());
+                return;
+            }
+            userPromptExternal(Alert.AlertType.ERROR, DialogText.INVALID_FIELDS, DialogText.INVALID_FORM);
+        }
+    }
+
+    private boolean areFieldsValid(String[] results) {
+        for (String s : results) {
+            if (s.isEmpty()) {
+                return false;
+            }
+        }
+        return results[1].equals(results[2]);
+    }
+
+    //TODO still not working properly
+    @FXML
+    void onLogOut(ActionEvent event) {
+        clientService.sendLogOut();
+        Navigation.getInstance().back();
+    }
+
+    @FXML
+    void onExit(ActionEvent event) {
+        clientService.sendExit();
+        Navigation.getInstance().close();
+    }
+
+    public void userPromptExternal(Alert.AlertType alertType, String title, String content) {
+        Platform.runLater(new Runnable() {
+            public void run() {
+            userPrompt1(alertType, title, content);
+            }
+        });
+
+    }
+
+    public Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        return alert.showAndWait();
+    }
+
+
+
+    @FXML
+    void startPrivateChat(MouseEvent event) {
+
+    }
+
+
+    public void ShowUserBio(Sendable message) {
+
+        List<String> list = (LinkedList<String>) message.getContent(List.class);
+        nameBio.setText(list.get(0).toString());
+        emailBio.setText(list.get(1).toString());
+        dateBirthBio.setText(list.get(2).toString());
+        dateRegistrationBio.setText(list.get(3).toString());
+
+    }
 }
