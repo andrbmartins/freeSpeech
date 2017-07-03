@@ -55,8 +55,4 @@ public class Client extends Application {
         RegistryService.getInstance().addService(clientService);
     }
 
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-    }
 }

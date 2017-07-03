@@ -1,6 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.utils;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.persistence.ConnectionManager;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.SQLException;
@@ -11,8 +11,6 @@ import java.util.List;
  * Created by Jramos on 29-06-2017.
  */
 public class JdbcUserService implements UserService {
-
-    private static JdbcUserService instance = new JdbcUserService();
     private ConnectionManager connectionManager;
 
 
@@ -91,10 +89,4 @@ public class JdbcUserService implements UserService {
         return message;
     }
 
-
-    /// public String getname(){
-   //     return UserService.class.getSimpleName();
-   // }
-
-   public static JdbcUserService getInstance(){ return instance; }
 }

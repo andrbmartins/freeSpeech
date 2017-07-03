@@ -55,6 +55,7 @@ public class Server {
         Crypto crypto = new Crypto();
         crypto.generateSymKey();
         symKey = crypto.getSymKey();
+        System.out.println("Generated symKey, ready to accept client connections");
 
         serverSocket = new ServerSocket(port);
         cachedPool = Executors.newCachedThreadPool();
@@ -157,7 +158,7 @@ public class Server {
         String destiny = content.get(Values.DESTINY);
 
         for (ClientHandler c : loggedUsers) {
-            if (c.getName().equals(destiny)) {
+            if (c.getClientName().equals(destiny)) {
                 c.write(msg);
                 break;
             }
@@ -173,7 +174,7 @@ public class Server {
         List<String> usersList = new LinkedList<>();
 
         for (ClientHandler c : loggedUsers) {
-            usersList.add(c.getName());
+            usersList.add(c.getClientName());
         }
         return usersList;
     }

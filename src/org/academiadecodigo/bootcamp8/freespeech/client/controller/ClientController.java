@@ -254,6 +254,11 @@ public class ClientController implements Controller {
     public void ShowUserBio(Sendable message) {
 
         List<String> list = (LinkedList<String>) message.getContent(List.class);
+
+        if (list.isEmpty()) {
+            return;
+        }
+
         nameBio.setText(list.get(0));
         emailBio.setText(list.get(1));
         dateBirthBio.setText(list.get(2));
