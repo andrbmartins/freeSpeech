@@ -22,8 +22,6 @@ public class ServerStart {
             server = new Server(Integer.parseInt(args[0]));
         }
 
-        server.setUserService(new JdbcUserService());
-
         try {
 
             server.init();

@@ -7,6 +7,6 @@ package org.academiadecodigo.bootcamp8.freespeech.server.model.logger;
  */
 public class Logger {
 
-    // TODO implement
+    // TODO implement singleton
 
 }

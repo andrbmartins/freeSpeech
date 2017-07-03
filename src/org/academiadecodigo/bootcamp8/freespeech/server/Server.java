@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ClientHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ConsoleHandler;
+import org.academiadecodigo.bootcamp8.freespeech.server.service.user.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.user.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -33,8 +34,6 @@ public class Server {
     private int port;
     private ServerSocket socket;
     private Key symKey;
-    // TODO change to loggerService
-    private UserService userService;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
 
     public Server(int port) {
@@ -90,9 +89,11 @@ public class Server {
      */
     public void start() throws IOException {
 
-        userService.eventlogger(TypeEvent.SERVER, Values.SERVER_START);
+        //TODO userService.eventlogger(TypeEvent.SERVER, Values.SERVER_START);
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
+        UserService userService = new JdbcUserService();
+
         while (true) {
             Socket clientSocket = socket.accept();
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey));
@@ -191,7 +192,7 @@ public class Server {
             try {
                 //TODO log server off
                 socket.close();
-                userService.eventlogger(TypeEvent.SERVER, Values.SERVER_STOP);
+                //TODO userService.eventlogger(TypeEvent.SERVER, Values.SERVER_STOP);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -214,14 +215,6 @@ public class Server {
         long hour = (millis / (1000 * 60 * 60)) % 24;
 
         return String.format("%02d:%02d:%02d", hour, minute, second);
-    }
-
-    public UserService getUserService() {
-        return userService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 
 }
