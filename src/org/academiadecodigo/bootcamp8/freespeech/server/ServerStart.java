@@ -1,7 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.service.user.JdbcUserService;
-
 import java.io.IOException;
 
 /**

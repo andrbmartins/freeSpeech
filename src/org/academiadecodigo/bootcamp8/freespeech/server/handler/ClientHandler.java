@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.Server;
-import org.academiadecodigo.bootcamp8.freespeech.server.service.user.UserService;
+import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;

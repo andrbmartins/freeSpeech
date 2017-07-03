@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.service.user;
+package org.academiadecodigo.bootcamp8.freespeech.server.service;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;

@@ -38,7 +38,6 @@ public class ServerResponseHandler implements Runnable {
             process(sealedMessage.getType(), message);
         }
 
-
     }
 
     private void process(MessageType type, Sendable message) {
