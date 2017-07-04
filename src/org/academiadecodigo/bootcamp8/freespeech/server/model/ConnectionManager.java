@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
 
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -22,11 +23,11 @@ public class ConnectionManager {
     public Connection getConnection() {
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
-                Logger.getInstance().eventlogger(TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
+                connection = DriverManager.getConnection(Values.URL_DB_SERVER, Values.USER_DB_SERVER, Values.PASSWORD_DB_SERVER);
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.SERVER_DB_CONNECT);
             }
         } catch (SQLException ex) {
-            Logger.getInstance().eventlogger(TypeEvent.DATABASE, Values.SERVER_DBDISCONNECT);
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.SERVER_DB_DISCONNECT);
         }
         return connection;
     }
@@ -48,7 +49,7 @@ public class ConnectionManager {
 
         } catch (SQLException e) {
 
-            System.out.println(Values.CLIENT_REGISTER_FAILED);
+            System.out.println(LoggerMessages.CLIENT_REGISTER_FAILED);
             registered = false;
 
         } finally {

@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.handler.ClientHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ConsoleHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
@@ -99,7 +100,7 @@ public class Server {
      */
     public void start() throws IOException {
 
-        Logger.getInstance().eventlogger(TypeEvent.SERVER, Values.SERVER_START);
+        Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.SERVER_START);
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
 
@@ -107,7 +108,7 @@ public class Server {
 
             Socket clientSocket = socket.accept();
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService));
-            Logger.getInstance().eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CONNECT_CLIENT + "-" + clientSocket);
 
         }
 
@@ -221,7 +222,7 @@ public class Server {
             try {
 
                 socket.close();
-                Logger.getInstance().eventlogger(TypeEvent.SERVER, Values.SERVER_STOP);
+                Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.SERVER_STOP);
 
             } catch (IOException e) {
                 Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
