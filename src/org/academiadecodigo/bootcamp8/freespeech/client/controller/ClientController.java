@@ -283,10 +283,8 @@ public class ClientController implements Controller {
         }
         setBioInfo(list);
 
-
     }
-
-
+    
     public void showUserBio(Sendable message) {
         privateChatButton.setVisible(true);
         removeAccount.setVisible(false);
