@@ -234,13 +234,25 @@ public class ClientController implements Controller {
         Navigation.getInstance().close();
     }
 
+
+    public void userPromptQuit(Alert.AlertType alertType, String title, String content) {
+        Platform.runLater(new Runnable() {
+            public void run() {
+                Optional<ButtonType> r = userPrompt1(alertType, title, content);
+                if (r.isPresent()) {
+                    Navigation.getInstance().close();
+                }
+            }
+        });
+
+    }
+
     public void userPromptExternal(Alert.AlertType alertType, String title, String content) {
         Platform.runLater(new Runnable() {
             public void run() {
                 Optional<ButtonType> r = userPrompt1(alertType, title, content);
             }
         });
-
     }
 
     private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {

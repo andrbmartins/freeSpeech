@@ -133,15 +133,11 @@ public class ServerResponseHandler implements Runnable {
         String info = (String) message.getContent(String.class);
         if (info.equals(Values.ACC_DELETED)) {
             run = false;
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
-                }
-            });
+            clientController.userPromptQuit(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
             return;
         }
         clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+
 
     }
 
