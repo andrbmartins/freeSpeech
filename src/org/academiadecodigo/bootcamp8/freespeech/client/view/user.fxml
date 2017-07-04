@@ -76,7 +76,7 @@
                </font>
             </TextField>
             <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0" />
-            <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" text="Chat" />
+            <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" text="Chat" visible="false" />
             <Button fx:id="updateProfile" mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile" visible="false" />
             <Button fx:id="removeAccount" mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account" visible="false" />
          </children>
