@@ -17,9 +17,11 @@ import javafx.util.Callback;
  */
 
 public class PasswordDialog extends Dialog<String> {
+
     private PasswordField passwordField;
 
     public PasswordDialog() {
+
         setTitle("Credential Manager");
         setHeaderText("You must login in order to access Admin App");
 
@@ -38,20 +40,28 @@ public class PasswordDialog extends Dialog<String> {
         getDialogPane().setContent(hBox);
 
         Platform.runLater(new Runnable() {
+
             @Override
             public void run() {
                 passwordField.requestFocus();
             }
+
         });
 
-       setResultConverter(new Callback<ButtonType, String>() {
-           @Override
-           public String call(ButtonType param) {
-               if (param == passwordButtonType) {
-                   return passwordField.getText();
-               }
-               return null;           }
-       });
+        setResultConverter(new Callback<ButtonType, String>() {
+
+            @Override
+            public String call(ButtonType param) {
+
+                if (param == passwordButtonType) {
+                    return passwordField.getText();
+                }
+
+                return null;
+            }
+
+        });
+
     }
 }
 

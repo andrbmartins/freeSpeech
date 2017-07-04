@@ -1,10 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.message;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Developed @ <Academia de Código_>

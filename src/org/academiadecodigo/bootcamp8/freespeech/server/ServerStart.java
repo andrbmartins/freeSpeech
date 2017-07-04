@@ -1,11 +1,10 @@
 package org.academiadecodigo.bootcamp8.freespeech.server;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
-import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
-
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import java.io.IOException;
 
 /**
@@ -35,9 +34,10 @@ public class ServerStart {
             server.start();
 
         } catch (IOException e) {
-            e.printStackTrace(); //TODO log?
+            Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
         } finally {
             server.stop();
         }
+
     }
 }
