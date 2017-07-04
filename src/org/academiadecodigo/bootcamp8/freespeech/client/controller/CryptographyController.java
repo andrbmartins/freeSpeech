@@ -1,9 +1,11 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -12,6 +14,7 @@ import javafx.stage.WindowEvent;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography.CryptographyService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.net.URL;
@@ -32,6 +35,9 @@ public class CryptographyController implements Controller {
     @FXML
     private GridPane gridpane;
     @FXML private Label connectingLabel;
+    @FXML private Button closeConnection;
+
+
 
     public CryptographyController() {
         position = new double[2];
@@ -126,8 +132,14 @@ public class CryptographyController implements Controller {
             @Override
             public void run() {
                 connectingLabel.setText("Unable to connect to server.");
+                closeConnection.setVisible(true);
             }
         });
+    }
+
+    @FXML
+    void onClose(ActionEvent event) {
+        Navigation.getInstance().close();
     }
 
 }

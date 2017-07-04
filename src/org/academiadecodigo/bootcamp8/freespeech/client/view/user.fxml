@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -9,124 +10,126 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="clientPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="854.0"
-          prefHeight="480.0" prefWidth="854.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111"
-          xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController">
+<GridPane fx:id="clientPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="854.0" prefHeight="480.0" prefWidth="854.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
         <GridPane fx:id="topBar" GridPane.columnSpan="4">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0"
-                        GridPane.columnIndex="2"/>
-                <Button mnemonicParsing="false" onAction="#editUserInfo" text="My Profile" GridPane.columnIndex="2"
-                        GridPane.halignment="RIGHT"/>
-                <Button mnemonicParsing="false" onAction="#changePassword" text="Change Password"
-                        GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
-                <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExit" GridPane.columnIndex="3"
-                        GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+                <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExit" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                     <GridPane.margin>
-                        <Insets right="10.0" top="10.0"/>
+                        <Insets right="10.0" top="10.0" />
                     </GridPane.margin>
                 </Button>
+                <Button mnemonicParsing="false" onAction="#editUserInfo" text="My Profile" GridPane.columnIndex="1" />
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="username" text="User name" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <TextField onKeyTyped="#search" promptText="search_" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
             </children>
         </GridPane>
-        <ListView fx:id="onlineUsersList" focusTraversable="false" onMouseClicked="#getUserBio" prefHeight="200.0"
-                  prefWidth="200.0" GridPane.rowIndex="1" GridPane.rowSpan="3"/>
-        <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS"
-                 GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
+        <ListView fx:id="onlineUsersList" focusTraversable="false" onMouseClicked="#getUserBio" prefHeight="200.0" prefWidth="172.0" GridPane.rowIndex="1" GridPane.rowSpan="3" />
+        <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
             <tabs>
                 <Tab fx:id="lobbyTab" closable="false" text="Lobby">
                     <content>
-                        <TextArea fx:id="lobbyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0"
-                                  wrapText="true"/>
+                        <TextArea fx:id="lobbyTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
                     </content>
-                </Tab>
-                <Tab fx:id="privateTab" text="Private">
-
                 </Tab>
             </tabs>
         </TabPane>
-        <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" wrapText="true"
-                  GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3"/>
-        <Button fx:id="send" mnemonicParsing="false" onAction="#onSend" text="Send" GridPane.columnIndex="3"
-                GridPane.rowIndex="3"/>
-    </children>
-    <children>
-        <VBox fx:id="Bio" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3"
-              GridPane.rowIndex="1" GridPane.rowSpan="2">
-            <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSend" GridPane.columnIndex="2"
-                    GridPane.halignment="RIGHT" GridPane.rowIndex="3">
-                <GridPane.margin>
-                    <Insets right="20.0"/>
-                </GridPane.margin>
-            </Button>
-            <VBox fx:id="bioArea" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3"
-                  GridPane.rowIndex="1" GridPane.rowSpan="2">
-                <children>
-                    <TextArea fx:id="Bio_Data" prefHeight="230.0" prefWidth="213.0"/>
-                    <HBox>
-                        <children>
-                            <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#onActionPrivateChat"
-                                    prefHeight="27.0" prefWidth="106.0" text="Start chat"/>
-                            <Button fx:id="addToChatButton" disable="true" mnemonicParsing="false"
-                                    onAction="#onAddToChatAction" prefHeight="27.0" prefWidth="107.0" text="Add to chat"
-                                    visible="false"/>
-                        </children>
-                    </HBox>
-                </children>
-            </VBox>
-            <TextField fx:id="nameBio" alignment="CENTER" disable="true" editable="false">
-                <font>
-                    <Font size="14.0"/>
-                </font>
-            </TextField>
-            <TextField fx:id="emailBio" disable="true">
-                <font>
-                    <Font size="14.0"/>
-                </font>
-            </TextField>
-            <TextField fx:id="dateBirthBio" disable="true">
-                <font>
-                    <Font size="14.0"/>
-                </font>
-            </TextField>
-            <TextField fx:id="dateRegistrationBio" disable="true" editable="false">
-                <font>
-                    <Font size="14.0"/>
-                </font>
-            </TextField>
-            <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport"/>
-            <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0"/>
-            <Button fx:id="updateProfile" mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile"
-                    visible="false"/>
-            <Button fx:id="removeAccount" mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account"
-                    visible="false"/>
-        </VBox>
+        <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSend" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+            <GridPane.margin>
+                <Insets right="20.0" />
+            </GridPane.margin>
+        </Button>
+      <GridPane fx:id="bioArea" prefWidth="213.0" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.rowSpan="2">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <TextField fx:id="nameBio" editable="false" />
+                <TextField fx:id="emailBio" promptText="email_" styleClass="bioFields" GridPane.rowIndex="1">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </TextField>
+                <TextField fx:id="dateBirthBio" promptText="yyyy-mm-dd" styleClass="bioFields" GridPane.rowIndex="2">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </TextField>
+                <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0" promptText="bio_" GridPane.rowIndex="3" />
+            <GridPane fx:id="userButtons" visible="false" GridPane.rowIndex="4">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                      <Button fx:id="changePassword" mnemonicParsing="false" onAction="#changePassword" text="Change Password" GridPane.columnIndex="2" />
+                      <Button fx:id="removeAccount" mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account" />
+                      <Button fx:id="updateProfile" mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile" GridPane.columnIndex="1" />
+               </children>
+            </GridPane>
+         </children>
+      </GridPane>
+      <GridPane fx:id="contactButtons" GridPane.columnIndex="3" GridPane.rowIndex="3">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+                <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+         </children>
+      </GridPane>
     </children>
 </GridPane>
