@@ -87,6 +87,8 @@ public class Crypto {
 
     }
 
+    // TODO do we really need decryption methods?
+
     /**
      * Decrypt an sealed object and return an object
      *
