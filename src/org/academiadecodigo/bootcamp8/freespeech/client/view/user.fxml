@@ -81,25 +81,26 @@
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextField fx:id="nameBio" editable="false" />
-                <TextField fx:id="emailBio" promptText="email_" styleClass="bioFields" GridPane.rowIndex="1">
+            <TextField fx:id="nameBio" editable="false" GridPane.rowIndex="1" />
+                <TextField fx:id="emailBio" promptText="email_" styleClass="bioFields" GridPane.rowIndex="2">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="dateBirthBio" promptText="yyyy-mm-dd" styleClass="bioFields" GridPane.rowIndex="2">
+                <TextField fx:id="dateBirthBio" promptText="yyyy-mm-dd" styleClass="bioFields" GridPane.rowIndex="3">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </TextField>
-                <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0" promptText="bio_" GridPane.rowIndex="3" />
-            <GridPane fx:id="userButtons" visible="false" GridPane.rowIndex="4">
+                <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0" promptText="bio_" GridPane.rowIndex="4" />
+            <GridPane fx:id="userButtons" visible="false" GridPane.rowIndex="5">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -114,9 +115,14 @@
                       <Button fx:id="updateProfile" mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile" GridPane.columnIndex="1" />
                </children>
             </GridPane>
+            <Button fx:id="closeProfile" mnemonicParsing="false" onAction="#closeProfile" text="x" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Button>
          </children>
       </GridPane>
-      <GridPane fx:id="contactButtons" GridPane.columnIndex="3" GridPane.rowIndex="3">
+      <GridPane fx:id="contactButtons" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="3">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -126,10 +132,15 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-                <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#onActionPrivateChat" onMouseClicked="#startPrivateChat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                 <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                 <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
+      <Button fx:id="addToChatButton" mnemonicParsing="false" onAction="#onAddToChatAction" text="add " GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets bottom="125.0" right="15.0" />
+         </GridPane.margin>
+      </Button>
     </children>
 </GridPane>

@@ -46,6 +46,9 @@ import java.util.List;
 //TODO documentation
 public class ClientController implements Controller {
 
+    //TODO messages sent in lobby show in private but not lobby
+
+
     @FXML
     private GridPane userButtons;
     @FXML
@@ -69,8 +72,7 @@ public class ClientController implements Controller {
     @FXML
     private TextField emailBio;
 
-    @FXML
-    Button addToChatButton;
+    @FXML Button addToChatButton;
     @FXML
     private TextField dateBirthBio;
     @FXML
@@ -100,6 +102,7 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        //TODO just testing, don't delete yet
         username.setText(Session.getUsername());
         username.setStyle("-fx-text-fill: #000000;");
 
@@ -109,8 +112,6 @@ public class ClientController implements Controller {
         setDraggableTopBar();
         focusUserInput();
         new Thread(new ServerResponseHandler(clientService, this)).start();
-
-
     }
 
     public Tab getSelectedTab() {
@@ -149,7 +150,7 @@ public class ClientController implements Controller {
     @FXML
     void onActionPrivateChat(ActionEvent event) {
 
-        String name = (String) onlineUsersList.getSelectionModel().getSelectedItem().toString();
+        String name = onlineUsersList.getSelectionModel().getSelectedItem().toString();
         String clientName = Session.getInstance().getUsername();
 
         if (!clientName.equals(name)) {
@@ -209,6 +210,7 @@ public class ClientController implements Controller {
 
             } else {
                 String tabID = getSelectedTab().getId();
+                System.out.println("PRIVATE");
                 clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
             }
 
@@ -307,8 +309,6 @@ public class ClientController implements Controller {
 
     @FXML
     void onExit(ActionEvent event) {
-
-        //onlineUsersList.getSelectionModel().clearSelection(); TODO clears listview selection - can close profiles
 
         clientService.sendExit();
         Navigation.getInstance().close();
@@ -509,4 +509,13 @@ public class ClientController implements Controller {
     void search(KeyEvent event) {
 
     }
+
+    @FXML
+    void closeProfile(ActionEvent event) {
+        onlineUsersList.getSelectionModel().clearSelection();
+        bioArea.setVisible(false);
+        contactButtons.setVisible(false);
+
+    }
+
 }
