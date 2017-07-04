@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -43,14 +42,10 @@ import java.util.List;
 //TODO documentation
 public class ClientController implements Controller {
 
-    @FXML
-    private TabPane tabPane;
-    @FXML
-    private GridPane topBar;
-    @FXML
-    private TextArea lobbyTextArea;
-    @FXML
-    private TextArea inputTextArea;
+    @FXML private TabPane tabPane;
+    @FXML private GridPane topBar;
+    @FXML private TextArea lobbyTextArea;
+    @FXML private TextArea inputTextArea;
     @FXML
     private ListView onlineUsersList;
     @FXML
@@ -69,11 +64,8 @@ public class ClientController implements Controller {
     private Button privateChatButton;
     @FXML
     private Button updateProfile;
-
     @FXML
     private Button removeAccount;
-
-
 
     private Stage stage;
     private ClientService clientService;
@@ -194,19 +186,7 @@ public class ClientController implements Controller {
             return;
         }
 
-        clientService.sendBioRequest((String) user);
-    }
-
-    @FXML
-    void editUserInfo(ActionEvent event) {
-        //TODO to complete process
-        EditBioDialog bio = new EditBioDialog();
-        //TODO use the method by jp to retrieve bio to set on dialog text
-
-        Optional<String[]> result = bio.showAndWait();
-        if (result.isPresent() && result.get()[0].equals(DialogText.DELETE_ACCOUNT)) {
-            confirmDelete();
-        }
+        clientService.sendBioRequest(MessageType.BIO, (String) user);
     }
 
     private void confirmDelete() {
@@ -287,17 +267,6 @@ public class ClientController implements Controller {
     }
 
     @FXML
-    void getUserBio(MouseEvent event) {
-        Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
-        if (user == null) {
-            return;
-        }
-        System.out.println("Send bio request to server");
-        System.out.println(user.toString());
-        clientService.sendBioRequest(MessageType.BIO, (String) user);
-    }
-
-    @FXML
     void editUserInfo(ActionEvent event) {
         clientService.sendBioRequest(MessageType.OWN_BIO, Session.getUsername());
     }
@@ -338,12 +307,11 @@ public class ClientController implements Controller {
         userBio.setText(list.get(3));
     }
 
-    }
-
     @FXML
     void onReport(ActionEvent event) {
         String userToReport = onlineUsersList.getSelectionModel().getSelectedItem().toString();
         clientService.sendReport(userToReport);
+    }
 
     @FXML
     void onRemoveAccount(ActionEvent event) {
