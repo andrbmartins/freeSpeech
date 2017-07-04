@@ -2,8 +2,10 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ClientHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ConsoleHandler;
+
 import org.academiadecodigo.bootcamp8.freespeech.server.service.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
@@ -24,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -36,15 +39,19 @@ public class Server {
     private ServerSocket socket;
     private Key symKey;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
+    private UserService userService;
 
-    public Server(int port) {
+
+    public Server(int port, UserService userService) {
         this.port = port;
         loggedUsers = new CopyOnWriteArrayList<>();
+        this.userService = userService;
     }
 
-    public Server() {
+    public Server(UserService userService) {
         port = Values.SERVER_PORT;
         loggedUsers = new CopyOnWriteArrayList<>();
+        this.userService = userService;
     }
 
     /**
@@ -93,12 +100,13 @@ public class Server {
         //TODO userService.eventlogger(TypeEvent.SERVER, Values.SERVER_START);
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
-        UserService userService = new JdbcUserService();
+
 
         while (true) {
             Socket clientSocket = socket.accept();
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService));
-            userService.eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
+
         }
 
     }

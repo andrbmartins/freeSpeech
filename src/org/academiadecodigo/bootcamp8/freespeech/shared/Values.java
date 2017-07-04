@@ -9,7 +9,7 @@ public class Values {
     public static final String HOST = "127.0.0.1";
     public static final int SERVER_PORT = 4040;
 
-    public static final String VIEW_PATH = "../view";
+    public static final String VIEW_PATH = "../view/";
     public static final String CONNECTING_SCENE = "connection";
     public static final String LOGIN_SCENE = "login";
     public static final String USER_SCENE = "user";

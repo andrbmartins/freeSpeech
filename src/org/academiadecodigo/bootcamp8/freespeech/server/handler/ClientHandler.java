@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.Server;
+
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
@@ -186,8 +187,8 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
+            case BIO:
             case OWN_BIO:
-                // TODO PEDRO
                 sendUserBio(msg);
                 break;
             case BIO_UPDATE:
@@ -200,9 +201,6 @@ public class ClientHandler implements Runnable {
                 server.removeUser(this);
                 write(msg);
                 Stream.close(clientSocket);
-                break;
-            case BIO:
-                sendUserBio(msg);
                 break;
             case DELETE_ACCOUNT:
                 if (deleteAccount(msg, type)) {

@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
+
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -17,16 +19,20 @@ public class ConnectionManager {
 
     private Connection connection;
 
-    public ConnectionManager() {
+    public Connection getConnection() {
         try {
-            connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
-            eventlogger(TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
-
-        } catch (SQLException e) {
-            eventlogger(TypeEvent.DATABASE, Values.SERVER_DBDISCONNECT);
+            if (connection == null) {
+                connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
+            }
+        } catch (SQLException ex) {
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, Values.SERVER_DBDISCONNECT);
         }
-
+        return connection;
     }
+
+
+
 
 
     public boolean insertUser(String username, String password) {    // TESTED OK
@@ -37,7 +43,7 @@ public class ConnectionManager {
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
             preparedStmt.execute();
-            eventlogger(TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username);
+            //eventlogger(TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username);
             preparedStmt = connection.prepareStatement(Queries.INSERT_INTO_BIO);
             preparedStmt.setString(1, username);
             preparedStmt.executeUpdate();
@@ -45,7 +51,6 @@ public class ConnectionManager {
 
         } catch (SQLException e) {
 
-            eventlogger(TypeEvent.CLIENT, Values.CLIENT_REGISTER_FAILED + " -- " + username);
             System.out.println(Values.CLIENT_REGISTER_FAILED);
             registered = false;
 
@@ -92,8 +97,7 @@ public class ConnectionManager {
             preparedStmt.execute();
 
         } catch (SQLException e1) {
-            eventlogger(TypeEvent.CLIENT, Values.CLIENT_PASSORD + "--" + username);
-            //e1.printStackTrace();
+            e1.printStackTrace();
             passChanged = false;
         } finally {
             try {
@@ -119,7 +123,7 @@ public class ConnectionManager {
             preparedStmt.execute();
 
         } catch (SQLException e1) {
-            eventlogger(TypeEvent.CLIENT, Values.ACCOUNT_DELETED + "--" + username);
+
             deleted = false;
         } finally {
             try {
@@ -146,8 +150,8 @@ public class ConnectionManager {
             return 0;
     }
 
-    //TODO make this event logger a utilitary class but keep method here
-    public void eventlogger(TypeEvent type_event, String message) {
+   //TODO make this event logger a utilitary class but keep method here
+  /*  public void eventlogger(TypeEvent type_event, String message) {
 
         PreparedStatement preparedStmt = null;
         try {
@@ -160,7 +164,7 @@ public class ConnectionManager {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
     public List<String> getUserBio(String username) throws SQLException {
 
@@ -205,4 +209,16 @@ public class ConnectionManager {
         System.out.println(updated);
         return updated;
     }
+
+    public void close() {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException ex) {
+            System.out.println("Unable to close database connections: " + ex.getMessage());
+        }
+    }
+
 }
+
