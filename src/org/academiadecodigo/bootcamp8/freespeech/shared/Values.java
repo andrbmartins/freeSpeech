@@ -45,31 +45,15 @@ public class Values {
 
     public static final String STYLESHEET = "resources/stylesheet.css";
 
-    public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
-    public static final String USER_DBSERVER = "root";
-    public static final String PASSWORD_DBSERVER = "";
+    public static final String URL_DB_SERVER = "jdbc:mysql://localhost:3306/freespeech";
+    public static final String USER_DB_SERVER = "root";
+    public static final String PASSWORD_DB_SERVER = "";
 
-    public static final String SERVER_START = "SERVER START";
-    public static final String SERVER_STOP = "SERVER STOP";
-    public static final String SERVER_DBCONNECT = "SERVER CONNECTED DATABASE";
-    public static final String SERVER_DBDISCONNECT = "SERVER NOT CONNECTED TO DATABASE";
-    public static final String CONNECT_CLIENT = "CLIENT CONNECTED";
-    public static final String CLIENT_DISCONNECTED = "CLIENT DISCONNECTED";
-    public static final String CLIENT_LOGINOK = "CLIENT LOGGED IN";
-    public static final String CLIENT_LOGINFAILED= "CLIENT LOGIN FAILED";
-    public static final String CLIENT_LOGOUT = "CLIENT LOGGED OUT";
-    public static final String CLIENT_REGISTED = "CLIENT REGISTERED";
-    public static final String CLIENT_REGISTER_FAILED = "FAILED TO REGISTER USER";
-    public static final String CLIENT_PASSORD = "CLIENT CHANGED PASSWORD";
-    public static final String ACCOUNT_DELETED = "USER ACCOUNT DELETED";
     public static final String SEPARATOR_CHARACTER = ",";
-
-    public enum TypeEvent { SERVER,LOGIN, REGISTER, CLIENT, DATABASE }
-
-    //public static final String NEW_USER = "New User";
 
     public static final double LOGIN_HEIGHT = 450d;
     public static final double LOGIN_WIDTH = 350d;
     public static final double CLIENT_WIDTH = 900d;
     public static final double CLIENT_HEIGHT = 600d;
+
 }

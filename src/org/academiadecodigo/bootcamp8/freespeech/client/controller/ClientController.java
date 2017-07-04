@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -45,24 +46,35 @@ import java.util.List;
 //TODO documentation
 public class ClientController implements Controller {
 
-    @FXML private TabPane tabPane;
-    @FXML private GridPane topBar;
-    @FXML private TextArea lobbyTextArea;
-    @FXML private TextArea inputTextArea;
-    @FXML private ListView onlineUsersList;
+    //TODO messages sent in lobby show in private but not lobby
+
+
     @FXML
-    private Button exitButton;
+    private GridPane userButtons;
     @FXML
-    private VBox bioArea;
+    private GridPane contactButtons;
+    @FXML
+    private Label username;
+    @FXML
+    private TabPane tabPane;
+    @FXML
+    private GridPane topBar;
+    @FXML
+    private TextArea lobbyTextArea;
+    @FXML
+    private TextArea inputTextArea;
+    @FXML
+    private ListView onlineUsersList;
+    @FXML
+    private GridPane bioArea;
     @FXML
     private TextField nameBio;
     @FXML
     private TextField emailBio;
+
+    @FXML Button addToChatButton;
     @FXML
-    private TextArea Bio_Data;
-    @FXML
-    private Button addToChatButton;
-    @FXML private TextField dateBirthBio;
+    private TextField dateBirthBio;
     @FXML
     private TextArea userBio;
     @FXML
@@ -76,7 +88,7 @@ public class ClientController implements Controller {
     private ClientService clientService;
     private Map<Tab, TextArea> rooms;
     private Map<String, Tab> tabId;
-    private Map<String,Set<String>> usersPerTab;
+    private Map<String, Set<String>> usersPerTab;
     private double[] position;
 
     public ClientController() {
@@ -90,14 +102,15 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        Tab tab = getSelectedTab();
+        //TODO just testing, don't delete yet
+        username.setText(Session.getUsername());
+        username.setStyle("-fx-text-fill: #000000;");
 
-        rooms.put(tab, lobbyTextArea);
-        tabId.put(tab.getText(), tab);
+        rooms.put(getSelectedTab(), lobbyTextArea);
+        tabId.put(getSelectedTab().getText(), getSelectedTab());
 
         setDraggableTopBar();
         focusUserInput();
-        //currentRoom = lobbyTextArea;
         new Thread(new ServerResponseHandler(clientService, this)).start();
     }
 
@@ -133,10 +146,11 @@ public class ClientController implements Controller {
         });
     }
 
+    //TODO
     @FXML
     void onActionPrivateChat(ActionEvent event) {
 
-        String name = (String) onlineUsersList.getSelectionModel().getSelectedItem().toString();
+        String name = onlineUsersList.getSelectionModel().getSelectedItem().toString();
         String clientName = Session.getInstance().getUsername();
 
         if (!clientName.equals(name)) {
@@ -147,21 +161,23 @@ public class ClientController implements Controller {
         addToChatButton.setVisible(true);
     }
 
+    //TODO
     @FXML
     void onAddToChatAction(ActionEvent event) {
 
         String name = onlineUsersList.getSelectionModel().getSelectedItem().toString();
 
         String tabId = tabPane.getSelectionModel().getSelectedItem().getId();
-        Set<String > userSet =usersPerTab.get(tabId);
+        Set<String> userSet = usersPerTab.get(tabId);
 
-        if(!userSet.contains(name)){
+        if (!userSet.contains(name)) {
             userSet.add(name);
-            usersPerTab.replace(tabId,userSet);
+            usersPerTab.replace(tabId, userSet);
         }
 
     }
 
+    //TODO
     @FXML
     void onSend(ActionEvent event) {
 
@@ -175,6 +191,7 @@ public class ClientController implements Controller {
         }
     }
 
+    //TODO
     @FXML
     void onSendKey(KeyEvent event) {
 
@@ -193,7 +210,8 @@ public class ClientController implements Controller {
 
             } else {
                 String tabID = getSelectedTab().getId();
-                clientService.sendPrivateText(inputTextArea,tabID,usersPerTab.get(tabID));
+                System.out.println("PRIVATE");
+                clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
             }
 
             //clientService.sendUserText(inputTextArea);
@@ -291,8 +309,10 @@ public class ClientController implements Controller {
 
     @FXML
     void onExit(ActionEvent event) {
+
         clientService.sendExit();
         Navigation.getInstance().close();
+
     }
 
 
@@ -336,35 +356,37 @@ public class ClientController implements Controller {
     }
 
 
-    public void setOwnBio(Sendable ownBio) {
-        privateChatButton.setVisible(false);
-        removeAccount.setVisible(true);
-        updateProfile.setVisible(true);
+    public void showOwnBio(Sendable ownBio) {
+
+        bioArea.setVisible(true);
+        userButtons.setVisible(true);
+        contactButtons.setVisible(false);
+        emailBio.setEditable(true);
+        userBio.setEditable(true);
+        dateBirthBio.setEditable(true);
 
         List<String> list = (LinkedList<String>) ownBio.getContent(List.class);
 
-        if (list.isEmpty()) {
-            System.out.println("inside the list.isEmpty");
-            //set fields editable
-            return;
-        }
         setBioInfo(list);
     }
 
     public void showUserBio(Sendable message) {
-        privateChatButton.setVisible(true);
-        removeAccount.setVisible(false);
-        updateProfile.setVisible(false);
+
+        bioArea.setVisible(true);
+        userButtons.setVisible(false);
+        contactButtons.setVisible(true);
+        emailBio.setEditable(false);
+        userBio.setEditable(false);
+        dateBirthBio.setEditable(false);
 
         List<String> list = (LinkedList<String>) message.getContent(List.class);
 
-        if (list.isEmpty()) {
-            return;
-        }
+
         setBioInfo(list);
     }
 
     private void setBioInfo(List<String> list) {
+
         nameBio.setText(list.get(0));
         emailBio.setText(list.get(1));
         dateBirthBio.setText(list.get(2));
@@ -427,7 +449,7 @@ public class ClientController implements Controller {
         HashSet<String> set = new HashSet<>();
         set.add(user);
         set.add(Session.getInstance().getUsername());
-        usersPerTab.put(id,set);
+        usersPerTab.put(id, set);
 
         tabPane.getTabs().add(tab);
     }
@@ -447,7 +469,7 @@ public class ClientController implements Controller {
 
         tabId.put(id, tab);
         rooms.put(tab, textArea);
-        usersPerTab.put(id,users);
+        usersPerTab.put(id, users);
 
         Runnable runnable = new Runnable() {
             @Override
@@ -458,17 +480,18 @@ public class ClientController implements Controller {
 
         Platform.runLater(runnable);
 
-        while (!tabPane.getTabs().contains(tab)){}
+        while (!tabPane.getTabs().contains(tab)) {
+        }
 
     }
 
     public TextArea getDestinyRoom(String tabId) {
         Tab tab = this.tabId.get(tabId);
-        return (tab != null)? rooms.get(tab) : null;
+        return (tab != null) ? rooms.get(tab) : null;
     }
 
     public void updateUsersSet(String tabId, Set<String> destinySet) {
-        usersPerTab.replace(tabId,destinySet);
+        usersPerTab.replace(tabId, destinySet);
     }
 
 
@@ -480,4 +503,19 @@ public class ClientController implements Controller {
         return file;
 
     }
+
+
+    @FXML
+    void search(KeyEvent event) {
+
+    }
+
+    @FXML
+    void closeProfile(ActionEvent event) {
+        onlineUsersList.getSelectionModel().clearSelection();
+        bioArea.setVisible(false);
+        contactButtons.setVisible(false);
+
+    }
+
 }

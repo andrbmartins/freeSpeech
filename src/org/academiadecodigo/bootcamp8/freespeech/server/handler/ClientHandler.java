@@ -1,14 +1,15 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.Server;
-
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
-
 import java.io.*;
 import java.net.Socket;
 import java.security.Key;
@@ -23,15 +24,13 @@ import java.util.List;
 
 public class ClientHandler implements Runnable {
 
-    private Crypto crypto;
-    private String clientName;
     private final Socket clientSocket;
     private final Server server;
+    private final UserService userService;
+    private Crypto crypto;
+    private String clientName;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
-    private UserService userService;
-    private boolean run;
-
 
     public ClientHandler(Server server, Socket clientSocket, Key key, UserService userService) {
         crypto = new Crypto();
@@ -39,30 +38,30 @@ public class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
         this.server = server;
         this.userService = userService;
-
-        run = true;
     }
 
     @Override
     public void run() {
 
-        openStreams(clientSocket);
+        openStreams();
         exchangeKeys();
         authenticateClient();
         server.addUser(this);
         readFromClient();
 
-
     }
 
+    private void openStreams() {
 
-    private void openStreams(Socket socket) {
         try {
-            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
+
+            objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
         }
+
     }
 
     private void exchangeKeys() {
@@ -70,95 +69,111 @@ public class ClientHandler implements Runnable {
         write(crypto.getPublicKey());
         Key key = (Key) Stream.read(objectInputStream);
         crypto.setForeignKey(key);
+
     }
 
     private void authenticateClient() {
 
         SealedSendable sealedSendable;
-        Sendable<HashMap> sendable;
 
-        boolean exit = false;
-        String message = "";
+        while (true) {
 
-        while (!exit) {
             sealedSendable = Stream.readSendable(objectInputStream);
 
-            //TODO check casts
-            sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
-            HashMap<String, String> map = sendable.getContent(HashMap.class);
+            switch (sealedSendable.getType()) {
 
-            //TODO switch and indentation
-            if (sealedSendable.getType() == MessageType.LOGIN) {
-                if (exit = makeLogIn(map)) {
-                    message = Values.LOGIN_OK;
-                    clientName = map.get(Values.NAME_KEY);
-                } else {
-                    message = Values.LOGIN_FAIL;
-                }
+                case LOGIN:
+                    if (login(sealedSendable)) {
+                        sendSymKey();
+                        return;
+                    }
+                    break;
+                case REGISTER:
+                    register(sealedSendable);
+                    break;
+                default:
+                    Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_ILLEGAL_LOG);
+                    throw new IllegalArgumentException();
+
             }
 
-            if (sealedSendable.getType() == MessageType.REGISTER) {
-
-                if (makeRegistry(map)) {
-                    message = Values.REGISTER_OK;
-                } else {
-                    message = Values.REGISTER_FAIL;
-                }
-            }
-
-
-            Sendable<String> newSendable = new Message<>(message);
-            sealedSendable = crypto.encrypt(sealedSendable.getType(), newSendable, crypto.getForeignKey());
-
-            write(sealedSendable);
-
-            if (newSendable.getContent(String.class).equals(Values.LOGIN_OK)) {
-
-                Sendable<Key> sendableKey = new Message<>(crypto.getSymKey());
-                SealedSendable keySeal = crypto.encrypt(MessageType.KEY, sendableKey, crypto.getForeignKey());
-
-                write(keySeal);
-            }
         }
+
     }
 
-    private boolean makeLogIn(HashMap<String, String> login) {
+    private void register(SealedSendable sealedSendable) {
 
-        String username = login.get(Values.NAME_KEY);
-        String password = login.get(Values.PASSWORD_KEY);
-
-        return userService.authenticate(username, password);
-    }
-
-    private boolean makeRegistry(HashMap<String, String> mapR) {
-
-        String username = mapR.get(Values.NAME_KEY);
+        Sendable<HashMap> sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
+        HashMap<String, String> register = sendable.getContent(HashMap.class);
+        String username = register.get(Values.NAME_KEY);
 
         synchronized (userService) {
 
-            if (userService.getUser(username) == null) {
-
-                return userService.addUser(new User(username, mapR.get(Values.PASSWORD_KEY)));
+            if (userService.getUser(username) == null &&
+                    userService.addUser(new User(username, register.get(Values.PASSWORD_KEY)))) {
+                Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_REGISTERED + username);
+                responseToClient(sealedSendable.getType(), Values.REGISTER_OK);
+                return;
 
             }
         }
-        return false;
+
+        responseToClient(sealedSendable.getType(), Values.REGISTER_FAIL);
+
     }
 
+    private boolean login(SealedSendable sealedSendable) {
+
+        Sendable<HashMap> sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
+        HashMap<String, String> login = sendable.getContent(HashMap.class);
+        String username = login.get(Values.NAME_KEY);
+        String password = login.get(Values.PASSWORD_KEY);
+
+        if (userService.authenticate(username, password)) {
+            responseToClient(sealedSendable.getType(), Values.LOGIN_OK);
+            clientName = login.get(Values.NAME_KEY);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_OK + username);
+            return true;
+        }
+
+        responseToClient(sealedSendable.getType(), Values.LOGIN_FAIL);
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_FAILED + username);
+
+        return false;
+
+    }
+
+    private void responseToClient(MessageType type, String message) {
+
+        Sendable<String> sendable = new Message<>(message);
+        SealedSendable sealedSendable = crypto.encrypt(type, sendable, crypto.getForeignKey());
+
+        write(sealedSendable);
+
+    }
+
+    private void sendSymKey() {
+
+        Sendable<Key> sendableKey = new Message<>(crypto.getSymKey());
+        SealedSendable keySeal = crypto.encrypt(MessageType.KEY, sendableKey, crypto.getForeignKey());
+
+        write(keySeal);
+
+    }
 
     private void readFromClient() {
+
         SealedSendable msg;
 
-        while (run) {
-            if ((msg = Stream.readSendable(objectInputStream)) != null) {
-                handleMessage(msg);
-                continue;
-            }
-            server.removeUser(this);
-            run = false;
+        while ((msg = Stream.readSendable(objectInputStream)) != null) {
+
+            handleMessage(msg);
         }
 
         server.removeUser(this);
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_DISCONNECTED + clientName);
+        Stream.close(clientSocket);
+
     }
 
     private void handleMessage(SealedSendable msg) {
@@ -167,11 +182,7 @@ public class ClientHandler implements Runnable {
 
         switch (type) {
             case REPORT:
-                //TODO make this a method and log it
-                Sendable<String> message = crypto.decryptSendable(msg, crypto.getSymKey());
-                String reportedUser = message.getContent(String.class);
-                System.out.println("REPORTED " + reportedUser);
-                System.out.println(reportedUser.getClass().getSimpleName());
+                reportUser(msg);
                 break;
             case TEXT:
                 server.writeToAll(msg);
@@ -181,6 +192,7 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
+            case BIO:
             case OWN_BIO:
                 sendUserBio(msg);
                 break;
@@ -191,24 +203,33 @@ public class ClientHandler implements Runnable {
                 changePass(msg, type);
                 break;
             case EXIT:
-                run = false;
+                Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
                 server.removeUser(this);
                 write(msg);
-                closeSocket();
-                break;
-            case BIO:
-                sendUserBio(msg);
+                Stream.close(clientSocket);
                 break;
             case DELETE_ACCOUNT:
-                if (deleteAccount(msg, type)){
-                    run = false;
+                if (deleteAccount(msg, type)) {
                     server.removeUser(this);
-                    closeSocket();
+                    Stream.close(clientSocket);
                 }
                 break;
-
+            default:
+                throw new IllegalArgumentException();
 
         }
+    }
+
+    private void reportUser(SealedSendable msg) {
+
+        Sendable<String> message = crypto.decryptSendable(msg, crypto.getSymKey());
+        String reportedUser = message.getContent(String.class);
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, reportedUser + LoggerMessages.CLIENT_REPORTED + clientName);
+
+        //TODO implement reporting in database
+        System.out.println("REPORTED " + reportedUser);
+        System.out.println(reportedUser.getClass().getSimpleName());
+
     }
 
     private void updateBio(SealedSendable msg) {
@@ -227,7 +248,6 @@ public class ClientHandler implements Runnable {
         write(sealedMsg);
     }
 
-    // Retrieve bio from database and send to client
     private void sendUserBio(SealedSendable msg) {
 
         Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
@@ -241,15 +261,19 @@ public class ClientHandler implements Runnable {
     }
 
     private void changePass(SealedSendable msg, MessageType type) {
-        Sendable<HashMap> sendable;
-        sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
+
+        Sendable<HashMap> sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
         HashMap<String, String> map = sendable.getContent(HashMap.class);
         Sendable<String> message;
-        if (userService.changePassword(clientName, map.get(Values.PASSWORD_KEY),
-                map.get(Values.NEW_PASSWORD))) {
+        String oldPassword = map.get(Values.PASSWORD_KEY);
+        String newPassword = map.get(Values.NEW_PASSWORD);
+
+        if (userService.changePassword(clientName, oldPassword, newPassword)) {
             message = new Message<>(Values.PASS_CHANGED);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_PASSWORD + clientName);
         } else {
             message = new Message<>(Values.PASS_NOT_CHANGED);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_PASS_FAILED + clientName);
         }
 
         SealedSendable sealedMsg = crypto.encrypt(type, message, crypto.getSymKey());
@@ -257,6 +281,7 @@ public class ClientHandler implements Runnable {
     }
 
     private boolean deleteAccount(SealedSendable msg, MessageType type) {
+
         Sendable<String> sendable = (Sendable<String>) crypto.decrypt(msg, crypto.getSymKey());
         String pass = sendable.getContent(String.class);
         Sendable<String> response;
@@ -265,9 +290,11 @@ public class ClientHandler implements Runnable {
         if (userService.deleteAccount(clientName, pass)) {
             response = new Message<>(Values.ACC_DELETED);
             deleted = true;
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.ACCOUNT_DELETED + clientName);
         } else {
             response = new Message<>(Values.NOT_VALIDATED);
             deleted = false;
+            Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.ACCOUNT_DEL_FAILED + clientName);
         }
 
         SealedSendable sealedMsg = crypto.encrypt(type, response, crypto.getSymKey());
@@ -281,21 +308,8 @@ public class ClientHandler implements Runnable {
     }
 
     public void write(Object object) {
-        System.out.println(object.toString());
+
         Stream.write(objectOutputStream, object);
-    }
-
-    private void closeSocket() {
-
-        try {
-            clientSocket.close();
-
-        } catch (IOException e) {
-            //TODO log
-            System.out.println(Thread.currentThread().getName() + ": could not close socket");
-            e.printStackTrace();
-
-        }
     }
 
     public String getClientName() {
