@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.model.logger;
+package org.academiadecodigo.bootcamp8.freespeech.server.utils.logger;
 
 /**
  * @author by André Martins <Code Cadet>

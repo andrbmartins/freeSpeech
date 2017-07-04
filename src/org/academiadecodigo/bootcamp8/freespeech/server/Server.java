@@ -4,7 +4,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.handler.ClientHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ConsoleHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
-import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
