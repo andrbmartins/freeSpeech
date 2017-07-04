@@ -1,13 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography;
 
-import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.academiadecodigo.bootcamp8.freespeech.client.controller.CryptographyController;
-import org.academiadecodigo.bootcamp8.freespeech.client.controller.LoginController;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.IOException;
@@ -15,25 +8,37 @@ import java.net.Socket;
 import java.security.Key;
 
 /**
- * Created by Filipe on 02/07/2017.
+ * Developed @ <Academia de Código_>
+ * Created by
+ * <Code Cadet> Filipe Santos Sá
  */
+
 public class FreeSpeechCryptographyService implements CryptographyService {
 
+    /**
+     * @see CryptographyService#connect(String, int)
+     * @param server
+     * @param port
+     * @return
+     */
     @Override
-    public void connect(String server, int port) {
+    public boolean connect(String server, int port) {
 
         try {
-            //synchronized (Platform.class) {
-                Socket clientSocket = new Socket(server, port);
-                Session.getInstance().setUserSocket(clientSocket);
-                exchangeKeys();
-            //}
+            Socket clientSocket = new Socket(server, port);
+            Session.getInstance().setUserSocket(clientSocket);
+            exchangeKeys();
+            return true;
 
         } catch (IOException e) {
             //TODO - unable to connect message
+            return false;
         }
     }
 
+    /**
+     * Receives server's public key and sends client's public key to server.
+     */
     private void exchangeKeys() {
 
         Key foreignKey = (Key) Stream.read(Session.getInput());

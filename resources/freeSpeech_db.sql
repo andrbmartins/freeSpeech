@@ -11,7 +11,8 @@ CREATE TABLE user (
 CREATE TABLE bio (
   user_name         CHAR(15) NOT NULL,
   email             CHAR(100),
-  date_birth        DATE,
+  -- date_birth        DATE,
+  date_birth        CHAR(30),
   picture           CHAR(100),
   date_registration DATE,
   bio               VARCHAR(500),

@@ -21,5 +21,4 @@ public interface Sendable<T> extends Serializable {
      */
     <T> T getContent(Class<T> type);
 
-
 }

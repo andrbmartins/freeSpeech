@@ -13,7 +13,6 @@ import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.DataBaseReade
 import javafx.fxml.FXML;
 import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.PasswordDialog;
 import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.WriteToFile;
-
 import java.io.File;
 import java.net.URL;
 import java.util.Optional;
@@ -25,6 +24,7 @@ import java.util.ResourceBundle;
  * <Code Cadet> PedroMAlves
  */
 public class AdminController implements Initializable {
+
     @FXML
     private TextField customQuery;
 
@@ -42,47 +42,52 @@ public class AdminController implements Initializable {
     private Stage stage;
     private double x;
     private double y;
-    private Utils.AdminLevel adminLevel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setDraggableMainFrame();
     }
 
-
     /**
      * Enforces user password before allowing usage of main view. If cancel button is pressed closes app.
      * Validates password introduced to check admin level
      */
     public void validateUser() {
-        if (!login()) {
+
+        Utils.AdminLevel adminLevel;
+
+        if ((adminLevel = login()) == null) {
             stage.close();
             return;
         }
+
         validadeResult(adminLevel);
     }
 
     /**
      * Shows password dialog and sets admin level
+     *
      * @return true is password is introduced. false if cancel button is pressed
      */
+    private Utils.AdminLevel login() {
 
-    private boolean login() {
         PasswordDialog pd = new PasswordDialog();
         Optional<String> result = pd.showAndWait();
 
         if (result.isPresent()) {
-            adminLevel = reader.checkPassword(result.get());
-            return true;
+            return reader.checkPassword(result.get());
         }
-        return false;
+
+        return null;
     }
 
     /**
      * Perfoms changes to interface based on adminLevel or prompts user for new password
+     *
      * @param adminLevel of enum type
      */
     private void validadeResult(Utils.AdminLevel adminLevel) {
+
         switch (adminLevel) {
             case ROOT:
                 userPrompt(Alert.AlertType.INFORMATION, Utils.GRANTED, Utils.ROOT_ACCESS);
@@ -94,13 +99,13 @@ public class AdminController implements Initializable {
             case INVALID:
                 userPrompt(Alert.AlertType.ERROR, Utils.INVALID_LOG, Utils.ENTER_VALID);
                 validateUser();
-            break;
+                break;
         }
     }
 
-
     /**
      * Closes app smoothly on button click
+     *
      * @param event
      */
     @FXML
@@ -110,31 +115,39 @@ public class AdminController implements Initializable {
 
     /**
      * Get inserted query and processes it after validating the query
+     *
      * @param event
      */
     @FXML
     void getCustomQuery(ActionEvent event) {
+
         String query = customQuery.getText();
+
         if (query.isEmpty()) {
             return;
         }
+
         if (!isQueryAllowed(query)) {
+
             userPrompt(Alert.AlertType.ERROR, Utils.VALIDATING_QUERY, Utils.INVALID_QUERY);
             customQuery.setText("");
             return;
         }
 
         String result = reader.executeQuery(query);
+
         if (isError(result)) {
             userPrompt(Alert.AlertType.ERROR, Utils.VALIDATING_QUERY, result);
             return;
         }
+
         display.appendText(result + "\n");
         customQuery.setText("");
     }
 
     /**
      * Executes default query for all server related entries in log table
+     *
      * @param event
      */
     @FXML
@@ -144,6 +157,7 @@ public class AdminController implements Initializable {
 
     /**
      * Executes default query for all non server related entries in log table
+     *
      * @param event
      */
     @FXML
@@ -153,6 +167,7 @@ public class AdminController implements Initializable {
 
     /**
      * Executes default query for number of registered users
+     *
      * @param event
      */
     @FXML
@@ -161,7 +176,18 @@ public class AdminController implements Initializable {
     }
 
     /**
+     * Executes default query for database related log table entries
+     *
+     * @param event
+     */
+    @FXML
+    void getDataBaseLog(ActionEvent event) {
+        display.appendText(reader.executeQuery(Utils.DB_LOG) + "\n");
+    }
+
+    /**
      * Clears "screen" textfield
+     *
      * @param event
      */
     @FXML
@@ -171,6 +197,7 @@ public class AdminController implements Initializable {
 
     /**
      * Writes to default file or previously user chosen file the info currently on "screen" texfield
+     *
      * @param event
      */
     @FXML
@@ -181,49 +208,61 @@ public class AdminController implements Initializable {
 
     /**
      * Writes to user chosen file the info currently on "screen" texfield
+     *
      * @param event
      */
     @FXML
     void saveAs(ActionEvent event) {
+
         FileChooser chooser = new FileChooser();
         File file;
+
         if ((file = chooser.showSaveDialog(stage)) == null) {
             return;
         }
+
         writer.setSavingFile(file);
         writer.save(display.getText());
         userPrompt(Alert.AlertType.INFORMATION, Utils.SAVING_FILE, Utils.FILE_SAVED);
+
     }
 
     /**
      * Clears all data in log table. Only root level can do this. It prompts user for confirmation
+     *
      * @param event
      */
     @FXML
     void clearTable(ActionEvent event) {
+
         if (userPrompt(Alert.AlertType.CONFIRMATION, Utils.CONFIRM, Utils.CONFIRM_QUESTION).get() == ButtonType.OK) {
             String result = reader.clearTable() ? Utils.CLEARED : Utils.NOT_CLEARED;
             userPrompt(Alert.AlertType.INFORMATION, Utils.CLEARING_LOG, result);
         }
+
     }
 
     /**
      * Launches a prompt
+     *
      * @param alertType type of prompt
-     * @param title text to be set as title
-     * @param content the actual message for user
+     * @param title     text to be set as title
+     * @param content   the actual message for user
      * @return the dialog as an Optional<ButtonType></>
      */
     private Optional<ButtonType> userPrompt(Alert.AlertType alertType, String title, String content) {
+
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         return alert.showAndWait();
+
     }
 
     /**
      * validates the query to see if it is allowed
+     *
      * @param query
      * @return
      */
@@ -235,6 +274,7 @@ public class AdminController implements Initializable {
 
     /**
      * Checks if message from server is an SQL exception and launches a prompt with the info
+     *
      * @param result
      * @return
      */
@@ -254,7 +294,6 @@ public class AdminController implements Initializable {
                 y = event.getSceneY();
             }
         });
-
         parentGrid.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -266,6 +305,7 @@ public class AdminController implements Initializable {
 
     /**
      * Sets database reader to query database
+     *
      * @param reader
      */
     public void setReader(DataBaseReader reader) {
@@ -274,6 +314,7 @@ public class AdminController implements Initializable {
 
     /**
      * Sets stage field
+     *
      * @param stage
      */
     public void setStage(Stage stage) {
@@ -282,6 +323,7 @@ public class AdminController implements Initializable {
 
     /**
      * Sets file writer to be used to save data to file
+     *
      * @param writer
      */
     public void setWriter(WriteToFile writer) {

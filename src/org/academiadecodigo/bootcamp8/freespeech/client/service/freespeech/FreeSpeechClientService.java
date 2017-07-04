@@ -8,6 +8,8 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +22,9 @@ import java.util.Map;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO documentation
+//TODO documentation - file manager singleton?
 
 public class FreeSpeechClientService implements ClientService {
-
-    private final int MAX_FILE_SIZE = 52428800; //50 MB
 
     @Override
     public void sendUserText(TextArea textArea) {
@@ -32,6 +32,7 @@ public class FreeSpeechClientService implements ClientService {
         if (textArea.getText().isEmpty()) {
             return;
         }
+
         String text = Session.getInstance().getUsername() + ": " + textArea.getText();
 
         Message<String> message = new Message<>(text);
@@ -41,6 +42,39 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     // Sends a request bio to server
+    @Override
+    public void sendPrivateText(TextArea textArea, String tabId, Set<String> destinySet) {
+
+        if (textArea.getText().isEmpty()) {
+            return;
+        }
+
+        String text = Session.getInstance().getUsername() + ": " + textArea.getText();
+
+        HashMap<String,String> map = new HashMap<>();
+        map.put(Values.TAB_ID, tabId);
+        map.put(Values.DESTINY,parseSetToString(destinySet));
+        map.put(Values.MESSAGE,text);
+
+        System.out.println(map.toString());
+
+        Message<HashMap<String,String>> message = new Message<>(map);
+        writeObject(MessageType.PRIVATE_TEXT, message);
+
+        textArea.clear();
+    }
+
+    private String parseSetToString(Set<String> destinySet) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String s : destinySet){
+            stringBuilder.append(s + Values.SEPARATOR_CHARACTER);
+        }
+
+        return stringBuilder.toString();
+    }
+
     @Override
     public void sendBioRequest(MessageType type, String username) {
         Message<String> message = new Message<>(username);
@@ -56,7 +90,9 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
-    public void sendUserData(File file) {
+    public void sendUserData(File file, String destiny, String origin) {
+
+        final int MAX_FILE_SIZE = 52428800; //50 MB
 
         if (file.length() > MAX_FILE_SIZE) {
             //TODO popup for user
@@ -64,13 +100,38 @@ public class FreeSpeechClientService implements ClientService {
             return;
         }
 
+        String fileExtension = file.getName();
+        fileExtension = fileExtension.substring(fileExtension.lastIndexOf(".") + 1);
+
+        System.out.println("file extension: " + fileExtension);
+
         byte[] buffer = fileToByteArray(file);
         List<Byte> byteList = byteArrayToList(buffer);
+        HashMap<String, List<Byte>> map = new HashMap<>();
 
-        Message<List> message = new Message<>(byteList);
-        writeObject(MessageType.DATA, message);
+        List<Byte> destinyList = parseByteArrayToList(destiny.getBytes());
+        List<Byte> originList = parseByteArrayToList(origin.getBytes());
+        List<Byte> extensionList = parseByteArrayToList(fileExtension.getBytes());
+
+        map.put(Values.DESTINY, destinyList);
+        map.put(Values.ORIGIN, originList);
+        map.put(Values.FILE_EXTENSION, extensionList);
+        map.put(Values.MESSAGE, byteList);
+
+        Message<HashMap<String, List<Byte>>> message = new Message<>(map);
+        writeObject(MessageType.PRIVATE_DATA, message);
     }
 
+    private List<Byte> parseByteArrayToList(byte[] bytes) {
+
+        ArrayList<Byte> byteList = new ArrayList<>();
+
+        for (Byte b : bytes){
+            byteList.add(b);
+        }
+
+        return byteList;
+    }
 
     @Override
     public void sendExit() {
@@ -83,6 +144,12 @@ public class FreeSpeechClientService implements ClientService {
 
         Message<String> message = new Message<>(HashService.getHash(password));
         writeObject(MessageType.DELETE_ACCOUNT, message);
+    }
+
+    @Override
+    public void sendReport(String userToReport) {
+        Message<String> message = new Message<>(userToReport);
+        writeObject(MessageType.REPORT, message);
     }
 
     @Override

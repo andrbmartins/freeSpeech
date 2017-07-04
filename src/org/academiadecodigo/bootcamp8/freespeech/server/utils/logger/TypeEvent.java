@@ -8,8 +8,6 @@ package org.academiadecodigo.bootcamp8.freespeech.server.utils.logger;
 public enum TypeEvent {
 
     SERVER,
-    LOGIN,
-    REGISTER,
     CLIENT,
     DATABASE
 

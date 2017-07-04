@@ -1,7 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-
 import java.io.*;
 
 /**
@@ -50,7 +49,7 @@ public class Stream {
         try {
 
             object = in.readObject();
-
+            System.out.println(object.toString());
         } catch (IOException e) {
             //TODO log - client app closed
             System.err.println("Error on trying to open object stream :: " + e.getMessage());

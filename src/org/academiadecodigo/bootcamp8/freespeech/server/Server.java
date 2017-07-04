@@ -2,20 +2,22 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ClientHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ConsoleHandler;
-import org.academiadecodigo.bootcamp8.freespeech.server.service.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
-
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.Key;
+import java.util.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,15 +37,21 @@ public class Server {
     private ServerSocket socket;
     private Key symKey;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
+    private UserService userService;
 
-    public Server(int port) {
+
+    public Server(int port, UserService userService) {
+
         this.port = port;
         loggedUsers = new CopyOnWriteArrayList<>();
+        this.userService = userService;
     }
 
-    public Server() {
+    public Server(UserService userService) {
+
         port = Values.SERVER_PORT;
         loggedUsers = new CopyOnWriteArrayList<>();
+        this.userService = userService;
     }
 
     /**
@@ -58,7 +66,6 @@ public class Server {
 
         generateSymKey();
         startConsole();
-
         socket = new ServerSocket(port);
 
     }
@@ -67,19 +74,23 @@ public class Server {
      * Generate the global symmetric key
      */
     private void generateSymKey() {
+
         Crypto crypto = new Crypto();
         crypto.generateSymKey();
         symKey = crypto.getSymKey();
         System.out.println("Generated symKey, ready to accept client connections");
+
     }
 
     /**
      * Initialize the input console for the server
      */
     private void startConsole() {
+
         Thread thread = new Thread(new ConsoleHandler(this));
-        thread.setName("Console Handler");
+        thread.setName("ConsoleHandler");
         thread.start();
+
     }
 
     /**
@@ -89,15 +100,16 @@ public class Server {
      */
     public void start() throws IOException {
 
-        //TODO userService.eventlogger(TypeEvent.SERVER, Values.SERVER_START);
+        Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.SERVER_START);
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
-        UserService userService = new JdbcUserService();
 
         while (true) {
+
             Socket clientSocket = socket.accept();
             cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService));
-            userService.eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CONNECT_CLIENT + "-" + clientSocket);
+
         }
 
     }
@@ -127,8 +139,11 @@ public class Server {
      * Sends updated list of users online to every user online
      */
     private void updateList() {
+
         Message<List> message = new Message<>(getUsersOnlineList());
+
         for (ClientHandler c : loggedUsers) {
+            System.out.println(c.getClientName());
             c.sendUsersList(message);
         }
 
@@ -141,6 +156,7 @@ public class Server {
      * @param sendable to write to all
      */
     public void writeToAll(SealedSendable sendable) {
+
         for (ClientHandler c : loggedUsers) {
             c.write(sendable);
         }
@@ -156,17 +172,25 @@ public class Server {
      */
     public void write(SealedSendable msg) {
 
-        HashMap<String, String> content;
         //TODO check casts
+        HashMap<String, String> content;
         content = (HashMap<String, String>) msg.getContent(symKey).getContent(HashMap.class);
-        String destiny = content.get(Values.DESTINY);
+        String destinyString = content.get(Values.DESTINY);
+        Set<String> destinySet = Parser.stringToSet(destinyString);
+
+        System.out.println("SERVER DESTINY SET: " + destinySet.toString());
+        System.out.println("loggedUsers size is " + loggedUsers.size());
 
         for (ClientHandler c : loggedUsers) {
-            if (c.getClientName().equals(destiny)) {
+
+            System.out.println("checking ig user " + c.getClientName() + "will recieve message");
+
+            if (destinySet.contains(c.getClientName())) {
+                System.out.println("user " + c.getClientName() + " WILL recieve a message");
                 c.write(msg);
-                break;
             }
         }
+
     }
 
     /**
@@ -175,12 +199,15 @@ public class Server {
      * @return the list of online users
      */
     private List<String> getUsersOnlineList() {
+
         List<String> usersList = new LinkedList<>();
 
         for (ClientHandler c : loggedUsers) {
             usersList.add(c.getClientName());
         }
+
         usersList.sort(null);
+
         return usersList;
     }
 
@@ -189,17 +216,19 @@ public class Server {
      */
     public void stop() {
 
+        //TODO gracefull shutdown
+
         if (socket != null) {
             try {
-                //TODO log server off
+
                 socket.close();
-                //TODO userService.eventlogger(TypeEvent.SERVER, Values.SERVER_STOP);
+                Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.SERVER_STOP);
+
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
             }
         }
 
-        //System.exit(0);
     }
 
     /**
@@ -208,6 +237,7 @@ public class Server {
      * @return a string describing the up time
      */
     public String runtime() {
+
         RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
 
         long millis = runtime.getUptime();
@@ -216,6 +246,22 @@ public class Server {
         long hour = (millis / (1000 * 60 * 60)) % 24;
 
         return String.format("%02d:%02d:%02d", hour, minute, second);
+    }
+
+    public void sendFile(SealedSendable msg) {
+
+        HashMap<String, List<Byte>> content;
+        content = (HashMap<String, List<Byte>>) msg.getContent(symKey).getContent(HashMap.class);
+        String destiny = new String(Parser.byteListToArray(content.get(Values.DESTINY)));
+
+        for (ClientHandler c : loggedUsers) {
+
+            if (c.getClientName().equals(destiny)) {
+                c.write(msg);
+                break;
+            }
+        }
+
     }
 
 }
