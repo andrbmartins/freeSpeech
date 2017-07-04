@@ -1,7 +1,8 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.model.logger;
+package org.academiadecodigo.bootcamp8.freespeech.server.utils.logger;
 
 
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
+import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
@@ -18,16 +19,11 @@ import java.sql.SQLException;
 public class Logger {
 
     private static Logger instance = null;
-    private Connection connection;
-
+    private static ConnectionManager connection;
 
 
     private Logger() {
-        try {
-            connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
     }
 
 
@@ -43,13 +39,16 @@ public class Logger {
         return instance;
     }
 
+
+
+
     //TODO make this event logger a utilitary class but keep method here
 
     public void eventlogger(TypeEvent type_event, String message) {
 
         PreparedStatement preparedStmt = null;
         try {
-            preparedStmt = connection.prepareStatement(Queries.LOG);
+            preparedStmt = connection.getConnection().prepareStatement(Queries.LOG);
             preparedStmt.setString(1, type_event.toString());
             preparedStmt.setString(2, message);
             preparedStmt.execute();
@@ -61,8 +60,7 @@ public class Logger {
     }
 
 
-
-
-
-
+    public static void setConnection(ConnectionManager connection) {
+        Logger.connection = connection;
+    }
 }

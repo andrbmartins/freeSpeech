@@ -2,7 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeech.server.service;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
-import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 
 import java.util.List;
 
@@ -29,5 +29,5 @@ public interface UserService {
 
     boolean deleteAccount(String clientName, String pass);
 
-    ConnectionManager getConnectionManager();
+    boolean updateBio(List<String> updatedBio);
 }

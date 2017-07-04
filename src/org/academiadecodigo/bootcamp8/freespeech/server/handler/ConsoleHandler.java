@@ -11,8 +11,6 @@ import java.util.Scanner;
  */
 public class ConsoleHandler implements Runnable {
 
-    private static final String STOP = "stop";
-
     private Server server;
     private Scanner in;
 
@@ -26,7 +24,7 @@ public class ConsoleHandler implements Runnable {
 
         String cmd;
         // While cmd if different than "stop"
-        while (!(cmd = readCommand()).equals(STOP)) {
+        while (!(cmd = readCommand()).equals(Command.STOP.getString())) {
             processCommand(cmd);
         }
 
@@ -43,12 +41,42 @@ public class ConsoleHandler implements Runnable {
 
     private void processCommand(String cmd) {
 
-        switch (cmd) {
-            case "runtime":
-                System.out.println("Server uptime " + server.runtime());
+        switch (Command.getEnum(cmd)) {
+            case RUNTIME:
+                System.out.println(server.runtime());
                 break;
             default:
                 System.out.println("Invalid command");
+        }
+
+    }
+
+    private enum Command {
+
+        STOP("stop"),
+        RUNTIME("runtime"),
+        INVALID("");
+
+        private final String string;
+
+        Command(String string) {
+            this.string = string;
+        }
+
+        public String getString() {
+            return string;
+        }
+
+        public static Command getEnum(String string) {
+
+            for (Command c : Command.values()) {
+                if (c.getString().equals(string)) {
+                    return c;
+                }
+            }
+
+            return INVALID;
+
         }
 
     }

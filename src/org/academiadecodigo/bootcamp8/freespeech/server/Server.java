@@ -2,10 +2,11 @@ package org.academiadecodigo.bootcamp8.freespeech.server;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ClientHandler;
 import org.academiadecodigo.bootcamp8.freespeech.server.handler.ConsoleHandler;
-import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.Logger;
+
 import org.academiadecodigo.bootcamp8.freespeech.server.service.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
-import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
@@ -17,6 +18,7 @@ import java.lang.management.RuntimeMXBean;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.Key;
+import java.util.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,16 +39,19 @@ public class Server {
     private ServerSocket socket;
     private Key symKey;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
+    private UserService userService;
 
 
-    public Server(int port) {
+    public Server(int port, UserService userService) {
         this.port = port;
         loggedUsers = new CopyOnWriteArrayList<>();
+        this.userService = userService;
     }
 
-    public Server() {
+    public Server(UserService userService) {
         port = Values.SERVER_PORT;
         loggedUsers = new CopyOnWriteArrayList<>();
+        this.userService = userService;
     }
 
     /**
@@ -81,7 +86,7 @@ public class Server {
      */
     private void startConsole() {
         Thread thread = new Thread(new ConsoleHandler(this));
-        thread.setName("Console Handler");
+        thread.setName("ConsoleHandler");
         thread.start();
     }
 
@@ -95,9 +100,6 @@ public class Server {
         //TODO userService.eventlogger(TypeEvent.SERVER, Values.SERVER_START);
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
-        UserService userService = new JdbcUserService();
-
-
 
 
         while (true) {
@@ -166,14 +168,31 @@ public class Server {
         HashMap<String, String> content;
         //TODO check casts
         content = (HashMap<String, String>) msg.getContent(symKey).getContent(HashMap.class);
-        String destiny = content.get(Values.DESTINY);
+        String destinyString = content.get(Values.DESTINY);
 
+        Set<String> destinySet = parseStringToSet(destinyString);
+
+        System.out.println("SERVER DESTINY SET: " + destinySet.toString());
+
+        System.out.println("loggedUsers size is " + loggedUsers.size());
         for (ClientHandler c : loggedUsers) {
-            if (c.getClientName().equals(destiny)) {
+            System.out.println("checking ig user " + c.getClientName() + "will recieve message");
+            if (destinySet.contains(c.getClientName())) {
+                System.out.println("user " + c.getClientName() + " WILL recieve a message");
                 c.write(msg);
-                break;
             }
         }
+    }
+
+    private Set<String> parseStringToSet(String destinyString) {
+
+        HashSet<String> set = new HashSet<>();
+
+        for(String s : destinyString.split(Values.SEPARATOR_CHARACTER)){
+            set.add(s);
+        }
+
+        return set;
     }
 
     /**
@@ -225,4 +244,29 @@ public class Server {
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
+
+    public void sendFile(SealedSendable msg) {
+
+        HashMap<String,List<Byte>> content;
+        content = (HashMap<String,List<Byte>>)msg.getContent(symKey).getContent(HashMap.class);
+
+        String destiny = new String(parseByteListToArray(content.get(Values.DESTINY)));
+
+        for (ClientHandler c : loggedUsers){
+            if(c.getClientName().equals(destiny)){
+                c.write(msg);
+                break;
+            }
+        }
+    }
+
+    private byte[] parseByteListToArray(List<Byte> byteList) {
+        byte[] bytes = new byte[byteList.size()];
+
+        for (int i = 0; i < bytes.length; i++){
+            bytes[i] = byteList.get(i);
+        }
+
+        return bytes;
+    }
 }

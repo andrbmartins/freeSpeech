@@ -31,21 +31,13 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Controller {
 
-    @FXML
-    private TextField nameField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private PasswordField confirmPassword;
-    @FXML
-    private Label serverMessageLabel;
-    @FXML
-    private GridPane loginPane;
-    @FXML
-    private Button loginButton;
-
-    @FXML
-    private Button registerButton;
+    @FXML private TextField nameField;
+    @FXML private PasswordField passwordField;
+    @FXML private PasswordField confirmPassword;
+    @FXML private Label serverMessageLabel;
+    @FXML private GridPane loginPane;
+    @FXML private Button loginButton;
+    @FXML private Button registerButton;
 
     private Stage stage;
     private LoginService loginService;
@@ -53,13 +45,16 @@ public class LoginController implements Controller {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         position = new double[2];
         loginService = RegistryService.getInstance().get(LoginService.class);
         setDraggable();
-
-
     }
 
+
+    /**
+     * Adds mouse event listeners to allow for stage to be dragged.
+     */
     private void setDraggable() {
 
         loginPane.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -79,8 +74,14 @@ public class LoginController implements Controller {
         });
     }
 
+    /**
+     *
+     * @param event
+     */
     @FXML
     void onLogin(ActionEvent event) {
+
+        final int MAX_NAME_CHARACTERS = 15;
 
         if (confirmPassword.isVisible()) {
             passwordConfirmation(false);
@@ -91,10 +92,13 @@ public class LoginController implements Controller {
             return;
         }
 
-        passwordConfirmation(false);
-
         if (emptyFields(false)) {
             serverMessageLabel.setText(Values.INVALID_INPUT);
+            return;
+        }
+
+        if (nameField.getText().length() > MAX_NAME_CHARACTERS) {
+            serverMessageLabel.setText(Values.NAME_TOO_LONG);
             return;
         }
 
@@ -113,8 +117,10 @@ public class LoginController implements Controller {
         serverMessageLabel.setText(serverResponse.getContent(String.class));
     }
 
+
     @FXML
     void onRegister(ActionEvent event) {
+
 
         if (!confirmPassword.isVisible()) {
             passwordConfirmation(true);
@@ -166,7 +172,7 @@ public class LoginController implements Controller {
 
         boolean empty = nameField.getText().isEmpty() || passwordField.getText().isEmpty();
 
-        if(register) {
+        if (register) {
             empty = empty || confirmPassword.getText().isEmpty();
         }
 
