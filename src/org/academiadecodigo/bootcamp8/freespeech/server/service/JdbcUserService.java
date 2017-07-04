@@ -2,7 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeech.server.service;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
-import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 
 import java.sql.SQLException;
 import java.util.List;
