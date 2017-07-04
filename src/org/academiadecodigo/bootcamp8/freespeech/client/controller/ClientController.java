@@ -24,6 +24,7 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
 import java.awt.*;
@@ -63,7 +64,15 @@ public class ClientController implements Controller {
     @FXML
     private TextField dateBirthBio;
     @FXML
-    private TextField dateRegistrationBio;
+    private TextArea userBio;
+    @FXML
+    private Button privateChatButton;
+    @FXML
+    private Button updateProfile;
+
+    @FXML
+    private Button removeAccount;
+
 
 
     private Stage stage;
@@ -86,7 +95,6 @@ public class ClientController implements Controller {
         focusUserInput();
         currentRoom = lobbyTextArea;
         new Thread(new ServerResponseHandler(clientService, this)).start();
-        clientService.sendListRequest();
     }
 
     private Tab getSelectedTab() {
@@ -243,15 +251,25 @@ public class ClientController implements Controller {
         Navigation.getInstance().close();
     }
 
+
+    public void userPromptQuit(Alert.AlertType alertType, String title, String content) {
+        Platform.runLater(new Runnable() {
+            public void run() {
+                Optional<ButtonType> r = userPrompt1(alertType, title, content);
+                if (r.isPresent()) {
+                    Navigation.getInstance().close();
+                }
+            }
+        });
+
+    }
+
     public void userPromptExternal(Alert.AlertType alertType, String title, String content) {
         Platform.runLater(new Runnable() {
             public void run() {
                 Optional<ButtonType> r = userPrompt1(alertType, title, content);
-                //stage.close();
-                //Navigation.getInstance().close();
             }
         });
-
     }
 
     private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
@@ -268,18 +286,57 @@ public class ClientController implements Controller {
 
     }
 
-    public void ShowUserBio(Sendable message) {
+    @FXML
+    void getUserBio(MouseEvent event) {
+        Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
+        if (user == null) {
+            return;
+        }
+        System.out.println("Send bio request to server");
+        System.out.println(user.toString());
+        clientService.sendBioRequest(MessageType.BIO, (String) user);
+    }
+
+    @FXML
+    void editUserInfo(ActionEvent event) {
+        clientService.sendBioRequest(MessageType.OWN_BIO, Session.getUsername());
+    }
+
+
+    public void setOwnBio(Sendable ownBio) {
+        privateChatButton.setVisible(false);
+        removeAccount.setVisible(true);
+        updateProfile.setVisible(true);
+
+        List<String> list = (LinkedList<String>) ownBio.getContent(List.class);
+
+        if (list.isEmpty()) {
+            System.out.println("inside the list.isEmpty");
+            //set fields editable
+            return;
+        }
+        setBioInfo(list);
+    }
+
+    public void showUserBio(Sendable message) {
+        privateChatButton.setVisible(true);
+        removeAccount.setVisible(false);
+        updateProfile.setVisible(false);
 
         List<String> list = (LinkedList<String>) message.getContent(List.class);
 
         if (list.isEmpty()) {
             return;
         }
+        setBioInfo(list);
+    }
 
+    private void setBioInfo(List<String> list) {
         nameBio.setText(list.get(0));
         emailBio.setText(list.get(1));
         dateBirthBio.setText(list.get(2));
-        dateRegistrationBio.setText(list.get(3));
+        userBio.setText(list.get(3));
+    }
 
     }
 
@@ -288,5 +345,29 @@ public class ClientController implements Controller {
         String userToReport = onlineUsersList.getSelectionModel().getSelectedItem().toString();
         clientService.sendReport(userToReport);
 
+    @FXML
+    void onRemoveAccount(ActionEvent event) {
+        DeleteAccountDialog delete = new DeleteAccountDialog();
+        Optional<String> password = delete.showAndWait();
+        if (password.isPresent()) {
+            clientService.deleteAccount(password.get());
+        }
+
     }
+
+
+    @FXML
+    void onUpdateProfile(ActionEvent event) {
+
+        List<String> updatedBio = new LinkedList<>();
+        updatedBio.add(Session.getUsername());
+        updatedBio.add(emailBio.getText());
+        updatedBio.add(dateBirthBio.getText());
+        updatedBio.add(userBio.getText());
+
+        clientService.updateBio(updatedBio);
+
+    }
+
+
 }

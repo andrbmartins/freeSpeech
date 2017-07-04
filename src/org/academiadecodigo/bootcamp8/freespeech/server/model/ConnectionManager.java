@@ -1,11 +1,12 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.sql.*;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Developed @ <Academia de Código_>
@@ -37,6 +38,9 @@ public class ConnectionManager {
             preparedStmt.setString(2, password);
             preparedStmt.execute();
             eventlogger(TypeEvent.CLIENT, Values.CLIENT_REGISTED + "--" + username);
+            preparedStmt = connection.prepareStatement(Queries.INSERT_INTO_BIO);
+            preparedStmt.setString(1, username);
+            preparedStmt.executeUpdate();
 
 
         } catch (SQLException e) {
@@ -160,11 +164,8 @@ public class ConnectionManager {
 
     public List<String> getUserBio(String username) throws SQLException {
 
-        System.out.println("vou executar a query para a bio com o valor de " + username);
-
         PreparedStatement preparedStmt = connection.prepareStatement(Queries.SHOW_BIO);
         preparedStmt.setString(1, username);
-        System.out.println("before result ");
         ResultSet resultSet = preparedStmt.executeQuery();
 
         if (resultSet.next()) {
@@ -172,11 +173,36 @@ public class ConnectionManager {
             userbio.add(resultSet.getString("user_name"));
             userbio.add(resultSet.getString("email"));
             userbio.add(resultSet.getString("date_birth"));
-            //userbio.add(resultSet.getString("picture"));
-            userbio.add(resultSet.getString("date_registration"));
+            userbio.add(resultSet.getString("bio"));
             return userbio;
         }
-
+        preparedStmt.close();
         return new LinkedList<>();
+    }
+
+    public boolean updateBio(String username, String email, String dateBirth, String bio) {
+        PreparedStatement preparedStmt = null;
+        boolean updated = true;
+        System.out.println("here?");
+        try {
+            preparedStmt = connection.prepareStatement(Queries.UPDATE_BIO);
+            preparedStmt.setString(1, email);
+            preparedStmt.setString(2, dateBirth);
+            preparedStmt.setString(3, bio);
+            preparedStmt.setString(4, username);
+            preparedStmt.execute();
+        } catch (SQLException e) {
+            updated = false;
+            e.printStackTrace();
+        } finally {
+            try {
+                preparedStmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        System.out.println(updated);
+        return updated;
     }
 }

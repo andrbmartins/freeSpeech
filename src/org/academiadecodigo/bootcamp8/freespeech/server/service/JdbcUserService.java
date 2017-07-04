@@ -2,7 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeech.server.service;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
-import org.academiadecodigo.bootcamp8.freespeech.server.model.logger.TypeEvent;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -31,6 +31,12 @@ public class JdbcUserService implements UserService {
     @Override
     public boolean addUser(User user) {
         return connectionManager.insertUser(user.getUsername(),user.getPassword());
+    }
+
+    @Override
+    public boolean updateBio(List<String> updatedBio) {
+        System.out.println("at jdbc method");
+        return connectionManager.updateBio(updatedBio.get(0), updatedBio.get(1), updatedBio.get(2), updatedBio.get(3));
     }
 
     @Override
@@ -84,6 +90,7 @@ public class JdbcUserService implements UserService {
             message = connectionManager.getUserBio(username);
             
         } catch (SQLException e) {
+            //TODO eventlogger here
             e.printStackTrace();
         }
         return message;

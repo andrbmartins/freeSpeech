@@ -12,8 +12,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import javax.print.attribute.standard.MediaSize;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,9 +46,6 @@ public class ServerResponseHandler implements Runnable {
     private void process(MessageType type, Sendable message) {
 
         switch (type) {
-            case NOTIFICATION:
-                clientService.sendListRequest();
-                break;
             case TEXT:
                 printToRoom(message);
                 break;
@@ -67,21 +62,27 @@ public class ServerResponseHandler implements Runnable {
                 //TODO - Empty switch case ???
                 break;
             case PASS_CHANGE:
-                passChangeNotify(message);
+                notifyUser(message);
                 break;
             case EXIT:
                 run = false;
                 Session.close();
                 break;
+            case BIO_UPDATE:
+                notifyUser(message);
+                break;
+            case OWN_BIO:
+                clientController.setOwnBio(message);
+                break;
             case BIO:
-                System.out.println("Recebi a mensagem com a bio " + message.toString());
-                clientController.ShowUserBio(message);
+                clientController.showUserBio(message);
                 break;
             case DELETE_ACCOUNT:
                 accDeleteNotify(message);
                 break;
         }
     }
+
 
 
     private void printToRoom(Sendable message) {
@@ -120,25 +121,23 @@ public class ServerResponseHandler implements Runnable {
         return result;
     }
 
-    public void passChangeNotify(Sendable msg) {
+
+    private void notifyUser(Sendable msg) {
         String info = (String) msg.getContent(String.class);
 
         clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+
     }
 
     private void accDeleteNotify(Sendable message) {
         String info = (String) message.getContent(String.class);
         if (info.equals(Values.ACC_DELETED)) {
             run = false;
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Navigation.getInstance().loadScreen(Values.CONNECTING_SCENE);
-                }
-            });
+            clientController.userPromptQuit(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
             return;
         }
         clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+
 
     }
 

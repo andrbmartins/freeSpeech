@@ -38,7 +38,8 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" onAction="#editUserInfo" text="Edit Bio" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+            <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.columnIndex="2" />
+            <Button mnemonicParsing="false" onAction="#editUserInfo" text="My Profile" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
             <Button mnemonicParsing="false" onAction="#changePassword" text="Change Password" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
             <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExit" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                <GridPane.margin>
@@ -71,12 +72,12 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="emailBio" disable="true" editable="false">
+            <TextField fx:id="emailBio" disable="true">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="dateBirthBio" disable="true" editable="false">
+            <TextField fx:id="dateBirthBio" disable="true">
                <font>
                   <Font size="14.0" />
                </font>
@@ -86,9 +87,11 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" />
             <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" />
-            <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" />
+            <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0" />
+            <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" text="Chat" />
+            <Button fx:id="updateProfile" mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile" visible="false" />
+            <Button fx:id="removeAccount" mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account" visible="false" />
          </children>
       </VBox>
    </children>

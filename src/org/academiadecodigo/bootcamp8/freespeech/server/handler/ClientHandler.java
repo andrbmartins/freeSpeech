@@ -54,7 +54,7 @@ public class ClientHandler implements Runnable {
     }
 
 
-    public void openStreams(Socket socket) {
+    private void openStreams(Socket socket) {
         try {
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -151,6 +151,7 @@ public class ClientHandler implements Runnable {
                 handleMessage(msg);
                 continue;
             }
+            server.removeUser(this);
             run = false;
         }
 
@@ -176,20 +177,22 @@ public class ClientHandler implements Runnable {
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
+            case OWN_BIO:
+                sendUserBio(msg);
+                break;
             case BIO_UPDATE:
-                //TODO - what to do in this case?
+                updateBio(msg);
                 break;
             case PASS_CHANGE:
                 changePass(msg, type);
                 break;
             case EXIT:
                 run = false;
+                server.removeUser(this);
                 write(msg);
                 closeSocket();
                 break;
             case BIO:
-                System.out.println("Recebi msg de request de bio" + msg.toString());
-                // IF Message is BIO request
                 sendUserBio(msg);
                 break;
             case DELETE_ACCOUNT:
@@ -204,21 +207,33 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    private void updateBio(SealedSendable msg) {
+        Sendable<List> message = (Sendable<List>) crypto.decryptSendable(msg, crypto.getSymKey());
+        List<String> updatedBio = message.getContent(List.class);
+
+        Sendable<String> userReply;
+
+        if (userService.updateBio(updatedBio)) {
+            userReply = new Message<>(Values.BIO_UPDATED);
+        } else {
+            userReply = new Message<>(Values.BIO_NOT_UPDATED);
+        }
+
+        SealedSendable sealedMsg = crypto.encrypt(msg.getType(), userReply, crypto.getSymKey());
+        write(sealedMsg);
+    }
+
     // Retrieve bio from database and send to client
     private void sendUserBio(SealedSendable msg) {
-        System.out.println("Vou mandar a mesma message que recebi para testar" + msg);
 
         Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
 
-        System.out.println("Mensagem desemcrytada enviada pelo cliente" + message.getContent(String.class));
-        // Aqui vou buscar a bio ha BD atraves da query (Tem de retornar a bio)
-
         List<String> messagebio = userService.getUserBio((String) message.getContent(String.class));
+
         Message<List> bio = new Message<>(messagebio);
-        SealedSendable sealedMessage = crypto.encrypt(MessageType.BIO, bio, crypto.getSymKey());
+        SealedSendable sealedMessage = crypto.encrypt(msg.getType(), bio, crypto.getSymKey());
         write(sealedMessage);
 
-        System.out.println("Enviei mensagem com bio ao cliente" + sealedMessage.toString());
     }
 
     private void changePass(SealedSendable msg, MessageType type) {

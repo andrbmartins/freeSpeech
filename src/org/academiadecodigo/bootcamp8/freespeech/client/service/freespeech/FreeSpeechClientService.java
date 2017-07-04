@@ -40,20 +40,20 @@ public class FreeSpeechClientService implements ClientService {
         textArea.clear();
     }
 
-    @Override
-    public void sendListRequest() {
-        Message<Object> message = new Message<>("");
-        writeObject(MessageType.USERS_ONLINE, message);
-    }
-
     // Sends a request bio to server
     @Override
-    public void sendBioRequest(String UserBio) {
-        Message<String> message = new Message<>(UserBio);
-        writeObject(MessageType.BIO, message);
-        System.out.println("Mensagem enviada de pedido de bio");
+    public void sendBioRequest(MessageType type, String username) {
+        Message<String> message = new Message<>(username);
+        writeObject(type, message);
+
     }
 
+    @Override
+    public void updateBio(List<String> updatedBio) {
+        Message<List> message = new Message<>(updatedBio);
+        writeObject(MessageType.BIO_UPDATE, message);
+
+    }
 
     @Override
     public void sendUserData(File file) {
