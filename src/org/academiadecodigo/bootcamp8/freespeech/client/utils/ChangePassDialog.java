@@ -14,7 +14,7 @@ import javafx.util.Callback;
  * <Code Cadet> PedroMAlves
  */
 
-public class ChangePassDialog extends Dialog{
+public class ChangePassDialog extends Dialog<String[]> {
     private PasswordField currPassword;
     private PasswordField newPassword;
     private PasswordField confirmPass;

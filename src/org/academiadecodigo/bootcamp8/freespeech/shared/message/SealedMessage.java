@@ -37,12 +37,12 @@ public class SealedMessage extends SealedObject implements SealedSendable {
      * @see SealedSendable#getContent(Key)
      */
     @Override
-    public Sendable getContent(Key key) {
+    public <T> Sendable<T> getContent(Key key) {
 
-        Sendable sendable = null;
+        Sendable<T> sendable = null;
 
         try {
-            sendable = (Sendable) getObject(key);
+            sendable = (Sendable<T>) getObject(key);
         } catch (IOException e) {
             //TODO log
             e.printStackTrace();

@@ -101,8 +101,8 @@ public class ClientHandler implements Runnable {
 
     private void register(SealedSendable sealedSendable) {
 
-        Sendable<HashMap> sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
-        HashMap<String, String> register = sendable.getContent(HashMap.class);
+        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getSymKey());
+        HashMap<String, String> register = sendable.getContent();
         String username = register.get(Values.NAME_KEY);
 
         synchronized (userService) {
@@ -122,8 +122,8 @@ public class ClientHandler implements Runnable {
 
     private boolean login(SealedSendable sealedSendable) {
 
-        Sendable<HashMap> sendable = (Sendable<HashMap>) crypto.decryptWithPrivate(sealedSendable);
-        HashMap<String, String> login = sendable.getContent(HashMap.class);
+        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getSymKey());
+        HashMap<String, String> login = sendable.getContent();
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
 
@@ -216,16 +216,17 @@ public class ClientHandler implements Runnable {
 
     private void reportUser(SealedSendable msg) {
 
-        Sendable<String> message = crypto.decryptSendable(msg, crypto.getSymKey());
-        String reportedUser = message.getContent(String.class);
+        Sendable<String> message = msg.getContent(crypto.getSymKey());
+        String reportedUser = message.getContent();
         System.out.println("REPORTED " + reportedUser);
         System.out.println(reportedUser.getClass().getSimpleName());
 
     }
 
     private void updateBio(SealedSendable msg) {
-        Sendable<List> message = (Sendable<List>) crypto.decryptSendable(msg, crypto.getSymKey());
-        List<String> updatedBio = message.getContent(List.class);
+
+        Sendable<List<String>> message = msg.getContent(crypto.getSymKey());
+        List<String> updatedBio = message.getContent();
 
         Sendable<String> userReply;
 
@@ -241,9 +242,8 @@ public class ClientHandler implements Runnable {
 
     private void sendUserBio(SealedSendable msg) {
 
-        Sendable message = crypto.decryptSendable(msg, crypto.getSymKey());
-
-        List<String> messagebio = userService.getUserBio((String) message.getContent(String.class));
+        Sendable<String> message = msg.getContent(crypto.getSymKey());
+        List<String> messagebio = userService.getUserBio(message.getContent());
 
         Message<List> bio = new Message<>(messagebio);
         SealedSendable sealedMessage = crypto.encrypt(msg.getType(), bio, crypto.getSymKey());
@@ -253,8 +253,8 @@ public class ClientHandler implements Runnable {
 
     private void changePass(SealedSendable msg, MessageType type) {
 
-        Sendable<HashMap> sendable = (Sendable<HashMap>) crypto.decrypt(msg, crypto.getSymKey());
-        HashMap<String, String> map = sendable.getContent(HashMap.class);
+        Sendable<HashMap<String, String>> sendable = msg.getContent(crypto.getSymKey());
+        HashMap<String, String> map = sendable.getContent();
         Sendable<String> message;
         String oldPassword = map.get(Values.PASSWORD_KEY);
         String newPassword = map.get(Values.NEW_PASSWORD);
@@ -271,8 +271,8 @@ public class ClientHandler implements Runnable {
 
     private boolean deleteAccount(SealedSendable msg, MessageType type) {
 
-        Sendable<String> sendable = (Sendable<String>) crypto.decrypt(msg, crypto.getSymKey());
-        String pass = sendable.getContent(String.class);
+        Sendable<String> sendable = msg.<String>getContent(crypto.getSymKey());
+        String pass = sendable.getContent();
         Sendable<String> response;
         boolean deleted;
 

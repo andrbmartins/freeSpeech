@@ -56,8 +56,10 @@ public class LoginClientService implements LoginService {
 
         SealedSendable s = Stream.readSendable(Session.getInput());
 
-        Sendable<Key> key = (Sendable<Key>) Session.getCrypto().decryptWithPrivate(s);
-        Session.getCrypto().setSymKey(key.getContent(Key.class));
+        //Sendable<Key> key = (Sendable<Key>) Session.getCrypto().decryptWithPrivate(s);
+        Object o = Session.getCrypto().decryptWithPrivate(s);
+        Sendable<Key> key = o instanceof Sendable ? (Sendable<Key>) o : null;
+        Session.getCrypto().setSymKey(key.getContent());
     }
 
     /**

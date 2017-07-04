@@ -215,7 +215,7 @@ public class ServerResponseHandler implements Runnable {
         //A single character, punctuation or symbol
 
         //TODO allow specials char
-        String regex = "(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])";
+        String regex = "(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}\\p{L}]*)([\\w\\p{P}\\p{S}\\p{L}])";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 

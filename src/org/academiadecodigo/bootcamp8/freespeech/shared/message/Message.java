@@ -21,8 +21,8 @@ public class Message<T> implements Sendable<T> {
      * @see Sendable#getContent(Class)
      */
     @Override
-    public <T> T getContent(Class<T> type) {
-        return content == null ? null : type.cast(content);
+    public T getContent() {
+        return content;
     }
 
     /**
