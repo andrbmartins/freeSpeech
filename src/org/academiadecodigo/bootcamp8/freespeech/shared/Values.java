@@ -38,7 +38,7 @@ public class Values {
 
     public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DBSERVER = "root";
-    public static final String PASSWORD_DBSERVER = "root";
+    public static final String PASSWORD_DBSERVER = "";
 
     public static final String SERVER_START = "SERVER START";
     public static final String SERVER_STOP = "SERVER STOP";

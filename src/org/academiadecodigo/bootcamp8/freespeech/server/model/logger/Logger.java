@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.model.logger;
 
 
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
@@ -16,15 +17,31 @@ import java.sql.SQLException;
  */
 public class Logger {
 
-
+    private static Logger instance = null;
     private Connection connection;
 
-    public Logger(Connection connection) {
 
-       this.connection = connection;
+
+    private Logger() {
+        try {
+            connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
+    public static Logger getInstance() {
+
+        if (instance == null) {
+            synchronized (Logger.class) {
+                if (instance == null) {
+                    instance = new Logger();
+                }
+            }
+        }
+        return instance;
+    }
 
     //TODO make this event logger a utilitary class but keep method here
 

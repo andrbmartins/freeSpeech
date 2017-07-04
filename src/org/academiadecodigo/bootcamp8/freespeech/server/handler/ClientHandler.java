@@ -33,7 +33,7 @@ public class ClientHandler implements Runnable {
     private boolean run;
     private Logger logger;
 
-    public ClientHandler(Server server, Socket clientSocket, Key key, UserService userService, Logger logger) {
+    public ClientHandler(Server server, Socket clientSocket, Key key, UserService userService) {
         crypto = new Crypto();
         crypto.setSymKey(key);
         this.clientSocket = clientSocket;

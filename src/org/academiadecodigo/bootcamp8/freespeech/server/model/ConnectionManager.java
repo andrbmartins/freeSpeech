@@ -19,11 +19,12 @@ public class ConnectionManager {
 
     public ConnectionManager() {
         try {
+
             connection = DriverManager.getConnection(Values.URL_DBSERVER, Values.USER_DBSERVER, Values.PASSWORD_DBSERVER);
-            eventlogger(TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, Values.SERVER_DBCONNECT);
 
         } catch (SQLException e) {
-            eventlogger(TypeEvent.DATABASE, Values.SERVER_DBDISCONNECT);
+           Logger.getInstance().eventlogger(TypeEvent.DATABASE, Values.SERVER_DBDISCONNECT);
         }
 
     }
@@ -144,7 +145,7 @@ public class ConnectionManager {
     }
 
    //TODO make this event logger a utilitary class but keep method here
-    public void eventlogger(TypeEvent type_event, String message) {
+  /*  public void eventlogger(TypeEvent type_event, String message) {
 
         PreparedStatement preparedStmt = null;
         try {
@@ -157,7 +158,7 @@ public class ConnectionManager {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
     public List<String> getUserBio(String username) throws SQLException {
 

@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 /**
  * Developed @ <Academia de Código_>
  * Created by
@@ -36,7 +37,7 @@ public class Server {
     private ServerSocket socket;
     private Key symKey;
     private CopyOnWriteArrayList<ClientHandler> loggedUsers;
-    private Logger logger;
+
 
     public Server(int port) {
         this.port = port;
@@ -95,14 +96,14 @@ public class Server {
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
         UserService userService = new JdbcUserService();
-        Logger logger = new Logger(userService.getConnectionManager().getConnection());
+
 
 
 
         while (true) {
             Socket clientSocket = socket.accept();
-            cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService, logger));
-            logger.eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
+            cachedPool.submit(new ClientHandler(this, clientSocket, symKey, userService));
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, Values.CONNECT_CLIENT + "-" + clientSocket);
 
         }
 
