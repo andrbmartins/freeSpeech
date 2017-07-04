@@ -193,6 +193,7 @@ public class ClientHandler implements Runnable {
                 if (deleteAccount(msg, type)){
                     run = false;
                     server.removeUser(this);
+                    closeSocket();
                 }
                 break;
 

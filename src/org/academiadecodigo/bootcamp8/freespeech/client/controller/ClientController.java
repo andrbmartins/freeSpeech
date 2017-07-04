@@ -184,21 +184,6 @@ public class ClientController implements Controller {
         });
     }
 
-    @FXML
-    void getUserBio(MouseEvent event) {
-        Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
-        if (user == null) {
-            return;
-        }
-        System.out.println("Send bio request to server");
-        System.out.println(user.toString());
-        clientService.sendBioRequest(MessageType.BIO, (String) user);
-    }
-
-    @FXML
-    void editUserInfo(ActionEvent event) {
-        clientService.sendBioRequest(MessageType.OWN_BIO, Session.getUsername());
-    }
 
     @FXML
     void changePassword(ActionEvent event) {
@@ -269,10 +254,27 @@ public class ClientController implements Controller {
 
     }
 
+    @FXML
+    void getUserBio(MouseEvent event) {
+        Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
+        if (user == null) {
+            return;
+        }
+        System.out.println("Send bio request to server");
+        System.out.println(user.toString());
+        clientService.sendBioRequest(MessageType.BIO, (String) user);
+    }
+
+    @FXML
+    void editUserInfo(ActionEvent event) {
+        clientService.sendBioRequest(MessageType.OWN_BIO, Session.getUsername());
+    }
+
+
     public void setOwnBio(Sendable ownBio) {
+        privateChatButton.setVisible(false);
         removeAccount.setVisible(true);
         updateProfile.setVisible(true);
-        privateChatButton.setVisible(false);
 
         List<String> list = (LinkedList<String>) ownBio.getContent(List.class);
 
@@ -282,9 +284,8 @@ public class ClientController implements Controller {
             return;
         }
         setBioInfo(list);
-
     }
-    
+
     public void showUserBio(Sendable message) {
         privateChatButton.setVisible(true);
         removeAccount.setVisible(false);
