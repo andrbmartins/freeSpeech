@@ -12,8 +12,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import javax.print.attribute.standard.MediaSize;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,16 +62,19 @@ public class ServerResponseHandler implements Runnable {
                 //TODO - Empty switch case ???
                 break;
             case PASS_CHANGE:
-                passChangeNotify(message);
+                notifyUser(message);
                 break;
             case EXIT:
                 run = false;
                 Session.close();
                 break;
+            case BIO_UPDATE:
+                notifyUser(message);
+                break;
             case OWN_BIO:
                 clientController.setOwnBio(message);
+                break;
             case BIO:
-                System.out.println("Recebi a mensagem com a bio " + message.toString());
                 clientController.showUserBio(message);
                 break;
             case DELETE_ACCOUNT:
@@ -81,6 +82,7 @@ public class ServerResponseHandler implements Runnable {
                 break;
         }
     }
+
 
 
     private void printToRoom(Sendable message) {
@@ -119,10 +121,12 @@ public class ServerResponseHandler implements Runnable {
         return result;
     }
 
-    public void passChangeNotify(Sendable msg) {
+
+    private void notifyUser(Sendable msg) {
         String info = (String) msg.getContent(String.class);
 
         clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+
     }
 
     private void accDeleteNotify(Sendable message) {
@@ -132,7 +136,7 @@ public class ServerResponseHandler implements Runnable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    Navigation.getInstance().loadScreen(Values.CONNECTING_SCENE);
+                    Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
                 }
             });
             return;

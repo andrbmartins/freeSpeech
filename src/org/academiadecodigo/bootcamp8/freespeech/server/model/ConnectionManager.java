@@ -178,4 +178,30 @@ public class ConnectionManager {
         preparedStmt.close();
         return new LinkedList<>();
     }
+
+    public boolean updateBio(String username, String email, String dateBirth, String bio) {
+        PreparedStatement preparedStmt = null;
+        boolean updated = true;
+        System.out.println("here?");
+        try {
+            preparedStmt = connection.prepareStatement(Queries.UPDATE_BIO);
+            preparedStmt.setString(1, email);
+            preparedStmt.setString(2, dateBirth);
+            preparedStmt.setString(3, bio);
+            preparedStmt.setString(4, username);
+            preparedStmt.execute();
+        } catch (SQLException e) {
+            updated = false;
+            e.printStackTrace();
+        } finally {
+            try {
+                preparedStmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        System.out.println(updated);
+        return updated;
+    }
 }

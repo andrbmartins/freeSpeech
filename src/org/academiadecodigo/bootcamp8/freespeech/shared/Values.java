@@ -31,6 +31,9 @@ public class Values {
     public static final String ACC_DELETED = "Your account was deleted. We are sorry to see you go. Come back when" +
             " you get tired of Slack Police!!!";
     public static final String NOT_VALIDATED = "Unable to delete your account. Please check your password";
+    public static final String BIO_UPDATED = "Bio successfully updated";
+    public static final String BIO_NOT_UPDATED = "Unable to update bio. We are experiencing database issues at the moment. " +
+            "Please try later on.";
 
     public static final String INVALID_INPUT = "Required fields are empty.";
 

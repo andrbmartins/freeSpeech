@@ -34,6 +34,12 @@ public class JdbcUserService implements UserService {
     }
 
     @Override
+    public boolean updateBio(List<String> updatedBio) {
+        System.out.println("at jdbc method");
+        return connectionManager.updateBio(updatedBio.get(0), updatedBio.get(1), updatedBio.get(2), updatedBio.get(3));
+    }
+
+    @Override
     public boolean deleteAccount(String username, String password) {
         return (authenticate(username, password)) && connectionManager.deleteAccount(username);
     }

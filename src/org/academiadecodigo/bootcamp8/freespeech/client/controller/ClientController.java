@@ -65,6 +65,11 @@ public class ClientController implements Controller {
     private TextArea userBio;
     @FXML
     private Button privateChatButton;
+    @FXML
+    private Button updateProfile;
+
+    @FXML
+    private Button removeAccount;
 
 
 
@@ -181,9 +186,11 @@ public class ClientController implements Controller {
 
     @FXML
     void getUserBio(MouseEvent event) {
-
-        System.out.println("Send bio request to server");
         Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
+        if (user == null) {
+            return;
+        }
+        System.out.println("Send bio request to server");
         System.out.println(user.toString());
         clientService.sendBioRequest(MessageType.BIO, (String) user);
     }
@@ -251,27 +258,33 @@ public class ClientController implements Controller {
     }
 
     public void setOwnBio(Sendable ownBio) {
+        removeAccount.setVisible(true);
+        updateProfile.setVisible(true);
         privateChatButton.setVisible(false);
+
         List<String> list = (LinkedList<String>) ownBio.getContent(List.class);
 
         if (list.isEmpty()) {
+            System.out.println("inside the list.isEmpty");
             //set fields editable
             return;
         }
-
         setBioInfo(list);
+
 
     }
 
 
     public void showUserBio(Sendable message) {
+        privateChatButton.setVisible(true);
+        removeAccount.setVisible(false);
+        updateProfile.setVisible(false);
 
         List<String> list = (LinkedList<String>) message.getContent(List.class);
 
         if (list.isEmpty()) {
             return;
         }
-        privateChatButton.setVisible(true);
         setBioInfo(list);
     }
 
@@ -296,6 +309,13 @@ public class ClientController implements Controller {
     @FXML
     void onUpdateProfile(ActionEvent event) {
 
+        List<String> updatedBio = new LinkedList<>();
+        updatedBio.add(Session.getUsername());
+        updatedBio.add(emailBio.getText());
+        updatedBio.add(dateBirthBio.getText());
+        updatedBio.add(userBio.getText());
+
+        clientService.updateBio(updatedBio);
 
     }
 

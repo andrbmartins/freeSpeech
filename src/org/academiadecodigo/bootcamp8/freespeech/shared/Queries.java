@@ -14,7 +14,7 @@ public class Queries {
 
     public static final String INSERT_INTO_BIO = "INSERT INTO bio(user_name, date_registration) VALUES (?, now())";
     public static final String INSERT_BIO = "INSERT INTO bio(user_name, email, date_birth, picture, date_registration) VALUES (?, ?, ?, ?, now())";
-    public static final String UPDATE_BIO = "UPDATE bio SET email = ? , date_birth = ? , picture = ? WHERE user_name = ? ";
+    public static final String UPDATE_BIO = "UPDATE bio SET email = ? , date_birth = ? , bio = ? WHERE user_name = ? ";
     public static final String DELETE_BIO = "DELETE FROM bio WHERE user_name = ?";
     public static final String SHOW_BIO = "SELECT * FROM bio WHERE user_name = ?";
     public static final String LOG = "INSERT INTO log(date_event, type_event, message_event) VALUES (now(), ?, ?)";

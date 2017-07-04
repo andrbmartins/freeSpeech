@@ -9,6 +9,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import javax.crypto.SealedObject;
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Developed @ <Academia de Código_>
@@ -35,4 +36,5 @@ public interface ClientService extends Service {
 
     void deleteAccount(String password);
 
+    void updateBio(List<String> updatedBio);
 }

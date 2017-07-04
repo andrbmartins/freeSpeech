@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="clientPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="854.0" prefHeight="480.0" prefWidth="854.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController">
+<GridPane fx:id="clientPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="854.0" prefHeight="480.0" prefWidth="854.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -37,7 +37,6 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout" GridPane.columnIndex="3" />
             <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.columnIndex="2" />
             <Button mnemonicParsing="false" onAction="#editUserInfo" text="My Profile" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
             <Button mnemonicParsing="false" onAction="#changePassword" text="Change Password" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
@@ -66,20 +65,20 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="emailBio" disable="true" editable="false">
+            <TextField fx:id="emailBio" disable="true">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="dateBirthBio" disable="true" editable="false">
+            <TextField fx:id="dateBirthBio" disable="true">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
             <TextArea fx:id="userBio" prefHeight="200.0" prefWidth="200.0" />
             <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" text="Chat" />
-            <Button mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile" />
-            <Button mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account" />
+            <Button fx:id="updateProfile" mnemonicParsing="false" onAction="#onUpdateProfile" text="Update Profile" visible="false" />
+            <Button fx:id="removeAccount" mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account" visible="false" />
          </children>
       </VBox>
    </children>

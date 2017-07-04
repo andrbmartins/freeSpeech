@@ -27,4 +27,6 @@ public interface UserService {
     List<String> getUserBio(String username);
 
     boolean deleteAccount(String clientName, String pass);
+
+    boolean updateBio(List<String> updatedBio);
 }
