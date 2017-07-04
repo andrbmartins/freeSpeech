@@ -9,6 +9,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import java.io.IOException;
@@ -173,8 +174,8 @@ public class Server {
     public void write(SealedSendable msg) {
 
         //TODO check casts
-        HashMap<String, String> content;
-        content = (HashMap<String, String>) msg.getContent(symKey).getContent(HashMap.class);
+        Sendable<HashMap<String, String>> sendable = msg.getContent(symKey);
+        HashMap<String, String> content = sendable.getContent();
         String destinyString = content.get(Values.DESTINY);
         Set<String> destinySet = Parser.stringToSet(destinyString);
 
@@ -250,8 +251,8 @@ public class Server {
 
     public void sendFile(SealedSendable msg) {
 
-        HashMap<String, List<Byte>> content;
-        content = (HashMap<String, List<Byte>>) msg.getContent(symKey).getContent(HashMap.class);
+        Sendable<HashMap<String, List<Byte>>> sendable = msg.getContent(symKey);
+        HashMap<String, List<Byte>> content = sendable.getContent();
         String destiny = new String(Parser.byteListToArray(content.get(Values.DESTINY)));
 
         for (ClientHandler c : loggedUsers) {

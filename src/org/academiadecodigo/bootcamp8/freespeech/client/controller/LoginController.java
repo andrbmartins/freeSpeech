@@ -105,7 +105,7 @@ public class LoginController implements Controller {
         sendData(MessageType.LOGIN);
         Sendable<String> serverResponse = loginService.readMessage();
 
-        if (serverResponse.getContent(String.class).equals(Values.LOGIN_OK)) {
+        if (serverResponse.getContent().equals(Values.LOGIN_OK)) {
             loginService.receiveSymKey();
             Session.getInstance().setUsername(nameField.getText());
             //TODO method to reset fields for when logout is requested
@@ -114,7 +114,7 @@ public class LoginController implements Controller {
             return;
         }
 
-        serverMessageLabel.setText(serverResponse.getContent(String.class));
+        serverMessageLabel.setText(serverResponse.getContent());
     }
 
 
@@ -145,7 +145,7 @@ public class LoginController implements Controller {
         sendData(MessageType.REGISTER);
         Sendable<String> serverResponse = loginService.readMessage();
 
-        if (serverResponse.getContent(String.class).equals(Values.REGISTER_OK)) {
+        if (serverResponse.getContent().equals(Values.REGISTER_OK)) {
             serverMessageLabel.setText(Values.REGISTER_OK);
             return;
         }
