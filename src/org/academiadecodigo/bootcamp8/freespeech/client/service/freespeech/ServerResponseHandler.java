@@ -4,11 +4,9 @@ import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
@@ -91,7 +89,7 @@ public class ServerResponseHandler implements Runnable {
                 notifyUser(message);
                 break;
             case OWN_BIO:
-                clientController.setOwnBio(message);
+                clientController.showOwnBio(message);
                 break;
             case BIO:
                 clientController.showUserBio(message);

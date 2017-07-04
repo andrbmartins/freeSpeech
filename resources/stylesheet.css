@@ -15,7 +15,8 @@
 }
 
 #closeButton,
-#exitButton {
+#exitButton,
+#closeConnection {
     -fx-background-image: url("icons/exit.png");
     -fx-pref-width: 30px;
     -fx-pref-height: 30px;
