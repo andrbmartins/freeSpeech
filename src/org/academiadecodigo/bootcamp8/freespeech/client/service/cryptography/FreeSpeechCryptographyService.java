@@ -17,19 +17,22 @@ public class FreeSpeechCryptographyService implements CryptographyService {
 
     /**
      * @see CryptographyService#connect(String, int)
-     * @param server - the host.
-     * @param port - the port.
+     * @param server
+     * @param port
+     * @return
      */
     @Override
-    public void connect(String server, int port) {
+    public boolean connect(String server, int port) {
 
         try {
-                Socket clientSocket = new Socket(server, port);
-                Session.getInstance().setUserSocket(clientSocket);
-                exchangeKeys();
+            Socket clientSocket = new Socket(server, port);
+            Session.getInstance().setUserSocket(clientSocket);
+            exchangeKeys();
+            return true;
 
         } catch (IOException e) {
             //TODO - unable to connect message
+            return false;
         }
     }
 

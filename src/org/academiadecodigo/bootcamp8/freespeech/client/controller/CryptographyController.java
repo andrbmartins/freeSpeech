@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -30,6 +31,7 @@ public class CryptographyController implements Controller {
 
     @FXML
     private GridPane gridpane;
+    @FXML private Label connectingLabel;
 
     public CryptographyController() {
         position = new double[2];
@@ -100,12 +102,30 @@ public class CryptographyController implements Controller {
     }
 
     private void connectToServer() {
-        cryptographyService.connect(Values.HOST, Values.SERVER_PORT);
+        boolean success = cryptographyService.connect(Values.HOST, Values.SERVER_PORT);
 
+        if(!success) {
+            notifyNoConnection();
+            return;
+        }
+
+        loginScreen();
+    }
+
+    private void loginScreen() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 Navigation.getInstance().loadScreen(Values.LOGIN_SCENE);
+            }
+        });
+    }
+
+    private void notifyNoConnection() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                connectingLabel.setText("Unable to connect to server.");
             }
         });
     }
