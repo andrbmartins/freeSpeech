@@ -32,7 +32,6 @@ public class LoginClientService implements LoginService {
         Message<Map> message = new Message<>(messageContent);
         SealedSendable sealed;
         sealed = Session.getCrypto().encrypt(messageType, message, Session.getCrypto().getForeignKey());
-
         Stream.write(Session.getOutput(), sealed);
     }
 
@@ -44,7 +43,6 @@ public class LoginClientService implements LoginService {
     public Sendable<String> readMessage() {
 
         SealedSendable serverRsp = Stream.readSendable(Session.getInput());
-
         return (Sendable<String>) Session.getCrypto().decryptWithPrivate(serverRsp);
     }
 
@@ -55,7 +53,6 @@ public class LoginClientService implements LoginService {
     public void receiveSymKey() {
 
         SealedSendable s = Stream.readSendable(Session.getInput());
-
         Sendable<Key> key = (Sendable<Key>) Session.getCrypto().decryptWithPrivate(s);
         Session.getCrypto().setSymKey(key.getContent(Key.class));
     }
@@ -69,7 +66,6 @@ public class LoginClientService implements LoginService {
         Message<String> message = new Message<>("");
         SealedSendable sealed;
         sealed = Session.getCrypto().encrypt(MessageType.EXIT, message, Session.getCrypto().getForeignKey());
-
         Stream.write(Session.getOutput(), sealed);
     }
 }

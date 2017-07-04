@@ -31,7 +31,6 @@ public class Client extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         addServicesToRegister();
-
         Navigation.getInstance().setStage(primaryStage);
         defineStyle(primaryStage);
         Navigation.getInstance().loadScreen(Values.CONNECTING_SCENE);
