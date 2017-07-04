@@ -78,7 +78,7 @@ public class Server {
      */
     private void startConsole() {
         Thread thread = new Thread(new ConsoleHandler(this));
-        thread.setName("Console Handler");
+        thread.setName("ConsoleHandler");
         thread.start();
     }
 

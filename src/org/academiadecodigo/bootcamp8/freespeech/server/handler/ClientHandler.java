@@ -54,7 +54,7 @@ public class ClientHandler implements Runnable {
     }
 
 
-    public void openStreams(Socket socket) {
+    private void openStreams(Socket socket) {
         try {
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
