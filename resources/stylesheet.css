@@ -6,41 +6,54 @@
     -fx-font: 10pt Helvetica;
 }
 
-#buttonBox {
-    -fx-alignment: center;
-    -fx-spacing: 30;
-}
-
-#nameLabel,
-#emailLabel,
-#passwordLabel {
-    -fx-padding: 40 0 0 0;
-}
-
-.menu-button {
-    -fx-background-radius: 20 20 20 20;
-    -fx-background-color: black;
-}
-
-.menu-button .context-menu {
-    -fx-text-fill: #000000;
+.button {
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
     -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 50px;
 }
 
-.menu-item,
-.menu-item:hover {
-    -fx-background-color: white;
+#closeButton,
+#exitButton {
+    -fx-background-image: url("icons/exit.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
 }
 
-.menu-item .label {
-    -fx-text-fill: #000000;
+#privateChatButton {
+    -fx-background-image: url("icons/private.png");
+}
+
+#reportButton {
+    -fx-background-image: url("icons/report.png");
+}
+
+#fileButton {
+    -fx-background-image: url("icons/file.png");
+}
+
+#loginButton {
+    -fx-background-image: url("icons/login.png");
+}
+
+#backButton {
+    -fx-background-image: url("icons/back.png");
+}
+
+#registerButton {
+    -fx-background-image: url("icons/register.png");
+}
+
+#confirmButton,
+#sendButton {
+    -fx-background-image: url("icons/confirm.png");
 }
 
 .text-field {
     -fx-max-width: 20em;
-
 }
 
 .label {
@@ -54,8 +67,18 @@
 .list-view {
     -fx-background-color: #FF0000;
     -fx-opacity: 0.9;
-    -fx-text-fill: #FFFFFF;
     -fx-font-weight: bold;
+}
+
+.list-cell {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: #000000;
+}
+
+.list-cell:selected {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #690504;
+    -fx-opacity: 0.7;
 }
 
 .tab-pane .tab-header-area .tab-header-background {
@@ -75,11 +98,7 @@
     -fx-background-insets: 0 1 0 -1;
 }
 
-.button {
-    -fx-background-color: red;
-    -fx-text-fill: #FFFFFF;
-    -fx-background-radius: 20 20 20 20;
-}
+
 
 .text-area,
 .text-area:focused .content {

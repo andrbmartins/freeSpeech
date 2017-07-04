@@ -16,20 +16,19 @@ public class ServerStart {
         if (args.length < 1 || Integer.parseInt(args[0]) < 1025) {
             System.out.println("Client app is configured to connect to port 4040.");
             server = new Server();
-        }
-        else {
+        } else {
             server = new Server(Integer.parseInt(args[0]));
         }
+
         try {
+
             server.init();
             server.start();
 
         } catch (IOException e) {
-
             e.printStackTrace(); //TODO log?
-
         } finally {
-           server.closeServerSocket();
+            server.stop();
         }
     }
 }

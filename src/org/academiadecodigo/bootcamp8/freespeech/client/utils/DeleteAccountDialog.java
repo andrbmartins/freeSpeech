@@ -1,8 +1,8 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
+package org.academiadecodigo.bootcamp8.freespeech.client.utils;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.PasswordField;
@@ -15,16 +15,15 @@ import javafx.util.Callback;
  * Created by
  * <Code Cadet> PedroMAlves
  */
-
-public class PasswordDialog extends Dialog<String> {
+public class DeleteAccountDialog extends Dialog {
     private PasswordField passwordField;
 
-    public PasswordDialog() {
-        setTitle("Credential Manager");
-        setHeaderText("You must login in order to access Admin App");
+    public DeleteAccountDialog() {
+        setTitle("Account manager");
+        setHeaderText("You must enter your password in order to delete your account");
 
-        ButtonType passwordButtonType = new ButtonType("Login", ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().addAll(passwordButtonType, ButtonType.CANCEL);
+        ButtonType delete = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
+        getDialogPane().getButtonTypes().addAll(delete, ButtonType.CANCEL);
 
         passwordField = new PasswordField();
         passwordField.setPromptText("Password");
@@ -44,14 +43,14 @@ public class PasswordDialog extends Dialog<String> {
             }
         });
 
-       setResultConverter(new Callback<ButtonType, String>() {
-           @Override
-           public String call(ButtonType param) {
-               if (param == passwordButtonType) {
-                   return passwordField.getText();
-               }
-               return null;           }
-       });
+        setResultConverter(new Callback<ButtonType, String>() {
+            @Override
+            public String call(ButtonType param) {
+                if (param == delete) {
+                    return passwordField.getText();
+                }
+                return null;
+            }
+        });
     }
 }
-

@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service;
+package org.academiadecodigo.bootcamp8.freespeech.serverapp.service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +20,7 @@ public class JdbcConnectionManager {
 
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost/freespeech", "root", "babaji");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/freespeech", "root", "");
             }
         } catch (SQLException ex) {
             System.out.println("Connection to database failed : " + ex.getMessage());

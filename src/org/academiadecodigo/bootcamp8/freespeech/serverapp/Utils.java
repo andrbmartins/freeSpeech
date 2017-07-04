@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp;
+package org.academiadecodigo.bootcamp8.freespeech.serverapp;
 
 /**
  * Developed @ <Academia de Código_>

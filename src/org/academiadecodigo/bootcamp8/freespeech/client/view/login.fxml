@@ -3,16 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="loginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.client.controller.LoginController">
+<GridPane fx:id="loginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.client.controller.LoginController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -26,29 +23,26 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <MenuButton fx:id="serverSelection" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Select Server" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER">
-        <items>
-          <MenuItem fx:id="freeSpeechOption" mnemonicParsing="false" onAction="#freeSpeechSelected" text="Free Speech" />
-        </items>
+      <Label fx:id="nameLabel" text="username_" visible="false" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+      <TextField fx:id="nameField" promptText="username_" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+      <Label fx:id="serverMessageLabel" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+      <PasswordField fx:id="passwordField" promptText="password_" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+      <PasswordField fx:id="confirmPassword" promptText="confirm password_" visible="false" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+      <Button fx:id="closeButton" mnemonicParsing="false" onAction="#onClose" GridPane.columnIndex="1" GridPane.halignment="LEFT">
          <GridPane.margin>
-            <Insets top="30.0" />
+            <Insets left="125.0" />
+         </GridPane.margin></Button>
+      <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+         <GridPane.margin>
+            <Insets left="70.0" />
          </GridPane.margin>
-      </MenuButton>
-      <Label fx:id="nameLabel" text="username_" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-      <Label fx:id="passwordLabel" text="password_" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-      <Label fx:id="emailLabel" text="confirm password_" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-      <TextField fx:id="nameField" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-      <Label fx:id="serverMessageLabel" text="Label" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-      <PasswordField fx:id="passwordField" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-      <PasswordField fx:id="confirmPassword" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-      <HBox fx:id="buttonBox" prefHeight="44.0" prefWidth="595.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7">
-         <children>
-            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" text="Login" />
-            <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onRegister" text="Register" />
-         </children>
-      </HBox>
+      </Button>
+      <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onRegister" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+         <GridPane.margin>
+            <Insets right="70.0" />
+         </GridPane.margin>
+      </Button>
    </children>
 </GridPane>

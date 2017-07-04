@@ -14,6 +14,7 @@ CREATE TABLE bio (
   date_birth        DATE,
   picture           CHAR(100),
   date_registration DATE,
+  bio               VARCHAR(500),
   PRIMARY KEY (user_name),
   FOREIGN KEY (user_name) REFERENCES user (user_name)
     ON DELETE CASCADE

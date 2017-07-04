@@ -52,6 +52,7 @@ public class Stream {
             object = in.readObject();
             System.out.println(object.toString());
         } catch (IOException e) {
+            //TODO log - client app closed
             System.err.println("Error on trying to open object stream :: " + e.getMessage());
         } catch (ClassNotFoundException e) {
             System.err.println("Class not found :: " + e.getMessage());

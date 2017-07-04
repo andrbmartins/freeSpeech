@@ -4,7 +4,11 @@ import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
@@ -31,11 +35,12 @@ import java.util.regex.Pattern;
  */
 
 public class ServerResponseHandler implements Runnable {
-
+    private boolean run;
     private ClientService clientService;
     private ClientController clientController;
 
     public ServerResponseHandler(ClientService clientService, ClientController clientController) {
+        run = true;
         this.clientService = clientService;
         this.clientController = clientController;
     }
@@ -43,11 +48,12 @@ public class ServerResponseHandler implements Runnable {
     @Override
     public void run() {
 
-        while (true) {
+        while (run) {
             SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
             Sendable message = Session.getCrypto().decryptSendable(sealedMessage, Session.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
+
     }
 
     private void process(MessageType type, Sendable message) {
@@ -57,24 +63,41 @@ public class ServerResponseHandler implements Runnable {
         System.out.println();
 
         switch (type) {
-            case NOTIFICATION:
-                clientService.sendListRequest();
-                break;
             case TEXT:
                 printToRoom(message);
                 break;
             case DATA:
-                //TODO
+                //TODO - Empty switch case ???
                 break;
-            case REQUEST_USERS_ONLINE:
+            case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
+                //TODO - Empty switch case ???
                 saveRecievedFile(message);
                 break;
             case PRIVATE_TEXT:
-                //TODO
+                //TODO - Empty switch case ???
                 printPrivateChat(message);
+                break;
+            case PASS_CHANGE:
+                notifyUser(message);
+                break;
+            case EXIT:
+                run = false;
+                Session.close();
+                break;
+            case BIO_UPDATE:
+                notifyUser(message);
+                break;
+            case OWN_BIO:
+                clientController.setOwnBio(message);
+                break;
+            case BIO:
+                clientController.showUserBio(message);
+                break;
+            case DELETE_ACCOUNT:
+                accDeleteNotify(message);
                 break;
         }
     }
@@ -176,7 +199,8 @@ public class ServerResponseHandler implements Runnable {
 
         messageText = wipeWhiteSpaces(messageText);
         //clientController.getCurrentRoom().appendText((roomText.isEmpty() ? "" : "\n") + messageText);
-        ((TextArea)(clientController.getCurrentRoom().getContent())).appendText((((TextArea)(clientController.getCurrentRoom().getContent())).getText().isEmpty() ? "" : "\n") + messageText);
+
+        ((TextArea)(clientController.getSelectedTab().getContent())).appendText((((TextArea)(clientController.getSelectedTab().getContent())).getText().isEmpty() ? "" : "\n") + messageText);
     }
 
     /**
@@ -192,9 +216,9 @@ public class ServerResponseHandler implements Runnable {
         //Every word character, digit, whitespace, punctuation and symbol
         //A single character, punctuation or symbol
 
-        //TODO allow specials characs
-
-        Pattern pattern = Pattern.compile("(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])");
+        //TODO allow specials char
+        String regex = "(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])";
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
         String result = "";
@@ -205,4 +229,25 @@ public class ServerResponseHandler implements Runnable {
         }
         return result;
     }
+
+
+    private void notifyUser(Sendable msg) {
+        String info = (String) msg.getContent(String.class);
+
+        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+
+    }
+
+    private void accDeleteNotify(Sendable message) {
+        String info = (String) message.getContent(String.class);
+        if (info.equals(Values.ACC_DELETED)) {
+            run = false;
+            clientController.userPromptQuit(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+            return;
+        }
+        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+
+
+    }
+
 }

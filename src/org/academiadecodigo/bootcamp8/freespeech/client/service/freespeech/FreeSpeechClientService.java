@@ -1,23 +1,28 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> PedroMAlves
  */
 
-//TODO documentation
+//TODO documentation - file manager singleton?
 
 public class FreeSpeechClientService implements ClientService {
 
@@ -36,6 +41,7 @@ public class FreeSpeechClientService implements ClientService {
         textArea.clear();
     }
 
+    // Sends a request bio to server
     @Override
     public void sendPrivateText(TextArea textArea, String tabId, Set<String> destinySet) {
 
@@ -70,13 +76,29 @@ public class FreeSpeechClientService implements ClientService {
     }
 
     @Override
-    public void sendListRequest() {
-        Message<Object> message = new Message<>("");
-        writeObject(MessageType.REQUEST_USERS_ONLINE, message);
+    public void sendBioRequest(MessageType type, String username) {
+        Message<String> message = new Message<>(username);
+        writeObject(type, message);
+
+    }
+
+    @Override
+    public void updateBio(List<String> updatedBio) {
+        Message<List> message = new Message<>(updatedBio);
+        writeObject(MessageType.BIO_UPDATE, message);
+
     }
 
     @Override
     public void sendUserData(File file, String destiny, String origin) {
+
+        final int MAX_FILE_SIZE = 52428800; //50 MB
+
+        if (file.length() > MAX_FILE_SIZE) {
+            //TODO popup for user
+            System.out.println("file too big");
+            return;
+        }
 
         String fileExtension = file.getName();
         fileExtension = fileExtension.substring(fileExtension.lastIndexOf(".") + 1);
@@ -111,6 +133,40 @@ public class FreeSpeechClientService implements ClientService {
         return byteList;
     }
 
+    @Override
+    public void sendExit() {
+        Message<String> message = new Message<>(" ");
+        writeObject(MessageType.EXIT, message);
+    }
+
+
+    public void deleteAccount (String password) {
+
+        Message<String> message = new Message<>(HashService.getHash(password));
+        writeObject(MessageType.DELETE_ACCOUNT, message);
+    }
+
+    @Override
+    public void sendReport(String userToReport) {
+        Message<String> message = new Message<>(userToReport);
+        writeObject(MessageType.REPORT, message);
+    }
+
+    @Override
+    public void changePassword(String[] passSet) {
+        Map<String, String> messageContent = new HashMap<>();
+
+        messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passSet[0]));
+        messageContent.put(Values.NEW_PASSWORD, HashService.getHash(passSet[1]));
+
+        Message<Map> message = new Message<>(messageContent);
+
+        writeObject(MessageType.PASS_CHANGE, message);
+
+    }
+
+
+    //TODO file manager?
     /**
      * Converts a byte array into a byte list.
      *

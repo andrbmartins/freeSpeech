@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.server.serverapp.controller;
+package org.academiadecodigo.bootcamp8.freespeech.serverapp.controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,11 +8,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.Utils;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.DataBaseReader;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.Utils;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.DataBaseReader;
 import javafx.fxml.FXML;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.PasswordDialog;
-import org.academiadecodigo.bootcamp8.freespeech.server.serverapp.service.WriteToFile;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.PasswordDialog;
+import org.academiadecodigo.bootcamp8.freespeech.serverapp.service.WriteToFile;
 
 import java.io.File;
 import java.net.URL;
@@ -49,6 +49,11 @@ public class AdminController implements Initializable {
         setDraggableMainFrame();
     }
 
+
+    /**
+     * Enforces user password before allowing usage of main view. If cancel button is pressed closes app.
+     * Validates password introduced to check admin level
+     */
     public void validateUser() {
         if (!login()) {
             stage.close();
@@ -56,6 +61,11 @@ public class AdminController implements Initializable {
         }
         validadeResult(adminLevel);
     }
+
+    /**
+     * Shows password dialog and sets admin level
+     * @return true is password is introduced. false if cancel button is pressed
+     */
 
     private boolean login() {
         PasswordDialog pd = new PasswordDialog();
@@ -68,6 +78,10 @@ public class AdminController implements Initializable {
         return false;
     }
 
+    /**
+     * Perfoms changes to interface based on adminLevel or prompts user for new password
+     * @param adminLevel of enum type
+     */
     private void validadeResult(Utils.AdminLevel adminLevel) {
         switch (adminLevel) {
             case ROOT:
@@ -84,11 +98,20 @@ public class AdminController implements Initializable {
         }
     }
 
+
+    /**
+     * Closes app smoothly on button click
+     * @param event
+     */
     @FXML
     void exit(ActionEvent event) {
         stage.close();
     }
 
+    /**
+     * Get inserted query and processes it after validating the query
+     * @param event
+     */
     @FXML
     void getCustomQuery(ActionEvent event) {
         String query = customQuery.getText();
@@ -110,34 +133,56 @@ public class AdminController implements Initializable {
         customQuery.setText("");
     }
 
-
+    /**
+     * Executes default query for all server related entries in log table
+     * @param event
+     */
     @FXML
     void getServerInfo(ActionEvent event) {
         display.appendText(reader.executeQuery(Utils.SERVER_INFO) + "\n");
     }
 
+    /**
+     * Executes default query for all non server related entries in log table
+     * @param event
+     */
     @FXML
     void getUserConnection(ActionEvent event) {
         display.appendText(reader.executeQuery(Utils.USER_CONNECTION) + "\n");
-
     }
 
+    /**
+     * Executes default query for number of registered users
+     * @param event
+     */
     @FXML
     void registeredUsers(ActionEvent event) {
         display.appendText(reader.executeQuery(Utils.USERS_TABLE) + "\n");
     }
 
+    /**
+     * Clears "screen" textfield
+     * @param event
+     */
     @FXML
     void refresh(ActionEvent event) {
         display.setText("");
     }
 
+    /**
+     * Writes to default file or previously user chosen file the info currently on "screen" texfield
+     * @param event
+     */
     @FXML
     void save(ActionEvent event) {
         writer.save(display.getText());
         userPrompt(Alert.AlertType.INFORMATION, Utils.SAVING_FILE, Utils.FILE_SAVED);
     }
 
+    /**
+     * Writes to user chosen file the info currently on "screen" texfield
+     * @param event
+     */
     @FXML
     void saveAs(ActionEvent event) {
         FileChooser chooser = new FileChooser();
@@ -150,6 +195,10 @@ public class AdminController implements Initializable {
         userPrompt(Alert.AlertType.INFORMATION, Utils.SAVING_FILE, Utils.FILE_SAVED);
     }
 
+    /**
+     * Clears all data in log table. Only root level can do this. It prompts user for confirmation
+     * @param event
+     */
     @FXML
     void clearTable(ActionEvent event) {
         if (userPrompt(Alert.AlertType.CONFIRMATION, Utils.CONFIRM, Utils.CONFIRM_QUESTION).get() == ButtonType.OK) {
@@ -158,6 +207,13 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * Launches a prompt
+     * @param alertType type of prompt
+     * @param title text to be set as title
+     * @param content the actual message for user
+     * @return the dialog as an Optional<ButtonType></>
+     */
     private Optional<ButtonType> userPrompt(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -166,19 +222,29 @@ public class AdminController implements Initializable {
         return alert.showAndWait();
     }
 
-
+    /**
+     * validates the query to see if it is allowed
+     * @param query
+     * @return
+     */
     private boolean isQueryAllowed(String query) {
         String lowerCase = query.toLowerCase();
         return (customQuery.getText().contains("delete") || customQuery.getText().contains("insert")
                 || customQuery.getText().contains("update") || customQuery.getText().contains("admin"));
     }
 
-
+    /**
+     * Checks if message from server is an SQL exception and launches a prompt with the info
+     * @param result
+     * @return
+     */
     private boolean isError(String result) {
         return result.startsWith("Error: ");
     }
 
-
+    /**
+     * Method to be able to move the frame due to Undecorated window
+     */
     private void setDraggableMainFrame() {
 
         parentGrid.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -198,15 +264,26 @@ public class AdminController implements Initializable {
         });
     }
 
-
+    /**
+     * Sets database reader to query database
+     * @param reader
+     */
     public void setReader(DataBaseReader reader) {
         this.reader = reader;
     }
 
+    /**
+     * Sets stage field
+     * @param stage
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Sets file writer to be used to save data to file
+     * @param writer
+     */
     public void setWriter(WriteToFile writer) {
         this.writer = writer;
     }
