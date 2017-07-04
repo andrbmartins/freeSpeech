@@ -54,7 +54,7 @@
               </rowConstraints>
                <children>
                   <Label fx:id="username" text="User name" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <TextField onKeyTyped="#search" promptText="search_" GridPane.rowIndex="1" />
+                  <TextField fx:id="searchBar" onKeyTyped="#search" promptText="search_" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             </children>
