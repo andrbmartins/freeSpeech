@@ -180,10 +180,12 @@ public class ClientController implements Controller {
     @FXML
     void getUserBio(MouseEvent event) {
 
-        System.out.println("Send bio request to server");
         Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
-        //onlineUsersList.getSelectionModel().getSelectedItem();
-        System.out.println(user.toString());
+
+        if (user == null) {
+            return;
+        }
+
         clientService.sendBioRequest((String) user);
     }
 

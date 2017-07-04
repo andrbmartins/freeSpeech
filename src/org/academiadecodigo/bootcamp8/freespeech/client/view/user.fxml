@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
@@ -37,11 +38,12 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout" GridPane.columnIndex="3" />
-            <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" GridPane.columnIndex="2" />
             <Button mnemonicParsing="false" onAction="#editUserInfo" text="Edit Bio" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
             <Button mnemonicParsing="false" onAction="#changePassword" text="Change Password" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-            <Button mnemonicParsing="false" onAction="#onExit" text="Exit" GridPane.columnIndex="3" GridPane.halignment="RIGHT" />
+            <Button fx:id="exitButton" mnemonicParsing="false" onAction="#onExit" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets right="10.0" top="10.0" />
+               </GridPane.margin></Button>
          </children>
       </GridPane>
        <ListView fx:id="onlineUsersList" focusTraversable="false" onMouseClicked="#getUserBio" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" GridPane.rowSpan="3" />
@@ -58,7 +60,10 @@
            </tabs>
        </TabPane>
       <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-      <Button fx:id="send" mnemonicParsing="false" onAction="#onSend" text="Send" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+      <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSend" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets right="20.0" />
+         </GridPane.margin></Button>
       <VBox fx:id="bioArea" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.rowSpan="2">
          <children>
             <TextField fx:id="nameBio" alignment="CENTER" disable="true" editable="false">
@@ -81,8 +86,9 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" text="Chat" />
-            <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" text="Report" />
+            <Button fx:id="privateChatButton" mnemonicParsing="false" onMouseClicked="#startPrivateChat" />
+            <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" />
+            <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" />
          </children>
       </VBox>
    </children>

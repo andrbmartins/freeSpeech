@@ -28,6 +28,8 @@ public class Values {
     public static final String UNMATCHED_PASSWORD = "Passwords don't match.";
     public static final String PASS_NOT_CHANGED = "Incorrect password. Not able to change your password.";
     public static final String PASS_CHANGED = "Successfully updated your password";
+    public static final String NAME_TOO_LONG = "Name can't be longer than 15 characters";
+
     public static final String ACC_DELETED = "Your account was deleted. We are sorry to see you go. Come back when" +
             " you get tired of Slack Police!!!";
     public static final String NOT_VALIDATED = "Unable to delete your account. Please check your password";
@@ -38,8 +40,7 @@ public class Values {
 
     public static final String URL_DBSERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DBSERVER = "root";
-    //public static final String PASSWORD_DBSERVER = "";
-    public static final String PASSWORD_DBSERVER = "1234";
+    public static final String PASSWORD_DBSERVER = "";
 
     public static final String SERVER_START = "SERVER START";
     public static final String SERVER_STOP = "SERVER STOP";
@@ -59,4 +60,6 @@ public class Values {
     public static final double LOGIN_WIDTH = 350d;
     public static final double CLIENT_WIDTH = 900d;
     public static final double CLIENT_HEIGHT = 600d;
+
+
 }

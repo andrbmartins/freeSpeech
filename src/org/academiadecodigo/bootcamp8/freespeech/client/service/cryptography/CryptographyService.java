@@ -7,6 +7,11 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.Service;
  */
 public interface CryptographyService extends Service {
 
+    /**
+     * Establishes a connection the the server socket in the specified host and port.
+     * @param host - the host.
+     * @param port - the port.
+     */
     void connect(String host, int port);
 
 }
