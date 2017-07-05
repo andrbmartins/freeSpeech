@@ -43,7 +43,7 @@ public class LoginClientService implements LoginService {
     public Sendable<String> readMessage() {
 
         SealedSendable serverRsp = Stream.readSendable(Session.getInput());
-        return (Sendable<String>) Session.getCrypto().decryptWithPrivate(serverRsp);
+        return serverRsp.getContent(Session.getCrypto().getPrivateKey());
     }
 
     /**
@@ -52,9 +52,10 @@ public class LoginClientService implements LoginService {
     @Override
     public void receiveSymKey() {
 
-        SealedSendable s = Stream.readSendable(Session.getInput());
-        Sendable<Key> key = (Sendable<Key>) Session.getCrypto().decryptWithPrivate(s);
-        Session.getCrypto().setSymKey(key.getContent(Key.class));
+        SealedSendable sealed = Stream.readSendable(Session.getInput());
+        Sendable<Key> key = sealed.getContent(Session.getCrypto().getPrivateKey());
+        Session.getCrypto().setSymKey(key.getContent());
+
     }
 
     /**
