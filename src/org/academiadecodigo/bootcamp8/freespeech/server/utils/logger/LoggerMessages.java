@@ -16,9 +16,10 @@ public class LoggerMessages {
     public static final String CLIENT_DISCONNECTED = "CLIENT DISCONNECTED: ";
     public static final String CLIENT_LOGIN_OK = "CLIENT LOGGED IN: ";
     public static final String CLIENT_LOGIN_FAILED = "CLIENT LOGIN FAILED: ";
+    public static final String CLIENT_ALREADY_LOGGED = "CLIENT TRYING TO LOG INTO ALREADY LOGGED ACCOUNT: ";
     public static final String CLIENT_LOGOUT = "CLIENT LOGGED OUT: ";
     public static final String CLIENT_REGISTERED = "CLIENT REGISTERED: ";
-    public static final String CLIENT_REGISTER_FAILED = "FAILED TO REGISTER USER";
+    public static final String CLIENT_REGISTER_FAILED = "FAILED TO REGISTER USER: ";
     public static final String CLIENT_PASSWORD = "CLIENT CHANGED PASSWORD: ";
     public static final String CLIENT_PASS_FAILED = "FAILED ATTEMPT AT CHANGING PASSWORD: ";
     public static final String ACCOUNT_DELETED = "USER ACCOUNT DELETED: ";

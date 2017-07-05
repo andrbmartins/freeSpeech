@@ -119,6 +119,7 @@ public class ClientHandler implements Runnable {
         }
 
         responseToClient(sealedSendable.getType(), Values.REGISTER_FAIL);
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_REGISTER_FAILED + username);
 
     }
 
@@ -129,7 +130,13 @@ public class ClientHandler implements Runnable {
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
 
-        if (server.userLogged(username) || !userService.authenticate(username, password)) {
+        if (server.userLogged(username)) {
+            responseToClient(sealedSendable.getType(), Values.ALREADY_LOGGED);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_ALREADY_LOGGED + username);
+            return false;
+        }
+
+        if (!userService.authenticate(username, password)) {
             responseToClient(sealedSendable.getType(), Values.LOGIN_FAIL);
             Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_FAILED + username);
             return false;
