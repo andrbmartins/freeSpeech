@@ -282,14 +282,6 @@ public class ClientController implements Controller {
         clientService.sendBioRequest(MessageType.BIO, (String) user);
     }
 
-    private void confirmDelete() {
-        DeleteAccountDialog delete = new DeleteAccountDialog();
-        Optional<String> password = delete.showAndWait();
-        if (password.isPresent()) {
-            clientService.deleteAccount(password.get());
-        }
-    }
-
     @FXML
     void changePassword(ActionEvent event) {
         ChangePassDialog change = new ChangePassDialog();
