@@ -18,7 +18,7 @@ public class Message<T> implements Sendable<T> {
     }
 
     /**
-     * @see Sendable#getContent(Class)
+     * @see Sendable#getContent()
      */
     @Override
     public T getContent() {
