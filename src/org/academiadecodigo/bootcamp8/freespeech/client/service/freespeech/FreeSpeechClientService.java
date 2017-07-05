@@ -93,14 +93,6 @@ public class FreeSpeechClientService implements ClientService {
     @Override
     public void sendUserData(File file, String destiny, String origin) {
 
-        final int MAX_FILE_SIZE = 52428800; //50 MB
-
-        if (file.length() > MAX_FILE_SIZE) {
-            //TODO popup for user
-            System.out.println("file too big");
-            return;
-        }
-
         String fileExtension = file.getName();
         fileExtension = fileExtension.substring(fileExtension.lastIndexOf(".") + 1);
 
