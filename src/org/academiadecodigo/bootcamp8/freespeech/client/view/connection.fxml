@@ -20,16 +20,31 @@
   </rowConstraints>
    <children>
       <Label fx:id="connectingLabel" text="Connecting to server. Please stand by." GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-      <ImageView fx:id="connectingHeader" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" />
       <ImageView fx:id="connectingImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1">
          <image>
             <Image url="@/loading_pizza.gif" />
          </image>
       </ImageView>
-      <Button fx:id="closeConnection" mnemonicParsing="false" onAction="#onClose" visible="false" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-         <GridPane.margin>
-            <Insets right="15.0" top="15.0" />
-         </GridPane.margin>
-      </Button>
+      <GridPane fx:id="connectionButtons" visible="false">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="closeConnection" mnemonicParsing="false" onAction="#onClose" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets right="15.0" top="15.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="reconnectButton" mnemonicParsing="false" onAction="#onReconnect" text="R" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets left="15.0" top="15.0" />
+               </GridPane.margin>
+            </Button>
+         </children>
+      </GridPane>
    </children>
 </GridPane>
