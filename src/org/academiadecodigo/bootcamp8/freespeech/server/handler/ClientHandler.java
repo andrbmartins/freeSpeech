@@ -101,7 +101,7 @@ public class ClientHandler implements Runnable {
 
     private void register(SealedSendable sealedSendable) {
 
-        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getSymKey());
+        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
         HashMap<String, String> register = sendable.getContent();
         String username = register.get(Values.NAME_KEY);
 
@@ -122,7 +122,7 @@ public class ClientHandler implements Runnable {
 
     private boolean login(SealedSendable sealedSendable) {
 
-        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getSymKey());
+        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
         HashMap<String, String> login = sendable.getContent();
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
@@ -271,7 +271,7 @@ public class ClientHandler implements Runnable {
 
     private boolean deleteAccount(SealedSendable msg, MessageType type) {
 
-        Sendable<String> sendable = msg.<String>getContent(crypto.getSymKey());
+        Sendable<String> sendable = msg.getContent(crypto.getSymKey());
         String pass = sendable.getContent();
         Sendable<String> response;
         boolean deleted;

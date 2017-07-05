@@ -185,4 +185,8 @@ public class Crypto {
         return keyPair.getPublic();
     }
 
+    public Key getPrivateKey() {
+        return keyPair.getPrivate();
+    }
+
 }
