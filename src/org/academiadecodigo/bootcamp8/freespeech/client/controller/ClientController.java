@@ -89,7 +89,6 @@ public class ClientController implements Controller {
     private Button removeAccount;
 
     private ListView<String> originalOnlineUsersList;
-
     private Stage stage;
     private ClientService clientService;
     private Map<Tab, TextArea> rooms;
