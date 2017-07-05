@@ -195,6 +195,7 @@ public class ClientHandler implements Runnable {
                 break;
             case PRIVATE_DATA:
                 server.sendFile(msg);
+                break;
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;

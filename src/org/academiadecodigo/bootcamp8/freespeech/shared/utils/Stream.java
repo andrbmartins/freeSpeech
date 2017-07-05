@@ -30,7 +30,7 @@ public class Stream {
             out.flush();
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open stream :: " + e.getMessage());
+            System.err.println("Error on trying to open stream. " + e.getMessage());
         }
 
     }

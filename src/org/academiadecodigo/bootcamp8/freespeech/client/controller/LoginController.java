@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -74,10 +76,14 @@ public class LoginController implements Controller {
         });
     }
 
-    /**
-     *
-     * @param event
-     */
+    @FXML
+    void onEnter(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            Button option = confirmPassword.isVisible() ? registerButton : loginButton;
+            option.fire();
+        }
+    }
+
     @FXML
     void onLogin(ActionEvent event) {
 
