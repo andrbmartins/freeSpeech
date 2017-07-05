@@ -129,18 +129,16 @@ public class ClientHandler implements Runnable {
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
 
-
-        if (userService.authenticate(username, password)) {
-            responseToClient(sealedSendable.getType(), Values.LOGIN_OK);
-            clientName = username;
-            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_OK + username);
-            return true;
+        if (server.userLogged(username) || !userService.authenticate(username, password)) {
+            responseToClient(sealedSendable.getType(), Values.LOGIN_FAIL);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_FAILED + username);
+            return false;
         }
 
-        responseToClient(sealedSendable.getType(), Values.LOGIN_FAIL);
-        Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_FAILED + username);
-
-        return false;
+        responseToClient(sealedSendable.getType(), Values.LOGIN_OK);
+        clientName = username;
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_OK + username);
+        return true;
 
     }
 
