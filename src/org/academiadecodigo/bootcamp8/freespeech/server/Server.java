@@ -137,17 +137,18 @@ public class Server {
     }
 
     /**
-     * Sends updated list of users online to every user online
+     * Checks if the user trying to login is already logged
+     * @param username of the user currently trying to login
+     * @return true if the user with this username is already logged. false if he is not logged
      */
-    private void updateList() {
+    public boolean userLogged(String username) {
+        for (ClientHandler c: loggedUsers) {
+            if (c.getClientName().equals(username)) {
+                return true;
+            }
 
-        Message<List> message = new Message<>(getUsersOnlineList());
-
-        for (ClientHandler c : loggedUsers) {
-            System.out.println(c.getClientName());
-            c.sendUsersList(message);
         }
-
+        return false;
     }
 
     /**
@@ -190,6 +191,20 @@ public class Server {
                 System.out.println("user " + c.getClientName() + " WILL recieve a message");
                 c.write(msg);
             }
+        }
+
+    }
+
+    /**
+     * Sends updated list of users online to every user online
+     */
+    private void updateList() {
+
+        Message<List> message = new Message<>(getUsersOnlineList());
+
+        for (ClientHandler c : loggedUsers) {
+            System.out.println(c.getClientName());
+            c.sendUsersList(message);
         }
 
     }
@@ -264,5 +279,6 @@ public class Server {
         }
 
     }
+
 
 }

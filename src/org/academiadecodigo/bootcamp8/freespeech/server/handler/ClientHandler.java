@@ -129,9 +129,10 @@ public class ClientHandler implements Runnable {
         String username = login.get(Values.NAME_KEY);
         String password = login.get(Values.PASSWORD_KEY);
 
+
         if (userService.authenticate(username, password)) {
             responseToClient(sealedSendable.getType(), Values.LOGIN_OK);
-            clientName = login.get(Values.NAME_KEY);
+            clientName = username;
             Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_OK + username);
             return true;
         }
@@ -225,6 +226,8 @@ public class ClientHandler implements Runnable {
         Sendable<String> message = msg.getContent(crypto.getSymKey());
         String reportedUser = message.getContent();
         Logger.getInstance().eventlogger(TypeEvent.CLIENT, reportedUser + LoggerMessages.CLIENT_REPORTED + clientName);
+
+        //TODO finish implementation of reporting
         System.out.println("REPORTED " + reportedUser);
         System.out.println(reportedUser.getClass().getSimpleName());
 
