@@ -12,6 +12,8 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -231,18 +233,9 @@ public class Server {
      */
     public void stop() {
 
-        //TODO gracefull shutdown
-
-        if (socket != null) {
-            try {
-
-                socket.close();
-                Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.SERVER_STOP);
-
-            } catch (IOException e) {
-                Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
-            }
-        }
+        Stream.close(socket);
+        Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.SERVER_STOP);
+        System.exit(0);
 
     }
 
