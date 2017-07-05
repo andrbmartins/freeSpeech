@@ -42,7 +42,7 @@ public class Crypto {
             keyPair = keyGen.generateKeyPair();
 
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("Invalid encryption algorithm or invalid provider :: " + e.getMessage());
+            System.err.println("Invalid encryption algorithm or invalid provider. " + e.getMessage());
         }
 
     }
@@ -57,86 +57,47 @@ public class Crypto {
             symKey = KeyGenerator.getInstance("Blowfish").generateKey();
 
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("Invalid encryption algorithm :: " + e.getMessage());
+            System.err.println("Invalid encryption algorithm. " + e.getMessage());
         }
 
     }
 
     /**
-     * Encrypt an object and return a sealed object
+     * Creates a sealed object with a type, content
+     * Encryption cipher is generated given the key
      *
-     * @param object to encrypt
-     * @param key    key to encrypt
+     * @param type    flag for the sealed object
+     * @param content to save on the sealed object
+     * @param key     key to generate cipher
      * @return SealedSendable
      */
-    public SealedSendable encrypt(MessageType type, Serializable object, Key key) {
+    public SealedSendable encrypt(MessageType type, Serializable content, Key key) {
 
         SealedSendable sealed = null;
 
         try {
 
             Cipher cipher = getCipher(key);
-            sealed = new SealedMessage(type, object, cipher);
+            sealed = new SealedMessage(type, content, cipher);
 
         } catch (IOException e) {
-            System.err.println("Failure on encapsulate object :: " + e.getMessage());
+            System.err.println("Failure on encapsulate content. " + e.getMessage());
         } catch (IllegalBlockSizeException e) {
-            System.err.println("Object is too big to encrypt :: " + e.getMessage());
+            System.err.println("Object is too big to encrypt. " + e.getMessage());
         }
 
         return sealed;
 
     }
 
-    // TODO do we really need decryption methods?
-
     /**
-     * Decrypt an sealed object and return an object
-     *
-     * @param sealed the object to decrypt
-     * @param key    the symKey to decrypt
-     * @return Object
+     * @param type    flag for the sealed object
+     * @param content to save on the sealed object
+     * @return SealedSendable
+     * @see Crypto#encrypt(MessageType, Serializable, Key)
      */
-    public Object decrypt(SealedSendable sealed, Key key) {
-        return sealed.getContent(key);
-    }
-
-    /**
-     * Decrypt an sealed object and return an object
-     * Utilizes the private key
-     *
-     * @param sealedSendable the object to decrypt
-     * @return Object
-     */
-    public Object decryptWithPrivate(SealedSendable sealedSendable) {
-        return decrypt(sealedSendable, keyPair.getPrivate());
-    }
-
-    /**
-     * Decrypt an sealed object and return an Sendable
-     * Utilizes the private key
-     *
-     * @param sealed the object to decrypt
-     * @param key    decryption key
-     * @return Sendable
-     */
-    public Sendable decryptSendable(SealedSendable sealed, Key key) {
-
-        Object object = decrypt(sealed, key);
-
-        return (Sendable) object;
-
-    }
-
-    /**
-     * Decrypt an sealed object and return an Sendable
-     * Utilizes the symmetric key
-     *
-     * @param sealed the object to decrypt
-     * @return Sendable
-     */
-    public Sendable decryptSendable(SealedSendable sealed) {
-        return decryptSendable(sealed, symKey);
+    public SealedSendable encrypt(MessageType type, Serializable content) {
+        return encrypt(type, content, symKey);
     }
 
     /**
