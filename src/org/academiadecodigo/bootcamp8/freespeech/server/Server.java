@@ -176,7 +176,6 @@ public class Server {
      */
     public void write(SealedSendable msg) {
 
-        //TODO check casts
         Sendable<HashMap<String, String>> sendable = msg.getContent(symKey);
         HashMap<String, String> content = sendable.getContent();
         String destinyString = content.get(Values.DESTINY);
