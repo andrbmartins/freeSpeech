@@ -232,12 +232,21 @@ public class ClientController implements Controller {
     void onFile(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
+        final int MAX_FILE_SIZE = 52428800; //50 MB
+
+
+        if (file == null) {
+            return;
+        }
+
+        if (file.length() > MAX_FILE_SIZE) {
+            userPrompt1(Alert.AlertType.INFORMATION, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
+            return;
+        }
 
         String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
 
-        if (file != null && destiny != null) {
-            clientService.sendUserData(file, destiny, Session.getUsername());
-        }
+        clientService.sendUserData(file, destiny, Session.getUsername());
     }
 
     public TextArea getCurrentRoom() {

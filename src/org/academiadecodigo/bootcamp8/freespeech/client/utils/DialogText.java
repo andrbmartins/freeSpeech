@@ -14,4 +14,8 @@ public class DialogText {
 
     public static final String ACCOUNT_MANAGER = "freeSpeech account manager";
 
+    public static final String FILE_TRANSFER = "freeSpeech file transfer";
+
+    public static final String FILE_TOO_BIG = "File too big. You can only send files of size up to 50MB";
+
 }
