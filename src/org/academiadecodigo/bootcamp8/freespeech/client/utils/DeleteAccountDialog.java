@@ -15,7 +15,7 @@ import javafx.util.Callback;
  * Created by
  * <Code Cadet> PedroMAlves
  */
-public class DeleteAccountDialog extends Dialog {
+public class DeleteAccountDialog extends Dialog<String> {
     private PasswordField passwordField;
 
     public DeleteAccountDialog() {

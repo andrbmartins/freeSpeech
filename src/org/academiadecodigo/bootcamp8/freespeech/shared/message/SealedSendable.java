@@ -27,6 +27,6 @@ public interface SealedSendable extends Serializable {
      * @param key the key to decrypt the content
      * @return the decrypt content with type Sendable
      */
-    Sendable getContent(Key key);
+    <T> Sendable<T> getContent(Key key);
 
 }

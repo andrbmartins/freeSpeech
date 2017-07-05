@@ -37,23 +37,20 @@ public class SealedMessage extends SealedObject implements SealedSendable {
      * @see SealedSendable#getContent(Key)
      */
     @Override
-    public Sendable getContent(Key key) {
+    public <T> Sendable<T> getContent(Key key) {
 
-        Sendable sendable = null;
+        @SuppressWarnings("unchecked")
+        Sendable<T> sendable = null;
 
         try {
-            sendable = (Sendable) getObject(key);
-        } catch (IOException e) {
-            //TODO log
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
+
+            sendable = (Sendable<T>) getObject(key);
+
+        } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | InvalidKeyException e) {
+            System.err.println("Error on get encrypted object content. " + e.getMessage());
         }
 
         return sendable;
+
     }
 }

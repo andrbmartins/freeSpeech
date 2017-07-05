@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -74,10 +76,14 @@ public class LoginController implements Controller {
         });
     }
 
-    /**
-     *
-     * @param event
-     */
+    @FXML
+    void onEnter(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            Button option = confirmPassword.isVisible() ? registerButton : loginButton;
+            option.fire();
+        }
+    }
+
     @FXML
     void onLogin(ActionEvent event) {
 
@@ -105,16 +111,16 @@ public class LoginController implements Controller {
         sendData(MessageType.LOGIN);
         Sendable<String> serverResponse = loginService.readMessage();
 
-        if (serverResponse.getContent(String.class).equals(Values.LOGIN_OK)) {
+        if (serverResponse.getContent().equals(Values.LOGIN_OK)) {
             loginService.receiveSymKey();
             Session.getInstance().setUsername(nameField.getText());
-            //TODO method to reset fields for when logout is requested
+            //TODO method to reset fields for when logout is requested ---> logout is not requested anymore
             //resetFields();
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
             return;
         }
 
-        serverMessageLabel.setText(serverResponse.getContent(String.class));
+        serverMessageLabel.setText(serverResponse.getContent());
     }
 
 
@@ -145,7 +151,7 @@ public class LoginController implements Controller {
         sendData(MessageType.REGISTER);
         Sendable<String> serverResponse = loginService.readMessage();
 
-        if (serverResponse.getContent(String.class).equals(Values.REGISTER_OK)) {
+        if (serverResponse.getContent().equals(Values.REGISTER_OK)) {
             serverMessageLabel.setText(Values.REGISTER_OK);
             return;
         }

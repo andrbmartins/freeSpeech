@@ -34,12 +34,10 @@ import java.util.regex.Pattern;
 
 public class ServerResponseHandler implements Runnable {
     private boolean run;
-    private ClientService clientService;
     private ClientController clientController;
 
-    public ServerResponseHandler(ClientService clientService, ClientController clientController) {
+    public ServerResponseHandler(ClientController clientController) {
         run = true;
-        this.clientService = clientService;
         this.clientController = clientController;
     }
 
@@ -48,7 +46,7 @@ public class ServerResponseHandler implements Runnable {
 
         while (run) {
             SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
-            Sendable message = Session.getCrypto().decryptSendable(sealedMessage, Session.getCrypto().getSymKey());
+            Sendable message = sealedMessage.getContent(Session.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
 
@@ -71,11 +69,9 @@ public class ServerResponseHandler implements Runnable {
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
-                //TODO - Empty switch case ???
                 saveRecievedFile(message);
                 break;
             case PRIVATE_TEXT:
-                //TODO - Empty switch case ???
                 printPrivateChat(message);
                 break;
             case PASS_CHANGE:
@@ -100,15 +96,14 @@ public class ServerResponseHandler implements Runnable {
         }
     }
 
-    private void saveRecievedFile(Sendable message) {
+    private void saveRecievedFile(Sendable<HashMap<String, List<Byte>>> message) {
 
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
 
-                HashMap<String, List<Byte>> map;
-                map = (HashMap<String, List<Byte>>) message.<HashMap<String, List<Byte>>>getContent(HashMap.class);
+                HashMap<String, List<Byte>> map = message.getContent();
                 List<Byte> extensionList = map.get(Values.FILE_EXTENSION);
                 String fileExtension = new String(parseListToByteArray(extensionList));
                 List<Byte> byteList = map.get(Values.MESSAGE);
@@ -147,21 +142,21 @@ public class ServerResponseHandler implements Runnable {
     private void byteListToFile(byte[] byteArray, File file) {
 
         try {
+
             FileOutputStream stream = new FileOutputStream(file);
             stream.write(byteArray);
             stream.flush();
             stream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void printPrivateChat(Sendable message) {
+    private void printPrivateChat(Sendable<HashMap<String,String>> message) {
 
-        HashMap<String,String> map = (HashMap<String,String>)message.<HashMap<String,String>>getContent(HashMap.class);
+        HashMap<String,String> map = message.getContent();
 
         String tabId = map.get(Values.TAB_ID);
         String destinyString = map.get(Values.DESTINY);
@@ -193,10 +188,9 @@ public class ServerResponseHandler implements Runnable {
     private void printToRoom(Sendable message) {
 
         String roomText = clientController.getCurrentRoom().getText();
-        String messageText = (String) message.getContent(String.class);
+        String messageText = (String) message.getContent();
 
         messageText = wipeWhiteSpaces(messageText);
-        //clientController.getCurrentRoom().appendText((roomText.isEmpty() ? "" : "\n") + messageText);
 
         ((TextArea)(clientController.getSelectedTab().getContent())).appendText((((TextArea)(clientController.getSelectedTab().getContent())).getText().isEmpty() ? "" : "\n") + messageText);
     }
@@ -215,7 +209,7 @@ public class ServerResponseHandler implements Runnable {
         //A single character, punctuation or symbol
 
         //TODO allow specials char
-        String regex = "(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}çÇ]*)([\\w\\p{P}\\p{S}çÇ])";
+        String regex = "(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}\\p{L}]*)([\\w\\p{P}\\p{S}\\p{L}])";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
@@ -229,15 +223,15 @@ public class ServerResponseHandler implements Runnable {
     }
 
 
-    private void notifyUser(Sendable msg) {
-        String info = (String) msg.getContent(String.class);
+    private void notifyUser(Sendable<String> msg) {
+        String info = msg.getContent();
 
         clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
 
     }
 
-    private void accDeleteNotify(Sendable message) {
-        String info = (String) message.getContent(String.class);
+    private void accDeleteNotify(Sendable<String> message) {
+        String info = message.getContent();
         if (info.equals(Values.ACC_DELETED)) {
             run = false;
             clientController.userPromptQuit(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);

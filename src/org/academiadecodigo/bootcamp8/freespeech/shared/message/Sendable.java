@@ -15,10 +15,8 @@ public interface Sendable<T> extends Serializable {
      * <p>
      * Get the content of a Sendable
      *
-     * @param type type of the content
-     * @param <T>  genetic type (cast to the pretend type
      * @return the content with type T
      */
-    <T> T getContent(Class<T> type);
+    T getContent();
 
 }

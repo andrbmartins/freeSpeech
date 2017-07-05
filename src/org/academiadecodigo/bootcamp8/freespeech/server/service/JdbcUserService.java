@@ -48,7 +48,7 @@ public class JdbcUserService implements UserService {
         try {
             user = connectionManager.findUser(username);
         } catch (SQLException e) {
-            Logger.getInstance().eventlogger(TypeEvent.DATABASE, "Unable to get user - " + e.getMessage());
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
         }
 
         return user;

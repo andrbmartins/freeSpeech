@@ -3,6 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,7 +16,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -35,6 +35,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Developed @ <Academia de Código_>
@@ -47,7 +48,6 @@ import java.util.List;
 public class ClientController implements Controller {
 
     //TODO messages sent in lobby show in private but not lobby
-
 
     @FXML
     private GridPane userButtons;
@@ -64,15 +64,19 @@ public class ClientController implements Controller {
     @FXML
     private TextArea inputTextArea;
     @FXML
-    private ListView onlineUsersList;
+    private ListView<String> onlineUsersList;
     @FXML
     private GridPane bioArea;
     @FXML
     private TextField nameBio;
     @FXML
     private TextField emailBio;
-
-    @FXML Button addToChatButton;
+    @FXML
+    private TextField searchBar;
+    @FXML
+    private Button clearSearchBar;
+    @FXML
+    private Button addToChatButton;
     @FXML
     private TextField dateBirthBio;
     @FXML
@@ -83,6 +87,8 @@ public class ClientController implements Controller {
     private Button updateProfile;
     @FXML
     private Button removeAccount;
+
+    private ListView<String> originalOnlineUsersList;
 
     private Stage stage;
     private ClientService clientService;
@@ -97,6 +103,7 @@ public class ClientController implements Controller {
         usersPerTab = new HashMap<>();
         position = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
+        originalOnlineUsersList = new ListView<>();
     }
 
     @Override
@@ -111,7 +118,7 @@ public class ClientController implements Controller {
 
         setDraggableTopBar();
         focusUserInput();
-        new Thread(new ServerResponseHandler(clientService, this)).start();
+        new Thread(new ServerResponseHandler(this)).start();
     }
 
     public Tab getSelectedTab() {
@@ -150,8 +157,8 @@ public class ClientController implements Controller {
     @FXML
     void onActionPrivateChat(ActionEvent event) {
 
-        String name = onlineUsersList.getSelectionModel().getSelectedItem().toString();
-        String clientName = Session.getInstance().getUsername();
+        String name = onlineUsersList.getSelectionModel().getSelectedItem();
+        String clientName = Session.getUsername();
 
         if (!clientName.equals(name)) {
             createNewTab(name);
@@ -165,7 +172,7 @@ public class ClientController implements Controller {
     @FXML
     void onAddToChatAction(ActionEvent event) {
 
-        String name = onlineUsersList.getSelectionModel().getSelectedItem().toString();
+        String name = onlineUsersList.getSelectionModel().getSelectedItem();
 
         String tabId = tabPane.getSelectionModel().getSelectedItem().getId();
         Set<String> userSet = usersPerTab.get(tabId);
@@ -187,7 +194,9 @@ public class ClientController implements Controller {
             System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
             clientService.sendUserText(inputTextArea);
         } else {
-            // TODO empty else
+            String tabID = getSelectedTab().getId();
+            System.out.println("PRIVATE");
+            clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
         }
     }
 
@@ -224,10 +233,10 @@ public class ClientController implements Controller {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
 
-        String destiny = onlineUsersList.getSelectionModel().getSelectedItem().toString();
+        String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
 
         if (file != null && destiny != null) {
-            clientService.sendUserData(file, destiny, Session.getInstance().getUsername());
+            clientService.sendUserData(file, destiny, Session.getUsername());
         }
     }
 
@@ -248,13 +257,14 @@ public class ClientController implements Controller {
         this.stage.setMaxHeight(screen.getHeight());
     }
 
-    public void processUsersList(Sendable message) {
+    public void processUsersList(Sendable<List<String>> message) {
 
         Platform.runLater(new Runnable() {
             public void run() {
-                List<String> list = (LinkedList<String>) message.getContent(List.class);
+                List<String> list = message.getContent();
                 ObservableList<String> observableList = FXCollections.observableList(list);
                 onlineUsersList.setItems(observableList);
+                originalOnlineUsersList.setItems(observableList);
             }
         });
     }
@@ -356,7 +366,7 @@ public class ClientController implements Controller {
     }
 
 
-    public void showOwnBio(Sendable ownBio) {
+    public void showOwnBio(Sendable<List<String>> ownBio) {
 
         bioArea.setVisible(true);
         userButtons.setVisible(true);
@@ -365,12 +375,13 @@ public class ClientController implements Controller {
         userBio.setEditable(true);
         dateBirthBio.setEditable(true);
 
-        List<String> list = (LinkedList<String>) ownBio.getContent(List.class);
+        List<String> list = ownBio.getContent();
+        // TODO resolve unchecked casts
 
         setBioInfo(list);
     }
 
-    public void showUserBio(Sendable message) {
+    public void showUserBio(Sendable<List<String>> message) {
 
         bioArea.setVisible(true);
         userButtons.setVisible(false);
@@ -379,8 +390,7 @@ public class ClientController implements Controller {
         userBio.setEditable(false);
         dateBirthBio.setEditable(false);
 
-        List<String> list = (LinkedList<String>) message.getContent(List.class);
-
+        List<String> list = message.getContent();
 
         setBioInfo(list);
     }
@@ -395,7 +405,7 @@ public class ClientController implements Controller {
 
     @FXML
     void onReport(ActionEvent event) {
-        String userToReport = onlineUsersList.getSelectionModel().getSelectedItem().toString();
+        String userToReport = onlineUsersList.getSelectionModel().getSelectedItem();
         clientService.sendReport(userToReport);
     }
 
@@ -430,7 +440,7 @@ public class ClientController implements Controller {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date date = new Date();
 
-        String id = Session.getInstance().getUsername() +
+        String id = Session.getUsername() +
                 "_" + user + dateFormat.format(date);
 
         Tab tab = new Tab("label " + id);
@@ -448,7 +458,7 @@ public class ClientController implements Controller {
         //creating the data to update usersPerTab
         HashSet<String> set = new HashSet<>();
         set.add(user);
-        set.add(Session.getInstance().getUsername());
+        set.add(Session.getUsername());
         usersPerTab.put(id, set);
 
         tabPane.getTabs().add(tab);
@@ -481,6 +491,7 @@ public class ClientController implements Controller {
         Platform.runLater(runnable);
 
         while (!tabPane.getTabs().contains(tab)) {
+            // TODO resolve empty while
         }
 
     }
@@ -498,15 +509,31 @@ public class ClientController implements Controller {
     public File filePopUPWindow() {
 
         FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showSaveDialog(stage);
 
-        return file;
+        return fileChooser.showSaveDialog(stage);
 
     }
 
 
     @FXML
     void search(KeyEvent event) {
+
+        FilteredList<String> list = originalOnlineUsersList.getItems().filtered(new Predicate<String>() {
+            @Override
+            public boolean test(String o) {
+                return o.contains(searchBar.getText());
+            }
+        });
+
+        onlineUsersList.setItems(list);
+
+    }
+
+    @FXML
+    void clearSearchBar(ActionEvent event) {
+
+        searchBar.clear();
+        onlineUsersList.setItems(originalOnlineUsersList.getItems());
 
     }
 

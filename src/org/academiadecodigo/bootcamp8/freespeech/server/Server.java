@@ -9,6 +9,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import java.io.IOException;
@@ -136,17 +137,18 @@ public class Server {
     }
 
     /**
-     * Sends updated list of users online to every user online
+     * Checks if the user trying to login is already logged
+     * @param username of the user currently trying to login
+     * @return true if the user with this username is already logged. false if he is not logged
      */
-    private void updateList() {
+    public boolean userLogged(String username) {
+        for (ClientHandler c: loggedUsers) {
+            if (c.getClientName().equals(username)) {
+                return true;
+            }
 
-        Message<List> message = new Message<>(getUsersOnlineList());
-
-        for (ClientHandler c : loggedUsers) {
-            System.out.println(c.getClientName());
-            c.sendUsersList(message);
         }
-
+        return false;
     }
 
     /**
@@ -173,8 +175,8 @@ public class Server {
     public void write(SealedSendable msg) {
 
         //TODO check casts
-        HashMap<String, String> content;
-        content = (HashMap<String, String>) msg.getContent(symKey).getContent(HashMap.class);
+        Sendable<HashMap<String, String>> sendable = msg.getContent(symKey);
+        HashMap<String, String> content = sendable.getContent();
         String destinyString = content.get(Values.DESTINY);
         Set<String> destinySet = Parser.stringToSet(destinyString);
 
@@ -189,6 +191,20 @@ public class Server {
                 System.out.println("user " + c.getClientName() + " WILL recieve a message");
                 c.write(msg);
             }
+        }
+
+    }
+
+    /**
+     * Sends updated list of users online to every user online
+     */
+    private void updateList() {
+
+        Message<List> message = new Message<>(getUsersOnlineList());
+
+        for (ClientHandler c : loggedUsers) {
+            System.out.println(c.getClientName());
+            c.sendUsersList(message);
         }
 
     }
@@ -250,8 +266,8 @@ public class Server {
 
     public void sendFile(SealedSendable msg) {
 
-        HashMap<String, List<Byte>> content;
-        content = (HashMap<String, List<Byte>>) msg.getContent(symKey).getContent(HashMap.class);
+        Sendable<HashMap<String, List<Byte>>> sendable = msg.getContent(symKey);
+        HashMap<String, List<Byte>> content = sendable.getContent();
         String destiny = new String(Parser.byteListToArray(content.get(Values.DESTINY)));
 
         for (ClientHandler c : loggedUsers) {
@@ -263,5 +279,6 @@ public class Server {
         }
 
     }
+
 
 }

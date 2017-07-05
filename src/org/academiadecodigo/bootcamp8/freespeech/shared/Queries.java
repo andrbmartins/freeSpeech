@@ -5,6 +5,7 @@ package org.academiadecodigo.bootcamp8.freespeech.shared;
  */
 public class Queries {
 
+    //TODO remove non-used Query Strings
     public static final String AUTHENTICATE_USER = "SELECT * FROM user WHERE user_name = ? AND user_password= ?";
     public static final String SELECT_USER = "SELECT * FROM user WHERE user_name=?";
     public static final String DELETE_USER = "DELETE FROM user USING user WHERE user.user_name =?";

@@ -27,6 +27,7 @@ public class Values {
 
     public static final String LOGIN_OK = "Successfully logged in!";
     public static final String LOGIN_FAIL = "Unable to login.";
+    public static final String ALREADY_LOGGED = "This user is already logged elsewhere";
     public static final String REGISTER_OK = "Successfully registered.";
     public static final String REGISTER_FAIL = "Username unavailable";
     public static final String UNMATCHED_PASSWORD = "Passwords don't match.";

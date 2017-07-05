@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.JdbcUserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import java.io.IOException;
 
@@ -29,7 +30,6 @@ public class ServerStart {
         }
 
         try {
-
             server.init();
             server.start();
 
