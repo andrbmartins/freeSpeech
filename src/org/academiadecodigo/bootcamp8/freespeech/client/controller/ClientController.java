@@ -121,7 +121,7 @@ public class ClientController implements Controller {
         new Thread(new ServerResponseHandler(this)).start();
     }
 
-    public Tab getSelectedTab() {
+    private Tab getSelectedTab() {
         return tabPane.getSelectionModel().getSelectedItem();
     }
 
@@ -190,6 +190,11 @@ public class ClientController implements Controller {
 
         System.out.println("parent: " + getSelectedTab());
         System.out.println("parent ID: " + getSelectedTab().getText());
+        sendPrivateMessage();
+    }
+
+    private void sendPrivateMessage() {
+
         if (getSelectedTab().getText().equals("Lobby")) {
             System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
             clientService.sendUserText(inputTextArea);
@@ -198,6 +203,7 @@ public class ClientController implements Controller {
             System.out.println("PRIVATE");
             clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
         }
+
     }
 
     //TODO
@@ -213,15 +219,7 @@ public class ClientController implements Controller {
             System.out.println("parent: " + getSelectedTab());
             System.out.println("parent ID: " + getSelectedTab().getText());
 
-            if (getSelectedTab().getText().equals("Lobby")) {
-                System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
-                clientService.sendUserText(inputTextArea);
-
-            } else {
-                String tabID = getSelectedTab().getId();
-                System.out.println("PRIVATE");
-                clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
-            }
+            sendPrivateMessage();
 
             //clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
@@ -232,12 +230,21 @@ public class ClientController implements Controller {
     void onFile(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
+        final int MAX_FILE_SIZE = 52428800; //50 MB
+
+
+        if (file == null) {
+            return;
+        }
+
+        if (file.length() > MAX_FILE_SIZE) {
+            userPrompt1(Alert.AlertType.INFORMATION, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
+            return;
+        }
 
         String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
 
-        if (file != null && destiny != null) {
-            clientService.sendUserData(file, destiny, Session.getUsername());
-        }
+        clientService.sendUserData(file, destiny, Session.getUsername());
     }
 
     public TextArea getCurrentRoom() {
@@ -280,14 +287,6 @@ public class ClientController implements Controller {
         }
 
         clientService.sendBioRequest(MessageType.BIO, (String) user);
-    }
-
-    private void confirmDelete() {
-        DeleteAccountDialog delete = new DeleteAccountDialog();
-        Optional<String> password = delete.showAndWait();
-        if (password.isPresent()) {
-            clientService.deleteAccount(password.get());
-        }
     }
 
     @FXML

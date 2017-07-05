@@ -114,9 +114,13 @@ public class ServerResponseHandler implements Runnable {
                 //fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("extension",fileExtension));
                 fileChooser.setInitialFileName("untitled." + fileExtension);
                 File file = fileChooser.showSaveDialog(new Stage());
-
+                if (file == null) {
+                    return;
+                }
 
                 try {
+
+
                     file.createNewFile();
                     byteListToFile(parseListToByteArray(byteList), file);
                 } catch (IOException e) {
@@ -133,7 +137,7 @@ public class ServerResponseHandler implements Runnable {
     private byte[] parseListToByteArray(List<Byte> byteList) {
         byte[] bytes = new byte[byteList.size()];
 
-        for(int i = 0; i < bytes.length; i++){
+        for (int i = 0; i < bytes.length; i++) {
             bytes[i] = byteList.get(i);
         }
 
@@ -155,9 +159,9 @@ public class ServerResponseHandler implements Runnable {
 
     }
 
-    private void printPrivateChat(Sendable<HashMap<String,String>> message) {
+    private void printPrivateChat(Sendable<HashMap<String, String>> message) {
 
-        HashMap<String,String> map = message.getContent();
+        HashMap<String, String> map = message.getContent();
 
         String tabId = map.get(Values.TAB_ID);
         String destinyString = map.get(Values.DESTINY);
@@ -165,21 +169,21 @@ public class ServerResponseHandler implements Runnable {
         TextArea textArea;
         Set<String> destinySet = parseStringToSet(destinyString);
 
-        if((textArea = clientController.getDestinyRoom(tabId)) != null){
-            clientController.updateUsersSet(tabId,destinySet);
+        if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
+            clientController.updateUsersSet(tabId, destinySet);
 
-        }else{
-            clientController.createReceivedTab(destinySet,tabId);
+        } else {
+            clientController.createReceivedTab(destinySet, tabId);
             textArea = clientController.getDestinyRoom(tabId);
         }
-            textArea.appendText((textArea.getText().isEmpty() ? "" :"\n") + text);
+        textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
     }
 
     private Set<String> parseStringToSet(String destinyString) {
 
         HashSet<String> set = new HashSet<>();
 
-        for(String s : destinyString.split(Values.SEPARATOR_CHARACTER)){
+        for (String s : destinyString.split(Values.SEPARATOR_CHARACTER)) {
             set.add(s);
         }
 
