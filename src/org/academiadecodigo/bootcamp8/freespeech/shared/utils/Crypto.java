@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedMessage;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+
 import javax.crypto.*;
 import java.io.IOException;
 import java.io.Serializable;
@@ -166,11 +167,7 @@ public class Crypto {
     }
 
     public void setForeignKey(Key foreignKey) {
-
-        if (this.foreignKey == null) {
-            this.foreignKey = foreignKey;
-        }
-
+        this.foreignKey = foreignKey;
     }
 
     public Key getSymKey() {
