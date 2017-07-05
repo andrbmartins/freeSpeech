@@ -187,12 +187,12 @@ public class ServerResponseHandler implements Runnable {
 
     private void printToRoom(Sendable message) {
 
-        String roomText = clientController.getCurrentRoom().getText();
         String messageText = (String) message.getContent();
-
         messageText = wipeWhiteSpaces(messageText);
+        TextArea textArea = clientController.getDestinyRoom("Lobby");
+        Boolean isEmpty = textArea.getText().isEmpty();
 
-        ((TextArea)(clientController.getSelectedTab().getContent())).appendText((((TextArea)(clientController.getSelectedTab().getContent())).getText().isEmpty() ? "" : "\n") + messageText);
+        textArea.appendText((isEmpty ? "" : "\n") + messageText);
     }
 
     /**
