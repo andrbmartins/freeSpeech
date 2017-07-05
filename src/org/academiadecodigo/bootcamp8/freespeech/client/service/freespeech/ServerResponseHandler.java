@@ -48,7 +48,7 @@ public class ServerResponseHandler implements Runnable {
 
         while (run) {
             SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
-            Sendable message = Session.getCrypto().decryptSendable(sealedMessage, Session.getCrypto().getSymKey());
+            Sendable message = sealedMessage.getContent(Session.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
 
