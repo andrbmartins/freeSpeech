@@ -27,6 +27,7 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final Server server;
     private final UserService userService;
+    private boolean run;
     private Crypto crypto;
     private String clientName;
     private ObjectOutputStream objectOutputStream;
@@ -38,6 +39,7 @@ public class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
         this.server = server;
         this.userService = userService;
+        run = true;
     }
 
     @Override
@@ -171,10 +173,14 @@ public class ClientHandler implements Runnable {
 
         SealedSendable msg;
 
-        while ((msg = Stream.readSendable(objectInputStream)) != null) {
-
+        while (run) {
+            if ((msg = Stream.readSendable(objectInputStream)) == null) {
+                run = false;
+                continue;
+            }
             handleMessage(msg);
         }
+
 
         server.removeUser(this);
         Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_DISCONNECTED + clientName);
@@ -210,6 +216,7 @@ public class ClientHandler implements Runnable {
                 changePass(msg, type);
                 break;
             case EXIT:
+                run = false;
                 Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
                 server.removeUser(this);
                 write(msg);
@@ -217,6 +224,7 @@ public class ClientHandler implements Runnable {
                 break;
             case DELETE_ACCOUNT:
                 if (deleteAccount(msg, type)) {
+                    run = false;
                     server.removeUser(this);
                     Stream.close(clientSocket);
                 }
