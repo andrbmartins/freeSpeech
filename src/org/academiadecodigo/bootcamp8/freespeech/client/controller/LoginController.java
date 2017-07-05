@@ -1,10 +1,11 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.controller;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -19,7 +20,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.net.URL;
-import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -33,58 +33,30 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Controller {
 
-    @FXML
-    private TextField nameField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private PasswordField confirmPassword;
-    @FXML
-    private Button loginButton;
-    @FXML
-    private Label serverMessageLabel;
-    @FXML
-    private Button registerButton;
-    @FXML
-    private Button exitButton;
-    private Stage stage;
-    private LoginService clientService;
+    @FXML private TextField nameField;
+    @FXML private PasswordField passwordField;
+    @FXML private PasswordField confirmPassword;
+    @FXML private Label serverMessageLabel;
+    @FXML private GridPane loginPane;
+    @FXML private Button loginButton;
+    @FXML private Button registerButton;
 
-    @FXML
-    private GridPane loginPane;
+    private Stage stage;
+    private LoginService loginService;
     private double[] position;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         position = new double[2];
-        clientService = RegistryService.getInstance().get(LoginService.class);
-
-        loginButton.setDisable(true);
-        registerButton.setDisable(true);
-        serverMessageLabel.setText("Please wait for connection");
-
-        //TODO view for connection + controller
-        Platform.runLater( new Runnable() {
-            @Override
-            public void run() {
-                clientService.makeConnection(Values.HOST, Values.SERVER_PORT);
-                loginButton.setDisable(false);
-                registerButton.setDisable(false);
-                serverMessageLabel.setText("Connection established");
-
-            }
-        });
-        connectionEstablished();
-
+        loginService = RegistryService.getInstance().get(LoginService.class);
         setDraggable();
-
-
     }
 
-    private void connectionEstablished() {
-        //TODO go from connecting screen to login
-    }
 
+    /**
+     * Adds mouse event listeners to allow for stage to be dragged.
+     */
     private void setDraggable() {
 
         loginPane.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -105,94 +77,128 @@ public class LoginController implements Controller {
     }
 
     @FXML
-    void freeSpeechSelected(ActionEvent event) {
-        //TODO remove
+    void onEnter(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            Button option = confirmPassword.isVisible() ? registerButton : loginButton;
+            option.fire();
+        }
+    }
+
+    @FXML
+    void onLogin(ActionEvent event) {
+
+        final int MAX_NAME_CHARACTERS = 15;
+
+        if (confirmPassword.isVisible()) {
+            passwordConfirmation(false);
+            passwordField.setText("");
+            loginButton.setId("loginButton");
+            registerButton.setId("registerButton");
+            serverMessageLabel.setText("");
+            return;
+        }
+
+        if (emptyFields(false)) {
+            serverMessageLabel.setText(Values.INVALID_INPUT);
+            return;
+        }
+
+        if (nameField.getText().length() > MAX_NAME_CHARACTERS) {
+            serverMessageLabel.setText(Values.NAME_TOO_LONG);
+            return;
+        }
+
+        sendData(MessageType.LOGIN);
+        Sendable<String> serverResponse = loginService.readMessage();
+
+        if (serverResponse.getContent().equals(Values.LOGIN_OK)) {
+            loginService.receiveSymKey();
+            Session.getInstance().setUsername(nameField.getText());
+            //TODO method to reset fields for when logout is requested ---> logout is not requested anymore
+            //resetFields();
+            Navigation.getInstance().loadScreen(Values.USER_SCENE);
+            return;
+        }
+
+        serverMessageLabel.setText(serverResponse.getContent());
+    }
+
+
+    @FXML
+    void onRegister(ActionEvent event) {
+
+
+        if (!confirmPassword.isVisible()) {
+            passwordConfirmation(true);
+            passwordField.setText("");
+            confirmPassword.setText("");
+            loginButton.setId("backButton");
+            registerButton.setId("confirmButton");
+            serverMessageLabel.setText("");
+            return;
+        }
+
+        if (emptyFields(true)) {
+            serverMessageLabel.setText(Values.INVALID_INPUT);
+            return;
+        }
+
+        if (!passwordField.getText().equals(confirmPassword.getText())) {
+            serverMessageLabel.setText(Values.UNMATCHED_PASSWORD);
+            return;
+        }
+
+        sendData(MessageType.REGISTER);
+        Sendable<String> serverResponse = loginService.readMessage();
+
+        if (serverResponse.getContent().equals(Values.REGISTER_OK)) {
+            serverMessageLabel.setText(Values.REGISTER_OK);
+            return;
+        }
+        serverMessageLabel.setText(Values.REGISTER_FAIL);
+    }
+
+    @FXML
+    void onClose(ActionEvent event) {
+        loginService.exit();
+        Session.close();
+        Navigation.getInstance().close();
+    }
+
+    private void sendData(MessageType messageType) {
+
+        Map<String, String> messageContent = new HashMap<>();
+        messageContent.put(Values.NAME_KEY, nameField.getText());
+        messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passwordField.getText()));
+
+        loginService.sendMessage(messageType, messageContent);
+    }
+
+    private boolean emptyFields(boolean register) {
+
+        boolean empty = nameField.getText().isEmpty() || passwordField.getText().isEmpty();
+
+        if (register) {
+            empty = empty || confirmPassword.getText().isEmpty();
+        }
+
+        return empty;
+    }
+
+    private void passwordConfirmation(boolean show) {
+
+        confirmPassword.setVisible(show);
     }
 
     @Override
     public void setStage(Stage stage) {
 
         this.stage = stage;
-        this.stage.setMaxWidth(Values.LOGIN_WIDTH);
+
+        this.stage.setMinHeight(Values.LOGIN_HEIGHT);
         this.stage.setMaxHeight(Values.LOGIN_HEIGHT);
+
+        this.stage.setMinWidth(Values.LOGIN_WIDTH);
+        this.stage.setMaxWidth(Values.LOGIN_WIDTH);
     }
-
-    @FXML
-    void onLogin(ActionEvent event) {
-
-        if (fieldsAreEmpty()) {
-            serverMessageLabel.setText(Values.INVALID_INPUT);
-            return;
-        }
-
-        sendMsg(MessageType.LOGIN);
-
-        SealedSendable serverRsp = Stream.readSendable(Session.getInput());
-        Sendable<String> serverMsg = (Sendable<String>) Session.getCrypto().decryptWithPrivate(serverRsp);
-
-        if (serverMsg.getContent(String.class).equals(Values.LOGIN_OK)) {
-            receiveSymKey();
-            Session.getInstance().setUsername(nameField.getText());
-            Navigation.getInstance().loadScreen(Values.USER_SCENE);
-            return;
-
-        }
-
-        serverMessageLabel.setText(serverMsg.getContent(String.class));
-    }
-
-    private void receiveSymKey() {
-        SealedSendable s = Stream.readSendable(Session.getInput());
-        Sendable<Key> key = (Sendable<Key>) Session.getCrypto().decryptWithPrivate(s);
-        Session.getCrypto().setSymKey(key.<Key>getContent(Key.class));
-    }
-
-
-    @FXML
-    void onRegister(ActionEvent event) {
-// TODO check double password
-        if (fieldsAreEmpty()) {
-            serverMessageLabel.setText(Values.INVALID_INPUT);
-            return;
-        }
-        if (!passwordField.getText().equals(confirmPassword.getText())) {
-            serverMessageLabel.setText(Values.UNMATCHED_PASSWORD);
-        }
-        sendMsg(MessageType.REGISTER);
-
-        SealedSendable s = Stream.readSendable(Session.getInput());
-        Sendable<String> s1 = (Sendable<String>) Session.getCrypto().decryptWithPrivate(s);
-
-        if (s1.getContent(String.class).equals(Values.REGISTER_OK)) {
-            serverMessageLabel.setText(Values.REGISTER_OK);
-        } else {
-            serverMessageLabel.setText(Values.REGISTER_FAIL);
-        }
-
-    }
-
-    private void sendMsg(MessageType messageType) {
-        Map<String, String> messageContent = new HashMap<>();
-
-        messageContent.put(Values.NAME_KEY, nameField.getText());
-        messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passwordField.getText()));
-
-        Message<Map> message = new Message<>(messageContent);
-
-        SealedSendable sealed = Session.getCrypto().encrypt(messageType, message,
-                Session.getCrypto().getForeignKey());
-
-        Stream.write(Session.getOutput(), sealed);
-    }
-
-    @FXML
-    void onExitButton(ActionEvent event) {
-        Session.close();
-        Navigation.getInstance().close();
-    }
-
-    private boolean fieldsAreEmpty() {
-        return nameField.getText().isEmpty() || passwordField.getText().isEmpty() || confirmPassword.getText().isEmpty();
-    }
-
 }

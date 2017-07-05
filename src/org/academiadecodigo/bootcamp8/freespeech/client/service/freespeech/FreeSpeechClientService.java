@@ -1,22 +1,28 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> Filipe Santos Sá
+ * <Code Cadet> PedroMAlves
  */
 
-//TODO documentation
+//TODO documentation - file manager singleton?
 
 public class FreeSpeechClientService implements ClientService {
 
@@ -26,7 +32,8 @@ public class FreeSpeechClientService implements ClientService {
         if (textArea.getText().isEmpty()) {
             return;
         }
-        String text = Session.getInstance().getUsername() + ": " + textArea.getText();
+
+        String text = Session.getUsername() + ": " + textArea.getText();
 
         Message<String> message = new Message<>(text);
         writeObject(MessageType.TEXT, message);
@@ -34,20 +41,129 @@ public class FreeSpeechClientService implements ClientService {
         textArea.clear();
     }
 
+    // Sends a request bio to server
     @Override
-    public void sendListRequest() {
-        Message<Object> message = new Message<>("");
-        writeObject(MessageType.REQUEST_USERS_ONLINE, message);
+    public void sendPrivateText(TextArea textArea, String tabId, Set<String> destinySet) {
+
+        if (textArea.getText().isEmpty()) {
+            return;
+        }
+
+        String text = Session.getUsername() + ": " + textArea.getText();
+
+        HashMap<String,String> map = new HashMap<>();
+        map.put(Values.TAB_ID, tabId);
+        map.put(Values.DESTINY,parseSetToString(destinySet));
+        map.put(Values.MESSAGE,text);
+
+        System.out.println(map.toString());
+
+        Message<HashMap<String,String>> message = new Message<>(map);
+        writeObject(MessageType.PRIVATE_TEXT, message);
+
+        textArea.clear();
+    }
+
+    private String parseSetToString(Set<String> destinySet) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String s : destinySet){
+            stringBuilder.append(s);
+            stringBuilder.append(Values.SEPARATOR_CHARACTER);
+        }
+
+        return stringBuilder.toString();
     }
 
     @Override
-    public void sendUserData(File file) {
+    public void sendBioRequest(MessageType type, String username) {
+        Message<String> message = new Message<>(username);
+        writeObject(type, message);
+
+    }
+
+    @Override
+    public void updateBio(List<String> updatedBio) {
+        Message<List> message = new Message<>(updatedBio);
+        writeObject(MessageType.BIO_UPDATE, message);
+
+    }
+
+    @Override
+    public void sendUserData(File file, String destiny, String origin) {
+
+        final int MAX_FILE_SIZE = 52428800; //50 MB
+
+        if (file.length() > MAX_FILE_SIZE) {
+            //TODO popup for user
+            System.out.println("file too big");
+            return;
+        }
+
+        String fileExtension = file.getName();
+        fileExtension = fileExtension.substring(fileExtension.lastIndexOf(".") + 1);
+
+        System.out.println("file extension: " + fileExtension);
 
         byte[] buffer = fileToByteArray(file);
         List<Byte> byteList = byteArrayToList(buffer);
+        HashMap<String, List<Byte>> map = new HashMap<>();
 
-        Message<List> message = new Message<>(byteList);
-        writeObject(MessageType.DATA, message);
+        List<Byte> destinyList = parseByteArrayToList(destiny.getBytes());
+        List<Byte> originList = parseByteArrayToList(origin.getBytes());
+        List<Byte> extensionList = parseByteArrayToList(fileExtension.getBytes());
+
+        map.put(Values.DESTINY, destinyList);
+        map.put(Values.ORIGIN, originList);
+        map.put(Values.FILE_EXTENSION, extensionList);
+        map.put(Values.MESSAGE, byteList);
+
+        Message<HashMap<String, List<Byte>>> message = new Message<>(map);
+        writeObject(MessageType.PRIVATE_DATA, message);
+    }
+
+    private List<Byte> parseByteArrayToList(byte[] bytes) {
+
+        ArrayList<Byte> byteList = new ArrayList<>();
+
+        for (Byte b : bytes){
+            byteList.add(b);
+        }
+
+        return byteList;
+    }
+
+    @Override
+    public void sendExit() {
+        Message<String> message = new Message<>(" ");
+        writeObject(MessageType.EXIT, message);
+    }
+
+
+    public void deleteAccount (String password) {
+
+        Message<String> message = new Message<>(HashService.getHash(password));
+        writeObject(MessageType.DELETE_ACCOUNT, message);
+    }
+
+    @Override
+    public void sendReport(String userToReport) {
+        Message<String> message = new Message<>(userToReport);
+        writeObject(MessageType.REPORT, message);
+    }
+
+    @Override
+    public void changePassword(String[] passSet) {
+        Map<String, String> messageContent = new HashMap<>();
+
+        messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passSet[0]));
+        messageContent.put(Values.NEW_PASSWORD, HashService.getHash(passSet[1]));
+
+        Message<Map> message = new Message<>(messageContent);
+
+        writeObject(MessageType.PASS_CHANGE, message);
+
     }
 
 
@@ -77,15 +193,20 @@ public class FreeSpeechClientService implements ClientService {
     private byte[] fileToByteArray(File file) {
 
         byte[] buffer = null;
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            buffer = new byte[(int) file.length()];
+        FileInputStream fileInputStream = null;
 
+        try {
+
+            fileInputStream = new FileInputStream(file);
+            buffer = new byte[(int) file.length()];
             fileInputStream.read(buffer);
-            fileInputStream.close();
+
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Stream.close(fileInputStream);
         }
+
         return buffer;
     }
 
@@ -93,7 +214,7 @@ public class FreeSpeechClientService implements ClientService {
 
     private void writeObject(MessageType type, Sendable message) {
 
-        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message, Session.getCrypto().getSymKey());
+        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message);
         Stream.write(Session.getOutput(), sealedMessage);
     }
 
@@ -101,4 +222,5 @@ public class FreeSpeechClientService implements ClientService {
     public String getName() {
         return ClientService.class.getSimpleName();
     }
+
 }

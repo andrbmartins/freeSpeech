@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="parentGrid" prefHeight="517.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.server.serverapp.controller.AdminController">
+<GridPane fx:id="parentGrid" prefHeight="517.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.bootcamp8.freespeech.serverapp.controller.AdminController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -35,13 +35,14 @@
                   <SplitMenuButton layoutX="497.0" layoutY="8.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Default Query">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#getServerInfo" text="Server Log" />
+                        <MenuItem mnemonicParsing="false" onAction="#getDataBaseLog" text="Database Log" />
                       <MenuItem mnemonicParsing="false" onAction="#getUserConnection" text="User Connection " />
                         <MenuItem mnemonicParsing="false" onAction="#registeredUsers" text="Registered Users" />
                     </items>
                   </SplitMenuButton>
                   <TextArea fx:id="display" editable="false" focusTraversable="false" layoutX="12.0" layoutY="67.0" prefHeight="366.0" prefWidth="616.0" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="67.0" />
-                  <Button fx:id="deleteLog" layoutX="304.0" layoutY="442.0" mnemonicParsing="false" onAction="#clearTable" text="Delete Server Log" />
-                  <Button layoutX="438.0" layoutY="442.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+                  <Button fx:id="deleteLog" layoutX="297.0" layoutY="442.0" mnemonicParsing="false" onAction="#clearTable" text="Delete Server Log" />
+                  <Button layoutX="437.0" layoutY="442.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
                   <MenuButton layoutX="509.0" layoutY="442.0" mnemonicParsing="false" text="Save">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#save" text="Save" />

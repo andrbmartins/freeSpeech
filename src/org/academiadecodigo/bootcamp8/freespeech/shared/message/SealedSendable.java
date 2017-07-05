@@ -1,10 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.message;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Developed @ <Academia de Código_>
@@ -30,6 +27,6 @@ public interface SealedSendable extends Serializable {
      * @param key the key to decrypt the content
      * @return the decrypt content with type Sendable
      */
-    Sendable getContent(Key key);
+    <T> Sendable<T> getContent(Key key);
 
 }

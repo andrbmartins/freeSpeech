@@ -2,13 +2,13 @@ package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.Service;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
-import javax.crypto.SealedObject;
 import java.io.*;
+import java.util.List;
 import java.net.Socket;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Developed @ <Academia de Código_>
@@ -25,7 +25,19 @@ public interface ClientService extends Service {
      */
     void sendUserText(TextArea textField);
 
-    void sendUserData(File file);
+    void sendPrivateText(TextArea textArea, String tabID, Set<String> destinySet);
 
-    void sendListRequest();
+    void sendUserData(File file, String destiny, String origin);
+
+    void sendBioRequest(MessageType type, String username);
+
+    void changePassword(String[] passSet);
+
+    void sendExit();
+
+    void deleteAccount(String password);
+
+    void sendReport(String userToReport);
+
+    void updateBio(List<String> updatedBio);
 }

@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,7 +16,7 @@ import java.net.Socket;
 
 public class Session {
 
-    private String username;
+    private static String username;
     private Socket userSocket;
     private Crypto cryptographer;
     private ObjectInputStream inputStream;
@@ -85,7 +86,7 @@ public class Session {
         return getInstance().cryptographer;
     }
 
-    public String getUsername() {
+    public static String getUsername() {
         return username;
     }
 
@@ -93,10 +94,6 @@ public class Session {
      * Closes the socket.
      */
     public static void close() {
-        try {
-            getInstance().userSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Stream.close(Session.getInstance().userSocket);
     }
 }

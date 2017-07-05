@@ -11,7 +11,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 public class Message<T> implements Sendable<T> {
 
     private static final long serialVersionUID = Values.SERIAL_VERSION_UID;
-
     private final T content;
 
     public Message(T content) {
@@ -22,10 +21,8 @@ public class Message<T> implements Sendable<T> {
      * @see Sendable#getContent(Class)
      */
     @Override
-    public <T> T getContent(Class<T> type) {
-
-        return content == null ? null : type.cast(content);
-
+    public T getContent() {
+        return content;
     }
 
     /**

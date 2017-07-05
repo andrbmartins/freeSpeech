@@ -1,7 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
-
 import java.io.*;
 
 /**
@@ -20,13 +19,18 @@ public class Stream {
      */
     public static void write(ObjectOutputStream out, Object message) {
 
+        // Don't allow send of null messages
+        if (message == null) {
+            return;
+        }
+
         try {
 
             out.writeObject(message);
             out.flush();
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open stream :: " + e.getMessage());
+            System.err.println("Error on trying to open stream. " + e.getMessage());
         }
 
     }
@@ -45,11 +49,12 @@ public class Stream {
         try {
 
             object = in.readObject();
-
+            System.out.println(object.toString());
         } catch (IOException e) {
-            System.err.println("Error on trying to open object stream :: " + e.getMessage());
+            //TODO log - client app closed
+            System.err.println("Error on trying to open object stream. " + e.getMessage());
         } catch (ClassNotFoundException e) {
-            System.err.println("Class not found :: " + e.getMessage());
+            System.err.println("Class not found. " + e.getMessage());
         }
 
         return object;
@@ -81,7 +86,7 @@ public class Stream {
             }
 
         } catch (IOException e) {
-            System.err.println("Error on trying to close stream :: " + e.getMessage());
+            System.err.println("Error on trying to close stream. " + e.getMessage());
         }
 
     }
