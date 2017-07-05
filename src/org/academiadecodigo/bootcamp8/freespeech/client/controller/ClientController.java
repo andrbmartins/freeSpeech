@@ -482,19 +482,30 @@ public class ClientController implements Controller {
         rooms.put(tab, textArea);
         usersPerTab.put(id, users);
 
-        Runnable runnable = new Runnable() {
+        final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                tabPane.getTabs().add(tab);
+
+                synchronized (this) {
+                    tabPane.getTabs().add(tab);
+                    notifyAll();
+                }
             }
         };
 
         Platform.runLater(runnable);
 
         while (!tabPane.getTabs().contains(tab)) {
-            // TODO resolve empty while
-        }
 
+            try {
+                synchronized (runnable) {
+                    runnable.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public TextArea getDestinyRoom(String tabId) {
