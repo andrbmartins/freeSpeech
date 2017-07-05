@@ -1,14 +1,15 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.handler;
 
 import org.academiadecodigo.bootcamp8.freespeech.server.Server;
-
 import org.academiadecodigo.bootcamp8.freespeech.server.service.UserService;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
+import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
-
 import java.io.*;
 import java.net.Socket;
 import java.security.Key;
@@ -58,7 +59,7 @@ public class ClientHandler implements Runnable {
             objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
         }
 
     }
@@ -91,6 +92,7 @@ public class ClientHandler implements Runnable {
                     register(sealedSendable);
                     break;
                 default:
+                    Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_ILLEGAL_LOG);
                     throw new IllegalArgumentException();
 
             }
@@ -109,7 +111,7 @@ public class ClientHandler implements Runnable {
 
             if (userService.getUser(username) == null &&
                     userService.addUser(new User(username, register.get(Values.PASSWORD_KEY)))) {
-
+                Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_REGISTERED + username);
                 responseToClient(sealedSendable.getType(), Values.REGISTER_OK);
                 return;
 
@@ -130,10 +132,12 @@ public class ClientHandler implements Runnable {
         if (userService.authenticate(username, password)) {
             responseToClient(sealedSendable.getType(), Values.LOGIN_OK);
             clientName = login.get(Values.NAME_KEY);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_OK + username);
             return true;
         }
 
         responseToClient(sealedSendable.getType(), Values.LOGIN_FAIL);
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGIN_FAILED + username);
 
         return false;
 
@@ -167,6 +171,7 @@ public class ClientHandler implements Runnable {
         }
 
         server.removeUser(this);
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_DISCONNECTED + clientName);
         Stream.close(clientSocket);
 
     }
@@ -198,6 +203,7 @@ public class ClientHandler implements Runnable {
                 changePass(msg, type);
                 break;
             case EXIT:
+                Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
                 server.removeUser(this);
                 write(msg);
                 Stream.close(clientSocket);
@@ -218,6 +224,7 @@ public class ClientHandler implements Runnable {
 
         Sendable<String> message = msg.getContent(crypto.getSymKey());
         String reportedUser = message.getContent();
+        Logger.getInstance().eventlogger(TypeEvent.CLIENT, reportedUser + LoggerMessages.CLIENT_REPORTED + clientName);
         System.out.println("REPORTED " + reportedUser);
         System.out.println(reportedUser.getClass().getSimpleName());
 
@@ -261,8 +268,10 @@ public class ClientHandler implements Runnable {
 
         if (userService.changePassword(clientName, oldPassword, newPassword)) {
             message = new Message<>(Values.PASS_CHANGED);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_PASSWORD + clientName);
         } else {
             message = new Message<>(Values.PASS_NOT_CHANGED);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_PASS_FAILED + clientName);
         }
 
         SealedSendable sealedMsg = crypto.encrypt(type, message, crypto.getSymKey());
@@ -279,9 +288,11 @@ public class ClientHandler implements Runnable {
         if (userService.deleteAccount(clientName, pass)) {
             response = new Message<>(Values.ACC_DELETED);
             deleted = true;
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.ACCOUNT_DELETED + clientName);
         } else {
             response = new Message<>(Values.NOT_VALIDATED);
             deleted = false;
+            Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.ACCOUNT_DEL_FAILED + clientName);
         }
 
         SealedSendable sealedMsg = crypto.encrypt(type, response, crypto.getSymKey());
@@ -295,7 +306,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void write(Object object) {
-        System.out.println(object.toString());
+
         Stream.write(objectOutputStream, object);
     }
 

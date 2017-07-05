@@ -1,6 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.model;
 
-
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
@@ -17,8 +16,8 @@ import java.util.List;
  * <Code Cadet> JPM Ramos
  */
 public class ConnectionManager {
-
     private Connection connection;
+
 
     public Connection getConnection() {
         try {
@@ -48,8 +47,7 @@ public class ConnectionManager {
             preparedStmt.executeUpdate();
 
         } catch (SQLException e) {
-
-            System.out.println(LoggerMessages.CLIENT_REGISTER_FAILED);
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
             registered = false;
 
         } finally {
@@ -59,7 +57,7 @@ public class ConnectionManager {
                     preparedStmt.close();
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
             }
         }
 
@@ -71,7 +69,6 @@ public class ConnectionManager {
         User user = null;
         PreparedStatement preparedStmt = connection.prepareStatement(Queries.SELECT_USER);
         preparedStmt.setString(1, username);
-        System.out.println("before result ");
         ResultSet resultSet = preparedStmt.executeQuery();
 
         if (resultSet.next()) {
@@ -79,7 +76,6 @@ public class ConnectionManager {
             String usernameValue = resultSet.getString("user_name");
             String passwordValue = resultSet.getString("user_password");
             user = new User(usernameValue, passwordValue);
-            System.out.println(user.toString());
         }
 
         preparedStmt.close();
@@ -101,7 +97,7 @@ public class ConnectionManager {
 
         } catch (SQLException e1) {
 
-            e1.printStackTrace();
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e1.getMessage());
             passChanged = false;
 
         } finally {
@@ -111,7 +107,7 @@ public class ConnectionManager {
                     preparedStmt.close();
                 }
             } catch (SQLException e) {
-                Logger.getInstance().eventlogger(TypeEvent.DATABASE, "Failed on password change");
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
             }
         }
 
@@ -130,7 +126,10 @@ public class ConnectionManager {
             preparedStmt.execute();
 
         } catch (SQLException e1) {
+
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e1.getMessage());
             deleted = false;
+
         } finally {
 
             try {
@@ -138,7 +137,7 @@ public class ConnectionManager {
                     preparedStmt.close();
                 }
             } catch (SQLException e) {
-                Logger.getInstance().eventlogger(TypeEvent.DATABASE, "Failed on account delete");
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
             }
 
         }
@@ -169,7 +168,6 @@ public class ConnectionManager {
             userbio.add(resultSet.getString("date_birth"));
             userbio.add(resultSet.getString("bio"));
             return userbio;
-
         }
 
         preparedStmt.close();
@@ -180,7 +178,6 @@ public class ConnectionManager {
 
         PreparedStatement preparedStmt = null;
         boolean updated = true;
-        System.out.println("here?");
 
         try {
 
@@ -192,19 +189,20 @@ public class ConnectionManager {
             preparedStmt.execute();
 
         } catch (SQLException e) {
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
             updated = false;
-            Logger.getInstance().eventlogger(TypeEvent.DATABASE, "Failure on bio update");
         } finally {
 
             try {
-                preparedStmt.close();
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
             } catch (SQLException e) {
-                Logger.getInstance().eventlogger(TypeEvent.DATABASE, "Failure on close SQL statement");
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
             }
 
         }
 
-        System.out.println(updated);
         return updated;
     }
 
@@ -215,7 +213,7 @@ public class ConnectionManager {
                 connection.close();
             }
         } catch (SQLException ex) {
-            Logger.getInstance().eventlogger(TypeEvent.DATABASE, "Unable to close database connections");
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, ex.getMessage());
         }
 
     }

@@ -8,8 +8,9 @@ package org.academiadecodigo.bootcamp8.freespeech.serverapp;
 public class Utils {
 
     public static final String SERVER_INFO = "SELECT date_event, message_event FROM log WHERE type_event='SERVER'";
-    public static final String USER_CONNECTION = "SELECT date_event, message_event FROM log WHERE type_event!='SERVER'";
+    public static final String USER_CONNECTION = "SELECT date_event, message_event FROM log WHERE type_event='CLIENT'";
     public static final String USERS_TABLE = "SELECT COUNT(*) FROM user";
+    public static final String DB_LOG = "SELECT date_event, message_event FROM log WHERE type_event='DATABASE'";
     public static final String CLEAR_TABLE = "DELETE FROM log";
     public static final String CONFIRM = "Confirm delete of data";
     public static final String CONFIRM_QUESTION = "Are you sure you want to delete all data from 'log' table?";

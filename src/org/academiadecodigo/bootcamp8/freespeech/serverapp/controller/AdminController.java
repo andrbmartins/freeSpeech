@@ -56,7 +56,7 @@ public class AdminController implements Initializable {
 
         Utils.AdminLevel adminLevel;
 
-        if ((adminLevel = login()) != null) {
+        if ((adminLevel = login()) == null) {
             stage.close();
             return;
         }
@@ -173,6 +173,16 @@ public class AdminController implements Initializable {
     @FXML
     void registeredUsers(ActionEvent event) {
         display.appendText(reader.executeQuery(Utils.USERS_TABLE) + "\n");
+    }
+
+    /**
+     * Executes default query for database related log table entries
+     *
+     * @param event
+     */
+    @FXML
+    void getDataBaseLog(ActionEvent event) {
+        display.appendText(reader.executeQuery(Utils.DB_LOG) + "\n");
     }
 
     /**
