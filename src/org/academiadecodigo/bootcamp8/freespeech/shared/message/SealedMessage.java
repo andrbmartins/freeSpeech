@@ -39,18 +39,19 @@ public class SealedMessage extends SealedObject implements SealedSendable {
     @Override
     public <T> Sendable<T> getContent(Key key) {
 
-        @SuppressWarnings("unchecked")
-        Sendable<T> sendable = null;
-
         try {
 
-            sendable = (Sendable<T>) getObject(key);
+            Object object = getObject(key);
+
+            if (object instanceof Sendable) {
+                return (Sendable<T>) object;
+            }
 
         } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | InvalidKeyException e) {
             System.err.println("Error on get encrypted object content. " + e.getMessage());
         }
 
-        return sendable;
+        throw new IllegalArgumentException("Object of type Sendable expected");
 
     }
 }

@@ -121,7 +121,7 @@ public class ClientController implements Controller {
         new Thread(new ServerResponseHandler(this)).start();
     }
 
-    public Tab getSelectedTab() {
+    private Tab getSelectedTab() {
         return tabPane.getSelectionModel().getSelectedItem();
     }
 
@@ -190,6 +190,11 @@ public class ClientController implements Controller {
 
         System.out.println("parent: " + getSelectedTab());
         System.out.println("parent ID: " + getSelectedTab().getText());
+        sendPrivateMessage();
+    }
+
+    private void sendPrivateMessage() {
+
         if (getSelectedTab().getText().equals("Lobby")) {
             System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
             clientService.sendUserText(inputTextArea);
@@ -198,6 +203,7 @@ public class ClientController implements Controller {
             System.out.println("PRIVATE");
             clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
         }
+
     }
 
     //TODO
@@ -213,15 +219,7 @@ public class ClientController implements Controller {
             System.out.println("parent: " + getSelectedTab());
             System.out.println("parent ID: " + getSelectedTab().getText());
 
-            if (getSelectedTab().getText().equals("Lobby")) {
-                System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
-                clientService.sendUserText(inputTextArea);
-
-            } else {
-                String tabID = getSelectedTab().getId();
-                System.out.println("PRIVATE");
-                clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
-            }
+            sendPrivateMessage();
 
             //clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
