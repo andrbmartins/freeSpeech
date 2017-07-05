@@ -14,6 +14,7 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography.CryptographyService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -31,9 +32,10 @@ public class CryptographyController implements Controller {
 
     @FXML
     private GridPane gridpane;
-    @FXML private Label connectingLabel;
-    @FXML private Button closeConnection;
-
+    @FXML
+    private Label connectingLabel;
+    @FXML
+    private GridPane connectionButtons;
 
 
     public CryptographyController() {
@@ -107,7 +109,7 @@ public class CryptographyController implements Controller {
     private void connectToServer() {
         boolean success = cryptographyService.connect(Values.HOST, Values.SERVER_PORT);
 
-        if(!success) {
+        if (!success) {
             notifyNoConnection();
             return;
         }
@@ -129,9 +131,16 @@ public class CryptographyController implements Controller {
             @Override
             public void run() {
                 connectingLabel.setText("Unable to connect to server.");
-                closeConnection.setVisible(true);
+                connectionButtons.setVisible(true);
             }
         });
+    }
+
+    @FXML
+    void onReconnect(ActionEvent event) {
+        connectionButtons.setVisible(false);
+        connectingLabel.setText("Connecting to server. Please stand by.");
+        createBackgroundThread();
     }
 
     @FXML
