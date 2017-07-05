@@ -203,7 +203,6 @@ public class Server {
         Message<List> message = new Message<>(getUsersOnlineList());
 
         for (ClientHandler c : loggedUsers) {
-            System.out.println(c.getClientName());
             c.sendUsersList(message);
         }
 
