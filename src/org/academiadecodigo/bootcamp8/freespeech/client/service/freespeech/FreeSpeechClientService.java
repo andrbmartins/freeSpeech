@@ -193,15 +193,20 @@ public class FreeSpeechClientService implements ClientService {
     private byte[] fileToByteArray(File file) {
 
         byte[] buffer = null;
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            buffer = new byte[(int) file.length()];
+        FileInputStream fileInputStream = null;
 
+        try {
+
+            fileInputStream = new FileInputStream(file);
+            buffer = new byte[(int) file.length()];
             fileInputStream.read(buffer);
-            fileInputStream.close();
+
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Stream.close(fileInputStream);
         }
+
         return buffer;
     }
 
