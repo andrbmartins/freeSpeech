@@ -274,7 +274,8 @@ public class ClientController implements Controller {
 
         Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
 
-        if (user == null) {
+        if (user == null || user.equals(Session.getUsername())) {
+            onlineUsersList.getSelectionModel().clearSelection();
             return;
         }
 
