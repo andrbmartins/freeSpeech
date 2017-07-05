@@ -118,7 +118,7 @@ public class ClientController implements Controller {
 
         setDraggableTopBar();
         focusUserInput();
-        new Thread(new ServerResponseHandler(clientService, this)).start();
+        new Thread(new ServerResponseHandler(this)).start();
     }
 
     public Tab getSelectedTab() {

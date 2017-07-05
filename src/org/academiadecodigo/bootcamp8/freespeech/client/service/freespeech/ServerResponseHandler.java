@@ -34,12 +34,10 @@ import java.util.regex.Pattern;
 
 public class ServerResponseHandler implements Runnable {
     private boolean run;
-    private ClientService clientService;
     private ClientController clientController;
 
-    public ServerResponseHandler(ClientService clientService, ClientController clientController) {
+    public ServerResponseHandler(ClientController clientController) {
         run = true;
-        this.clientService = clientService;
         this.clientController = clientController;
     }
 
@@ -71,11 +69,9 @@ public class ServerResponseHandler implements Runnable {
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
-                //TODO - Empty switch case ???
                 saveRecievedFile(message);
                 break;
             case PRIVATE_TEXT:
-                //TODO - Empty switch case ???
                 printPrivateChat(message);
                 break;
             case PASS_CHANGE:
@@ -146,12 +142,12 @@ public class ServerResponseHandler implements Runnable {
     private void byteListToFile(byte[] byteArray, File file) {
 
         try {
+
             FileOutputStream stream = new FileOutputStream(file);
             stream.write(byteArray);
             stream.flush();
             stream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

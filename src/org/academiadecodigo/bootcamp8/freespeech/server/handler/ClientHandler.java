@@ -251,7 +251,7 @@ public class ClientHandler implements Runnable {
             userReply = new Message<>(Values.BIO_NOT_UPDATED);
         }
 
-        SealedSendable sealedMsg = crypto.encrypt(msg.getType(), userReply, crypto.getSymKey());
+        SealedSendable sealedMsg = crypto.encrypt(msg.getType(), userReply);
         write(sealedMsg);
     }
 
@@ -261,7 +261,7 @@ public class ClientHandler implements Runnable {
         List<String> messagebio = userService.getUserBio(message.getContent());
 
         Message<List> bio = new Message<>(messagebio);
-        SealedSendable sealedMessage = crypto.encrypt(msg.getType(), bio, crypto.getSymKey());
+        SealedSendable sealedMessage = crypto.encrypt(msg.getType(), bio);
         write(sealedMessage);
 
     }
@@ -282,7 +282,7 @@ public class ClientHandler implements Runnable {
             Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_PASS_FAILED + clientName);
         }
 
-        SealedSendable sealedMsg = crypto.encrypt(type, message, crypto.getSymKey());
+        SealedSendable sealedMsg = crypto.encrypt(type, message);
         write(sealedMsg);
     }
 
@@ -303,13 +303,13 @@ public class ClientHandler implements Runnable {
             Logger.getInstance().eventlogger(TypeEvent.SERVER, LoggerMessages.ACCOUNT_DEL_FAILED + clientName);
         }
 
-        SealedSendable sealedMsg = crypto.encrypt(type, response, crypto.getSymKey());
+        SealedSendable sealedMsg = crypto.encrypt(type, response);
         write(sealedMsg);
         return deleted;
     }
 
     public void sendUsersList(Sendable userList) {
-        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList, crypto.getSymKey());
+        SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList);
         write(sealedSendable);
     }
 

@@ -33,7 +33,7 @@ public class FreeSpeechClientService implements ClientService {
             return;
         }
 
-        String text = Session.getInstance().getUsername() + ": " + textArea.getText();
+        String text = Session.getUsername() + ": " + textArea.getText();
 
         Message<String> message = new Message<>(text);
         writeObject(MessageType.TEXT, message);
@@ -49,7 +49,7 @@ public class FreeSpeechClientService implements ClientService {
             return;
         }
 
-        String text = Session.getInstance().getUsername() + ": " + textArea.getText();
+        String text = Session.getUsername() + ": " + textArea.getText();
 
         HashMap<String,String> map = new HashMap<>();
         map.put(Values.TAB_ID, tabId);
@@ -69,7 +69,8 @@ public class FreeSpeechClientService implements ClientService {
         StringBuilder stringBuilder = new StringBuilder();
 
         for (String s : destinySet){
-            stringBuilder.append(s + Values.SEPARATOR_CHARACTER);
+            stringBuilder.append(s);
+            stringBuilder.append(Values.SEPARATOR_CHARACTER);
         }
 
         return stringBuilder.toString();
@@ -208,7 +209,7 @@ public class FreeSpeechClientService implements ClientService {
 
     private void writeObject(MessageType type, Sendable message) {
 
-        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message, Session.getCrypto().getSymKey());
+        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message);
         Stream.write(Session.getOutput(), sealedMessage);
     }
 
