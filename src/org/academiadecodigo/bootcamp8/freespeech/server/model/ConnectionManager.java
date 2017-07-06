@@ -26,7 +26,7 @@ public class ConnectionManager {
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_CONNECT);
             }
         } catch (SQLException ex) {
-            Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_DISCONNECT);
+            System.err.println(LoggerMessages.DB_DISCONNECT + ex.getMessage());
         }
         return connection;
     }
@@ -214,7 +214,7 @@ public class ConnectionManager {
                 connection.close();
             }
         } catch (SQLException ex) {
-            Logger.getInstance().eventlogger(TypeEvent.DATABASE, ex.getMessage());
+            System.err.println(ex.getMessage());
         }
 
     }
