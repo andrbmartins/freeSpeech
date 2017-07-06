@@ -174,14 +174,24 @@ public class ClientController implements Controller {
     @FXML
     void onAddToChatAction(ActionEvent event) {
 
-        String name = onlineUsersList.getSelectionModel().getSelectedItem();
+        String name;
 
-        String tabId = tabPane.getSelectionModel().getSelectedItem().getId();
-        Set<String> userSet = usersPerTab.get(tabId);
+        if((name = onlineUsersList.getSelectionModel().getSelectedItem()) == null){
+            return;
+        }
+
+        String currentTabId = getSelectedTab().getId();
+        String userSelected = onlineUsersList.getSelectionModel().getSelectedItem();
+
+        if (getSelectedTab().getText().equals("Lobby") || usersPerTab.get(currentTabId).contains(userSelected)){
+            return;
+        }
+
+        Set<String> userSet = usersPerTab.get(currentTabId);
 
         if (!userSet.contains(name)) {
             userSet.add(name);
-            usersPerTab.replace(tabId, userSet);
+            usersPerTab.replace(currentTabId, userSet);
         }
 
     }
