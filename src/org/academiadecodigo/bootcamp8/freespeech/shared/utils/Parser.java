@@ -32,4 +32,15 @@ public class Parser {
 
         return set;
     }
+
+    public static byte[] listToByteArray(List<Byte> byteList) {
+        byte[] bytes = new byte[byteList.size()];
+
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = byteList.get(i);
+        }
+
+        return bytes;
+    }
+
 }

@@ -12,11 +12,11 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -70,7 +70,7 @@ public class ServerResponseHandler implements Runnable {
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
-                saveRecievedFile(message);
+                saveReceivedFile(message);
                 break;
             case PRIVATE_TEXT:
                 printPrivateChat(message);
@@ -97,8 +97,7 @@ public class ServerResponseHandler implements Runnable {
         }
     }
 
-    private void saveRecievedFile(Sendable<HashMap<String, List<Byte>>> message) {
-
+    private void saveReceivedFile(Sendable<HashMap<String, List<Byte>>> message) {
 
         Runnable runnable = new Runnable() {
             @Override
@@ -106,23 +105,21 @@ public class ServerResponseHandler implements Runnable {
 
                 HashMap<String, List<Byte>> map = message.getContent();
                 List<Byte> extensionList = map.get(Values.FILE_EXTENSION);
-                String fileExtension = new String(parseListToByteArray(extensionList));
                 List<Byte> byteList = map.get(Values.MESSAGE);
-
+                String fileExtension = new String(Parser.listToByteArray(extensionList));
+                String sender = new String(Parser.listToByteArray(map.get(Values.ORIGIN)));
 
                 FileChooser fileChooser = new FileChooser();
-                //fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("extension",fileExtension));
-                fileChooser.setInitialFileName("untitled." + fileExtension);
+                fileChooser.setTitle("You have received a file from " + sender);
+                fileChooser.setInitialFileName("My file." + fileExtension);
                 File file = fileChooser.showSaveDialog(new Stage());
-                if (file == null) {
-                    return;
-                }
 
                 try {
 
+                    if (file != null && file.createNewFile()) {
+                        byteListToFile(Parser.listToByteArray(byteList), file);
+                    }
 
-                    file.createNewFile();
-                    byteListToFile(parseListToByteArray(byteList), file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -132,16 +129,6 @@ public class ServerResponseHandler implements Runnable {
 
         Platform.runLater(runnable);
 
-    }
-
-    private byte[] parseListToByteArray(List<Byte> byteList) {
-        byte[] bytes = new byte[byteList.size()];
-
-        for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = byteList.get(i);
-        }
-
-        return bytes;
     }
 
     private void byteListToFile(byte[] byteArray, File file) {
@@ -226,7 +213,6 @@ public class ServerResponseHandler implements Runnable {
         }
         return result;
     }
-
 
     private void notifyUser(Sendable<String> msg) {
         String info = msg.getContent();
