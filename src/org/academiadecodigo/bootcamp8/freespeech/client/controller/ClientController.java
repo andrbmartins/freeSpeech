@@ -562,6 +562,13 @@ public class ClientController implements Controller {
             }
         });
 
+        try {
+            int code = java.awt.event.KeyEvent.VK_ENTER;
+            new Robot().keyPress(code);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+
         onlineUsersList.setItems(list);
 
     }
