@@ -4,8 +4,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.event.*;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -121,7 +121,12 @@ public class ClientController implements Controller {
     }
 
     private Tab getSelectedTab() {
-        return tabPane.getSelectionModel().getSelectedItem();
+
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+
+
+
+        return tab;
     }
 
     private void focusUserInput() {
@@ -445,6 +450,8 @@ public class ClientController implements Controller {
         Tab tab = new Tab("label " + id);
         tab.setId(id);
 
+        addClosingTabHandler(tab);
+
         TextArea textArea = new TextArea();
         textArea.appendText("");
         tab.setContent(textArea);
@@ -463,6 +470,38 @@ public class ClientController implements Controller {
         tabPane.getTabs().add(tab);
     }
 
+    private void addClosingTabHandler(Tab tab) {
+
+        if(tabPane.getTabs().size() == 1){
+
+            EventHandler<Event> event = new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    Tab tab1 = (Tab) event.getSource();
+                    String leaveText = new String("<<<<< " + Session.getUsername() + " has left the building!>>>>>");
+
+                    //removes the tab from the various maps.
+                    Set<String> destinySet = usersPerTab.remove(tab1.getId());
+                    destinySet.remove(Session.getUsername());
+
+                    rooms.remove(tab1);
+                    tabId.remove(tab1.getId());
+                    //
+
+                    clientService.sendPrivateText(new TextArea(leaveText),tab1.getId(),destinySet);
+                }
+
+
+            };
+
+            tab.setOnClosed(event);
+        }
+        else {
+            tab.setOnClosed(tabPane.getTabs().get(1).getOnClosed());
+        }
+
+    }
+
     public void createReceivedTab(Set<String> users, String id) {
 
         Tab tab = new Tab("label " + id);
@@ -479,6 +518,8 @@ public class ClientController implements Controller {
         tabId.put(id, tab);
         rooms.put(tab, textArea);
         usersPerTab.put(id, users);
+
+        addClosingTabHandler(tab);
 
         final Runnable runnable = new Runnable() {
             @Override
