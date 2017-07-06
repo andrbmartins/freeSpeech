@@ -38,7 +38,7 @@ public class Session {
      */
     public static Session getInstance() {
         if (instance == null) {
-            synchronized (Navigation.class) {
+            synchronized (Session.class) {
                 if (instance == null) {
                     instance = new Session();
                 }
