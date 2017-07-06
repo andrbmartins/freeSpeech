@@ -24,28 +24,26 @@ import java.util.Map;
 public class FreeSpeechClientService implements ClientService {
 
     @Override
-    public void sendUserText(TextArea textArea) {
+    public void sendUserText(String textArea) {
 
-        if (textArea.getText().isEmpty()) {
+        if (textArea.isEmpty()) {
             return;
         }
 
-        String text = SessionContainer.getInstance().getUsername() + ": " + textArea.getText();
+        String text = SessionContainer.getInstance().getUsername() + ": " + textArea;
 
         Message<String> message = new Message<>(text);
         writeObject(MessageType.TEXT, message);
-
-        textArea.clear();
     }
 
     @Override
-    public void sendPrivateText(TextArea textArea, String tabId, Set<String> destinySet) {
+    public void sendPrivateText(String textArea, String tabId, Set<String> destinySet) {
 
-        if (textArea.getText().isEmpty()) {
+        if (textArea.isEmpty()) {
             return;
         }
 
-        String text = SessionContainer.getInstance().getUsername() + ": " + textArea.getText();
+        String text = SessionContainer.getInstance().getUsername() + ": " + textArea;
 
         HashMap<String,String> map = new HashMap<>();
         map.put(Values.TAB_ID, tabId);
@@ -56,8 +54,6 @@ public class FreeSpeechClientService implements ClientService {
 
         Message<HashMap<String,String>> message = new Message<>(map);
         writeObject(MessageType.PRIVATE_TEXT, message);
-
-        textArea.clear();
     }
 
 
