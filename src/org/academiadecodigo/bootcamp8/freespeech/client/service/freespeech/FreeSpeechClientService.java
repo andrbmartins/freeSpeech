@@ -5,6 +5,7 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
@@ -98,8 +99,8 @@ public class FreeSpeechClientService implements ClientService {
 
         System.out.println("file extension: " + fileExtension);
 
-        byte[] buffer = fileToByteArray(file);
-        List<Byte> byteList = byteArrayToList(buffer);
+        byte[] buffer = Parser.fileToByteArray(file);
+        List<Byte> byteList = Parser.byteArrayToList(buffer);
         HashMap<String, List<Byte>> map = new HashMap<>();
 
         List<Byte> destinyList = parseByteArrayToList(destiny.getBytes());
@@ -156,50 +157,6 @@ public class FreeSpeechClientService implements ClientService {
 
         writeObject(MessageType.PASS_CHANGE, message);
 
-    }
-
-
-    //TODO file manager?
-    /**
-     * Converts a byte array into a byte list.
-     *
-     * @param buffer - the byte array.
-     * @return the byte list.
-     */
-    private List<Byte> byteArrayToList(byte[] buffer) {
-
-        List<Byte> byteList = new ArrayList<>();
-
-        for (byte b : buffer) {
-            byteList.add(b);
-        }
-        return byteList;
-    }
-
-    /**
-     * Converts a file into a byte array.
-     *
-     * @param file - the file.
-     * @return the byte array.
-     */
-    private byte[] fileToByteArray(File file) {
-
-        byte[] buffer = null;
-        FileInputStream fileInputStream = null;
-
-        try {
-
-            fileInputStream = new FileInputStream(file);
-            buffer = new byte[(int) file.length()];
-            fileInputStream.read(buffer);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Stream.close(fileInputStream);
-        }
-
-        return buffer;
     }
 
     //TODO - logout

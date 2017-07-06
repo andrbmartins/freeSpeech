@@ -2,13 +2,12 @@ package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
-/**
- * Created by codecadet on 04/07/17.
- */
 public class Parser {
 
     public static byte[] byteListToArray(List<Byte> byteList) {
@@ -26,9 +25,7 @@ public class Parser {
 
         HashSet<String> set = new HashSet<>();
 
-        for(String s : destinyString.split(Values.SEPARATOR_CHARACTER)){
-            set.add(s);
-        }
+        Collections.addAll(set, destinyString.split(Values.SEPARATOR_CHARACTER));
 
         return set;
     }
@@ -41,6 +38,63 @@ public class Parser {
         }
 
         return bytes;
+    }
+
+    public static void byteListToFile(byte[] byteArray, File file) {
+
+        try {
+
+            FileOutputStream stream = new FileOutputStream(file);
+            stream.write(byteArray);
+            stream.flush();
+            stream.close();
+
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+    }
+
+    /**
+     * Converts a byte array into a byte list.
+     *
+     * @param buffer - the byte array.
+     * @return the byte list.
+     */
+    public static List<Byte> byteArrayToList(byte[] buffer) {
+
+        List<Byte> byteList = new ArrayList<>();
+
+        for (byte b : buffer) {
+            byteList.add(b);
+        }
+        return byteList;
+    }
+
+    /**
+     * Converts a file into a byte array.
+     *
+     * @param file - the file.
+     * @return the byte array.
+     */
+    public static byte[] fileToByteArray(File file) {
+
+        byte[] buffer = null;
+        FileInputStream fileInputStream = null;
+
+        try {
+
+            fileInputStream = new FileInputStream(file);
+            buffer = new byte[(int) file.length()];
+            fileInputStream.read(buffer);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Stream.close(fileInputStream);
+        }
+
+        return buffer;
     }
 
 }

@@ -63,9 +63,6 @@ public class ServerResponseHandler implements Runnable {
             case TEXT:
                 printToRoom(message);
                 break;
-            case DATA:
-                //TODO - Empty switch case ???
-                break;
             case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
@@ -94,6 +91,8 @@ public class ServerResponseHandler implements Runnable {
             case DELETE_ACCOUNT:
                 accDeleteNotify(message);
                 break;
+            default:
+                throw new IllegalArgumentException("Invalid message type");
         }
     }
 
@@ -117,32 +116,17 @@ public class ServerResponseHandler implements Runnable {
                 try {
 
                     if (file != null && file.createNewFile()) {
-                        byteListToFile(Parser.listToByteArray(byteList), file);
+                        Parser.byteListToFile(Parser.listToByteArray(byteList), file);
                     }
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println(e.getMessage());
                 }
 
             }
         };
 
         Platform.runLater(runnable);
-
-    }
-
-    private void byteListToFile(byte[] byteArray, File file) {
-
-        try {
-
-            FileOutputStream stream = new FileOutputStream(file);
-            stream.write(byteArray);
-            stream.flush();
-            stream.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -154,7 +138,7 @@ public class ServerResponseHandler implements Runnable {
         String destinyString = map.get(Values.DESTINY);
         String text = map.get(Values.MESSAGE);
         TextArea textArea;
-        Set<String> destinySet = parseStringToSet(destinyString);
+        Set<String> destinySet = Parser.stringToSet(destinyString);
 
         if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
             clientController.updateUsersSet(tabId, destinySet);
@@ -164,17 +148,6 @@ public class ServerResponseHandler implements Runnable {
             textArea = clientController.getDestinyRoom(tabId);
         }
         textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
-    }
-
-    private Set<String> parseStringToSet(String destinyString) {
-
-        HashSet<String> set = new HashSet<>();
-
-        for (String s : destinyString.split(Values.SEPARATOR_CHARACTER)) {
-            set.add(s);
-        }
-
-        return set;
     }
 
     private void printToRoom(Sendable message) {
