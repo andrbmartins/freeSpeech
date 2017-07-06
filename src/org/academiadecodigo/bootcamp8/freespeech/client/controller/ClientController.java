@@ -121,12 +121,7 @@ public class ClientController implements Controller {
     }
 
     private Tab getSelectedTab() {
-
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-
-
-
-        return tab;
+        return tabPane.getSelectionModel().getSelectedItem();
     }
 
     private void focusUserInput() {
@@ -225,7 +220,6 @@ public class ClientController implements Controller {
 
             sendPrivateMessage();
 
-            //clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
         }
     }
@@ -358,12 +352,6 @@ public class ClientController implements Controller {
         return alert.showAndWait();
     }
 
-
-    @FXML
-    void startPrivateChat(MouseEvent event) {
-
-    }
-
     @FXML
     void editUserInfo(ActionEvent event) {
         clientService.sendBioRequest(MessageType.OWN_BIO, Session.getUsername());
@@ -472,34 +460,32 @@ public class ClientController implements Controller {
 
     private void addClosingTabHandler(Tab tab) {
 
-        if(tabPane.getTabs().size() == 1){
-
-            EventHandler<Event> event = new EventHandler<Event>() {
-                @Override
-                public void handle(Event event) {
-                    Tab tab1 = (Tab) event.getSource();
-                    String leaveText = new String("<<<<< " + Session.getUsername() + " has left the building!>>>>>");
-
-                    //removes the tab from the various maps.
-                    Set<String> destinySet = usersPerTab.remove(tab1.getId());
-                    destinySet.remove(Session.getUsername());
-
-                    rooms.remove(tab1);
-                    tabId.remove(tab1.getId());
-                    //
-
-                    clientService.sendPrivateText(new TextArea(leaveText),tab1.getId(),destinySet);
-                }
-
-
-            };
-
-            tab.setOnClosed(event);
-        }
-        else {
+        if (tabPane.getTabs().size() != 1) {
             tab.setOnClosed(tabPane.getTabs().get(1).getOnClosed());
+            return;
         }
 
+        EventHandler<Event> event = new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                Tab tab1 = (Tab) event.getSource();
+                String leaveText = "< " + Session.getUsername() + " has left the building! >";
+
+                //removes the tab from the various maps.
+                Set<String> destinySet = usersPerTab.remove(tab1.getId());
+                destinySet.remove(Session.getUsername());
+
+                rooms.remove(tab1);
+                tabId.remove(tab1.getId());
+                //
+
+                clientService.sendPrivateText(new TextArea(leaveText), tab1.getId(), destinySet);
+            }
+
+
+        };
+
+        tab.setOnClosed(event);
     }
 
     public void createReceivedTab(Set<String> users, String id) {

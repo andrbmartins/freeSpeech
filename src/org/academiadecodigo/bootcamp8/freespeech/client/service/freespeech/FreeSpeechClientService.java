@@ -103,9 +103,9 @@ public class FreeSpeechClientService implements ClientService {
         List<Byte> byteList = Parser.byteArrayToList(buffer);
         HashMap<String, List<Byte>> map = new HashMap<>();
 
-        List<Byte> destinyList = parseByteArrayToList(destiny.getBytes());
-        List<Byte> originList = parseByteArrayToList(origin.getBytes());
-        List<Byte> extensionList = parseByteArrayToList(fileExtension.getBytes());
+        List<Byte> destinyList = Parser.byteArrayToList(destiny.getBytes());
+        List<Byte> originList = Parser.byteArrayToList(origin.getBytes());
+        List<Byte> extensionList = Parser.byteArrayToList(fileExtension.getBytes());
 
         map.put(Values.DESTINY, destinyList);
         map.put(Values.ORIGIN, originList);
@@ -114,17 +114,6 @@ public class FreeSpeechClientService implements ClientService {
 
         Message<HashMap<String, List<Byte>>> message = new Message<>(map);
         writeObject(MessageType.PRIVATE_DATA, message);
-    }
-
-    private List<Byte> parseByteArrayToList(byte[] bytes) {
-
-        ArrayList<Byte> byteList = new ArrayList<>();
-
-        for (Byte b : bytes){
-            byteList.add(b);
-        }
-
-        return byteList;
     }
 
     @Override

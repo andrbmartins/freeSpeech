@@ -133,7 +133,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-                <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#onActionPrivateChat" onMouseClicked="#startPrivateChat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#onActionPrivateChat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                 <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                 <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
          </children>
