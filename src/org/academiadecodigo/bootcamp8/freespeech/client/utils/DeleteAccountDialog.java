@@ -2,55 +2,83 @@ package org.academiadecodigo.bootcamp8.freespeech.client.utils;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.PasswordField;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 /**
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> PedroMAlves
  */
+
+//TODO refactor
+
 public class DeleteAccountDialog extends Dialog<String> {
+
     private PasswordField passwordField;
 
     public DeleteAccountDialog() {
-        setTitle("Account manager");
-        setHeaderText("You must enter your password in order to delete your account");
 
-        ButtonType delete = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().addAll(delete, ButtonType.CANCEL);
+        styleStage();
 
-        passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
+        //TODO can we use buttons instead?
+        ButtonType deleteButton = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
+        getDialogPane().getButtonTypes().addAll(deleteButton, ButtonType.CANCEL);
 
-        HBox hBox = new HBox();
-        hBox.getChildren().add(passwordField);
-        hBox.setPadding(new Insets(20));
+        VBox vBox = styleVBox();
+        getDialogPane().setContent(vBox);
 
-        HBox.setHgrow(passwordField, Priority.ALWAYS);
+        focusField();
 
-        getDialogPane().setContent(hBox);
+        setResultConverter(new Callback<ButtonType, String>() {
+            @Override
+            public String call(ButtonType param) {
+                if (param == deleteButton) {
+                    return passwordField.getText();
+                }
+                return null;
+            }
+        });
+    }
 
+    private void focusField() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 passwordField.requestFocus();
             }
         });
+    }
 
-        setResultConverter(new Callback<ButtonType, String>() {
-            @Override
-            public String call(ButtonType param) {
-                if (param == delete) {
-                    return passwordField.getText();
-                }
-                return null;
-            }
-        });
+    private void styleStage() {
+        Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
+        stage.initStyle(StageStyle.UNDECORATED);
+        getDialogPane().getScene().getStylesheets().clear();
+        getDialogPane().getScene().getStylesheets().add(Values.DIALOG_STYLE);
+    }
+
+    private VBox styleVBox() {
+
+        final String DELETE = "Enter password in order to delete account";
+
+        Label label = new Label(DELETE);
+        passwordField = new PasswordField();
+
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setSpacing(10);
+        vBox.getChildren().add(label);
+        vBox.getChildren().add(passwordField);
+        vBox.setPadding(new Insets(20));
+
+        return vBox;
+
     }
 }

@@ -46,6 +46,7 @@ public class Values {
     public static final String INVALID_INPUT = "Required fields are empty.";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
+    public static final String DIALOG_STYLE = "/stylesheet.css";
 
     public static final String URL_DB_SERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DB_SERVER = "root";
