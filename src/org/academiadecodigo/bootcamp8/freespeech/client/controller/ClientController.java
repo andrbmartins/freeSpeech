@@ -209,11 +209,13 @@ public class ClientController implements Controller {
 
         if (getSelectedTab().getText().equals("Lobby")) {
             System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
-            clientService.sendUserText(inputTextArea);
+            clientService.sendUserText(inputTextArea.getText());
+            inputTextArea.clear();
         } else {
             String tabID = getSelectedTab().getId();
             System.out.println("PRIVATE");
-            clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
+            clientService.sendPrivateText(inputTextArea.getText(), tabID, usersPerTab.get(tabID));
+            inputTextArea.clear();
         }
 
     }
@@ -492,7 +494,7 @@ public class ClientController implements Controller {
                 tabId.remove(tab1.getId());
                 //
 
-                clientService.sendPrivateText(new TextArea(leaveText), tab1.getId(), destinySet);
+                clientService.sendPrivateText(leaveText, tab1.getId(), destinySet);
             }
 
 
