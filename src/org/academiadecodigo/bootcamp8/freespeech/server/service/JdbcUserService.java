@@ -37,6 +37,17 @@ public class JdbcUserService implements UserService {
     }
 
     @Override
+    public void reportUser(String clientName, String reportedUser) {
+        connectionManager.reportUser(clientName, reportedUser);
+    }
+
+    @Override
+    public int verifyReport(String clientName, String reportedUser) {
+        return connectionManager.verifyReport(clientName, reportedUser);
+
+    }
+
+    @Override
     public boolean deleteAccount(String username, String password) {
         return (authenticate(username, password)) && connectionManager.deleteAccount(username);
     }
@@ -74,5 +85,7 @@ public class JdbcUserService implements UserService {
         return message;
 
     }
+
+
 
 }

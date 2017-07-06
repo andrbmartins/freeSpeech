@@ -238,10 +238,17 @@ public class ClientHandler implements Runnable {
 
         Sendable<String> message = msg.getContent(crypto.getSymKey());
         String reportedUser = message.getContent();
-        Logger.getInstance().eventlogger(TypeEvent.CLIENT, reportedUser + LoggerMessages.CLIENT_REPORTED + clientName);
 
+
+        if (userService.verifyReport(clientName, reportedUser) == 0 ){
+            userService.reportUser(clientName,reportedUser);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, reportedUser + LoggerMessages.CLIENT_REPORTED + clientName);
+            System.out.println("REPORTED " + reportedUser);
+        }
+        else
+            System.out.println("USER ALREADY REPORTED BY YOU TODAY" + reportedUser);
         //TODO finish implementation of reporting
-        System.out.println("REPORTED " + reportedUser);
+        //System.out.println("REPORTED " + reportedUser);
         System.out.println(reportedUser.getClass().getSimpleName());
 
     }

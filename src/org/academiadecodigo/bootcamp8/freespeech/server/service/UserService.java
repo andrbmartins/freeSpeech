@@ -1,8 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.server.service;
 
-import org.academiadecodigo.bootcamp8.freespeech.server.model.ConnectionManager;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
-import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 
 import java.util.List;
 
@@ -27,4 +25,7 @@ public interface UserService {
 
     boolean updateBio(List<String> updatedBio);
 
+    void reportUser(String clientName, String reportedUser);
+
+    int verifyReport(String clientName, String reportedUser);
 }

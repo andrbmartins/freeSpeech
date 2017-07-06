@@ -206,6 +206,72 @@ public class ConnectionManager {
         return updated;
     }
 
+
+
+    public boolean reportUser(String username , String user_reported){
+
+        PreparedStatement preparedStmt = null;
+        boolean reported = true;
+
+        try {
+
+            preparedStmt = connection.prepareStatement(Queries.REPORT_USER);
+            preparedStmt.setString(1, username);
+            preparedStmt.setString(2, user_reported);
+            preparedStmt.execute();
+
+        } catch (SQLException e) {
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+            reported = false;
+        } finally {
+
+            try {
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
+            } catch (SQLException e) {
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+            }
+
+        }
+
+        return reported;
+    }
+
+
+    public int verifyReport(String username, String user_reported) {
+
+        PreparedStatement preparedStmt = null;
+        ResultSet resultSet = null;
+        try {
+
+            preparedStmt = connection.prepareStatement(Queries.REPORTED_USER);
+            preparedStmt.setString(1, username);
+            preparedStmt.setString(2, user_reported);
+            resultSet =  preparedStmt.executeQuery();
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+
+        } catch (SQLException e) {
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+        } finally {
+
+            try {
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
+            } catch (SQLException e) {
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+            }
+
+        }
+        return 0;
+    }
+
+
+
+
+
+
     public void close() {
 
         try {
@@ -218,6 +284,7 @@ public class ConnectionManager {
         }
 
     }
+
 
 }
 

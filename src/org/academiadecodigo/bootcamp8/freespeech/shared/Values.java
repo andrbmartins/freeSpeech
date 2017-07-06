@@ -49,7 +49,7 @@ public class Values {
 
     public static final String URL_DB_SERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DB_SERVER = "root";
-    public static final String PASSWORD_DB_SERVER = "";
+    public static final String PASSWORD_DB_SERVER = "root";
 
     public static final String SEPARATOR_CHARACTER = ",";
 
