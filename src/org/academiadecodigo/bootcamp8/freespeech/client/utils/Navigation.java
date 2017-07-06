@@ -22,12 +22,12 @@ public class Navigation {
 
     private static Navigation instance = null;
 
+    private Map<String, Controller> controllers;
     private Stage stage;
-    private LinkedList<Scene> scenes = new LinkedList<>();
-    private Map<String, Controller> controllers = new HashMap<>();
     private String css;
 
     private Navigation() {
+        controllers = new HashMap<>();
     }
 
     /**
@@ -63,23 +63,11 @@ public class Navigation {
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
             scene.getStylesheets().add(css);
-            scenes.push(scene);
             setScene(scene);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
-    }
-
-    /**
-     * Sets the scene on stage to the previous one.
-     */
-    public void back() {
-        if (scenes.size() < 2) {
-            return;
-        }
-        scenes.pop();
-        setScene(scenes.peek());
     }
 
     public void close() {
@@ -98,4 +86,5 @@ public class Navigation {
     public void setCss(String css) {
         this.css = css;
     }
+
 }

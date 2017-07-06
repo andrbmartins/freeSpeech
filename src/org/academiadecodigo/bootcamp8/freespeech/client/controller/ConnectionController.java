@@ -4,16 +4,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography.CryptographyService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.connection.ConnectionService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -23,22 +23,23 @@ import java.util.ResourceBundle;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class CryptographyController implements Controller {
+public class ConnectionController implements Controller {
 
-    private CryptographyService cryptographyService;
+    private ConnectionService connectionService;
     private Stage stage;
     private double[] position;
 
     @FXML
     private GridPane gridpane;
-    @FXML private Label connectingLabel;
-    @FXML private Button closeConnection;
+    @FXML
+    private Label connectingLabel;
+    @FXML
+    private GridPane connectionButtons;
 
 
-
-    public CryptographyController() {
+    public ConnectionController() {
         position = new double[2];
-        cryptographyService = RegistryService.getInstance().get(CryptographyService.class);
+        connectionService = RegistryService.getInstance().get(ConnectionService.class);
     }
 
     @Override
@@ -105,9 +106,9 @@ public class CryptographyController implements Controller {
     }
 
     private void connectToServer() {
-        boolean success = cryptographyService.connect(Values.HOST, Values.SERVER_PORT);
+        boolean success = connectionService.connect(Values.HOST, Values.SERVER_PORT);
 
-        if(!success) {
+        if (!success) {
             notifyNoConnection();
             return;
         }
@@ -129,9 +130,16 @@ public class CryptographyController implements Controller {
             @Override
             public void run() {
                 connectingLabel.setText("Unable to connect to server.");
-                closeConnection.setVisible(true);
+                connectionButtons.setVisible(true);
             }
         });
+    }
+
+    @FXML
+    void onReconnect(ActionEvent event) {
+        connectionButtons.setVisible(false);
+        connectingLabel.setText("Connecting to server. Please stand by.");
+        createBackgroundThread();
     }
 
     @FXML

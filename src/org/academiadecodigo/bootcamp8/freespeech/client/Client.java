@@ -4,8 +4,8 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography.CryptographyService;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography.FreeSpeechCryptographyService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.connection.ConnectionService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.connection.FreeSpeechConnectionService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.FreeSpeechClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginClientService;
@@ -45,11 +45,11 @@ public class Client extends Application {
 
     private void addServicesToRegister() {
 
-        CryptographyService cryptographyService = new FreeSpeechCryptographyService();
+        ConnectionService connectionService = new FreeSpeechConnectionService();
         LoginService loginService = new LoginClientService();
         ClientService clientService = new FreeSpeechClientService();
 
-        RegistryService.getInstance().addService(cryptographyService);
+        RegistryService.getInstance().addService(connectionService);
         RegistryService.getInstance().addService(loginService);
         RegistryService.getInstance().addService(clientService);
     }

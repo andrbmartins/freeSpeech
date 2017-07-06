@@ -23,10 +23,10 @@ public class ConnectionManager {
         try {
             if (connection == null) {
                 connection = DriverManager.getConnection(Values.URL_DB_SERVER, Values.USER_DB_SERVER, Values.PASSWORD_DB_SERVER);
-                Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.SERVER_DB_CONNECT);
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_CONNECT);
             }
         } catch (SQLException ex) {
-            Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.SERVER_DB_DISCONNECT);
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_DISCONNECT);
         }
         return connection;
     }
@@ -210,6 +210,7 @@ public class ConnectionManager {
 
         try {
             if (connection != null) {
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_TERMINATE);
                 connection.close();
             }
         } catch (SQLException ex) {
