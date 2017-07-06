@@ -181,7 +181,6 @@ public class ClientHandler implements Runnable {
             handleMessage(msg);
         }
 
-
         server.removeUser(this);
         Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_DISCONNECTED + clientName);
         Stream.close(clientSocket);

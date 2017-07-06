@@ -12,11 +12,11 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -63,14 +63,11 @@ public class ServerResponseHandler implements Runnable {
             case TEXT:
                 printToRoom(message);
                 break;
-            case DATA:
-                //TODO - Empty switch case ???
-                break;
             case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
             case PRIVATE_DATA:
-                saveRecievedFile(message);
+                saveReceivedFile(message);
                 break;
             case PRIVATE_TEXT:
                 printPrivateChat(message);
@@ -94,11 +91,12 @@ public class ServerResponseHandler implements Runnable {
             case DELETE_ACCOUNT:
                 accDeleteNotify(message);
                 break;
+            default:
+                throw new IllegalArgumentException("Invalid message type");
         }
     }
 
-    private void saveRecievedFile(Sendable<HashMap<String, List<Byte>>> message) {
-
+    private void saveReceivedFile(Sendable<HashMap<String, List<Byte>>> message) {
 
         Runnable runnable = new Runnable() {
             @Override
@@ -106,21 +104,23 @@ public class ServerResponseHandler implements Runnable {
 
                 HashMap<String, List<Byte>> map = message.getContent();
                 List<Byte> extensionList = map.get(Values.FILE_EXTENSION);
-                String fileExtension = new String(parseListToByteArray(extensionList));
                 List<Byte> byteList = map.get(Values.MESSAGE);
-
+                String fileExtension = new String(Parser.listToByteArray(extensionList));
+                String sender = new String(Parser.listToByteArray(map.get(Values.ORIGIN)));
 
                 FileChooser fileChooser = new FileChooser();
-                //fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("extension",fileExtension));
-                fileChooser.setInitialFileName("untitled." + fileExtension);
+                fileChooser.setTitle("You have received a file from " + sender);
+                fileChooser.setInitialFileName("My file." + fileExtension);
                 File file = fileChooser.showSaveDialog(new Stage());
 
-
                 try {
-                    file.createNewFile();
-                    byteListToFile(parseListToByteArray(byteList), file);
+
+                    if (file != null && file.createNewFile()) {
+                        Parser.byteListToFile(Parser.listToByteArray(byteList), file);
+                    }
+
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println(e.getMessage());
                 }
 
             }
@@ -130,60 +130,24 @@ public class ServerResponseHandler implements Runnable {
 
     }
 
-    private byte[] parseListToByteArray(List<Byte> byteList) {
-        byte[] bytes = new byte[byteList.size()];
+    private void printPrivateChat(Sendable<HashMap<String, String>> message) {
 
-        for(int i = 0; i < bytes.length; i++){
-            bytes[i] = byteList.get(i);
-        }
-
-        return bytes;
-    }
-
-    private void byteListToFile(byte[] byteArray, File file) {
-
-        try {
-
-            FileOutputStream stream = new FileOutputStream(file);
-            stream.write(byteArray);
-            stream.flush();
-            stream.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void printPrivateChat(Sendable<HashMap<String,String>> message) {
-
-        HashMap<String,String> map = message.getContent();
+        HashMap<String, String> map = message.getContent();
 
         String tabId = map.get(Values.TAB_ID);
         String destinyString = map.get(Values.DESTINY);
         String text = map.get(Values.MESSAGE);
         TextArea textArea;
-        Set<String> destinySet = parseStringToSet(destinyString);
+        Set<String> destinySet = Parser.stringToSet(destinyString);
 
-        if((textArea = clientController.getDestinyRoom(tabId)) != null){
-            clientController.updateUsersSet(tabId,destinySet);
+        if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
+            clientController.updateUsersSet(tabId, destinySet);
 
-        }else{
-            clientController.createReceivedTab(destinySet,tabId);
+        } else {
+            clientController.createReceivedTab(destinySet, tabId);
             textArea = clientController.getDestinyRoom(tabId);
         }
-            textArea.appendText((textArea.getText().isEmpty() ? "" :"\n") + text);
-    }
-
-    private Set<String> parseStringToSet(String destinyString) {
-
-        HashSet<String> set = new HashSet<>();
-
-        for(String s : destinyString.split(Values.SEPARATOR_CHARACTER)){
-            set.add(s);
-        }
-
-        return set;
+        textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
     }
 
     private void printToRoom(Sendable message) {
@@ -222,7 +186,6 @@ public class ServerResponseHandler implements Runnable {
         }
         return result;
     }
-
 
     private void notifyUser(Sendable<String> msg) {
         String info = msg.getContent();

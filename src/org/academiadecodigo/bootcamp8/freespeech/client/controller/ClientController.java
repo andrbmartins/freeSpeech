@@ -4,8 +4,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.event.*;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -89,7 +89,6 @@ public class ClientController implements Controller {
     private Button removeAccount;
 
     private ListView<String> originalOnlineUsersList;
-
     private Stage stage;
     private ClientService clientService;
     private Map<Tab, TextArea> rooms;
@@ -121,8 +120,13 @@ public class ClientController implements Controller {
         new Thread(new ServerResponseHandler(this)).start();
     }
 
-    public Tab getSelectedTab() {
-        return tabPane.getSelectionModel().getSelectedItem();
+    private Tab getSelectedTab() {
+
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+
+
+
+        return tab;
     }
 
     private void focusUserInput() {
@@ -190,6 +194,11 @@ public class ClientController implements Controller {
 
         System.out.println("parent: " + getSelectedTab());
         System.out.println("parent ID: " + getSelectedTab().getText());
+        sendPrivateMessage();
+    }
+
+    private void sendPrivateMessage() {
+
         if (getSelectedTab().getText().equals("Lobby")) {
             System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
             clientService.sendUserText(inputTextArea);
@@ -198,6 +207,7 @@ public class ClientController implements Controller {
             System.out.println("PRIVATE");
             clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
         }
+
     }
 
     //TODO
@@ -213,15 +223,7 @@ public class ClientController implements Controller {
             System.out.println("parent: " + getSelectedTab());
             System.out.println("parent ID: " + getSelectedTab().getText());
 
-            if (getSelectedTab().getText().equals("Lobby")) {
-                System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
-                clientService.sendUserText(inputTextArea);
-
-            } else {
-                String tabID = getSelectedTab().getId();
-                System.out.println("PRIVATE");
-                clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
-            }
+            sendPrivateMessage();
 
             //clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
@@ -232,12 +234,21 @@ public class ClientController implements Controller {
     void onFile(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
+        final int MAX_FILE_SIZE = 52428800; //50 MB
+
+
+        if (file == null) {
+            return;
+        }
+
+        if (file.length() > MAX_FILE_SIZE) {
+            userPrompt1(Alert.AlertType.INFORMATION, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
+            return;
+        }
 
         String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
 
-        if (file != null && destiny != null) {
-            clientService.sendUserData(file, destiny, Session.getUsername());
-        }
+        clientService.sendUserData(file, destiny, Session.getUsername());
     }
 
     public TextArea getCurrentRoom() {
@@ -280,14 +291,6 @@ public class ClientController implements Controller {
         }
 
         clientService.sendBioRequest(MessageType.BIO, (String) user);
-    }
-
-    private void confirmDelete() {
-        DeleteAccountDialog delete = new DeleteAccountDialog();
-        Optional<String> password = delete.showAndWait();
-        if (password.isPresent()) {
-            clientService.deleteAccount(password.get());
-        }
     }
 
     @FXML
@@ -447,6 +450,8 @@ public class ClientController implements Controller {
         Tab tab = new Tab("label " + id);
         tab.setId(id);
 
+        addClosingTabHandler(tab);
+
         TextArea textArea = new TextArea();
         textArea.appendText("");
         tab.setContent(textArea);
@@ -463,6 +468,38 @@ public class ClientController implements Controller {
         usersPerTab.put(id, set);
 
         tabPane.getTabs().add(tab);
+    }
+
+    private void addClosingTabHandler(Tab tab) {
+
+        if(tabPane.getTabs().size() == 1){
+
+            EventHandler<Event> event = new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    Tab tab1 = (Tab) event.getSource();
+                    String leaveText = new String("<<<<< " + Session.getUsername() + " has left the building!>>>>>");
+
+                    //removes the tab from the various maps.
+                    Set<String> destinySet = usersPerTab.remove(tab1.getId());
+                    destinySet.remove(Session.getUsername());
+
+                    rooms.remove(tab1);
+                    tabId.remove(tab1.getId());
+                    //
+
+                    clientService.sendPrivateText(new TextArea(leaveText),tab1.getId(),destinySet);
+                }
+
+
+            };
+
+            tab.setOnClosed(event);
+        }
+        else {
+            tab.setOnClosed(tabPane.getTabs().get(1).getOnClosed());
+        }
+
     }
 
     public void createReceivedTab(Set<String> users, String id) {
@@ -482,19 +519,32 @@ public class ClientController implements Controller {
         rooms.put(tab, textArea);
         usersPerTab.put(id, users);
 
-        Runnable runnable = new Runnable() {
+        addClosingTabHandler(tab);
+
+        final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                tabPane.getTabs().add(tab);
+
+                synchronized (this) {
+                    tabPane.getTabs().add(tab);
+                    notifyAll();
+                }
             }
         };
 
         Platform.runLater(runnable);
 
         while (!tabPane.getTabs().contains(tab)) {
-            // TODO resolve empty while
-        }
 
+            try {
+                synchronized (runnable) {
+                    runnable.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public TextArea getDestinyRoom(String tabId) {

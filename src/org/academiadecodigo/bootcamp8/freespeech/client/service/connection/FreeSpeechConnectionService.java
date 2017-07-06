@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.service.cryptography;
+package org.academiadecodigo.bootcamp8.freespeech.client.service.connection;
 
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
@@ -13,10 +13,10 @@ import java.security.Key;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class FreeSpeechCryptographyService implements CryptographyService {
+public class FreeSpeechConnectionService implements ConnectionService {
 
     /**
-     * @see CryptographyService#connect(String, int)
+     * @see ConnectionService#connect(String, int)
      * @param server
      * @param port
      * @return
@@ -48,6 +48,6 @@ public class FreeSpeechCryptographyService implements CryptographyService {
 
     @Override
     public String getName() {
-        return CryptographyService.class.getSimpleName();
+        return ConnectionService.class.getSimpleName();
     }
 }

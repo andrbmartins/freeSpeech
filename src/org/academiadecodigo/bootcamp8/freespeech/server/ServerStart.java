@@ -36,6 +36,7 @@ public class ServerStart {
         } catch (IOException e) {
             Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
         } finally {
+            connectionManager.close();
             server.stop();
         }
 
