@@ -198,14 +198,14 @@ public class ClientHandler implements Runnable {
             case TEXT:
                 server.writeToAll(msg);
                 break;
-            case PRIVATE_DATA:
+            case DATA:
                 server.sendFile(msg);
                 break;
             case PRIVATE_TEXT:
                 server.write(msg);
                 break;
+            case PROFILE:
             case BIO:
-            case OWN_BIO:
                 sendUserBio(msg);
                 break;
             case BIO_UPDATE:

@@ -1,6 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.connection;
 
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.IOException;
@@ -26,12 +26,11 @@ public class FreeSpeechConnectionService implements ConnectionService {
 
         try {
             Socket clientSocket = new Socket(server, port);
-            Session.getInstance().setUserSocket(clientSocket);
+            SessionContainer.getInstance().setUserSocket(clientSocket);
             exchangeKeys();
             return true;
 
         } catch (IOException e) {
-            //TODO - unable to connect message
             return false;
         }
     }
@@ -41,9 +40,11 @@ public class FreeSpeechConnectionService implements ConnectionService {
      */
     private void exchangeKeys() {
 
-        Key foreignKey = (Key) Stream.read(Session.getInput());
-        Session.getCrypto().setForeignKey(foreignKey);
-        Stream.write(Session.getOutput(), Session.getCrypto().getPublicKey());
+        SessionContainer sessionContainer = SessionContainer.getInstance();
+
+        Key foreignKey = (Key) Stream.read(sessionContainer.getInput());
+        sessionContainer.getCrypto().setForeignKey(foreignKey);
+        Stream.write(sessionContainer.getOutput(), sessionContainer.getCrypto().getPublicKey());
     }
 
     @Override

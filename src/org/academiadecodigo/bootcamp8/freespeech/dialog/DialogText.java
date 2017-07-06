@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.utils;
+package org.academiadecodigo.bootcamp8.freespeech.dialog;
 
 
 /**

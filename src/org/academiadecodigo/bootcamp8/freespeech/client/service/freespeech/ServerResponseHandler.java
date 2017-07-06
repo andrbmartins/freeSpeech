@@ -6,8 +6,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
+import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
@@ -17,10 +17,8 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -44,9 +42,11 @@ public class ServerResponseHandler implements Runnable {
     @Override
     public void run() {
 
+        SessionContainer sessionContainer = SessionContainer.getInstance();
+
         while (run) {
-            SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
-            Sendable message = sealedMessage.getContent(Session.getCrypto().getSymKey());
+            SealedSendable sealedMessage = Stream.readSendable(sessionContainer.getInput());
+            Sendable message = sealedMessage.getContent(sessionContainer.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
 
@@ -66,7 +66,7 @@ public class ServerResponseHandler implements Runnable {
             case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
-            case PRIVATE_DATA:
+            case DATA:
                 saveReceivedFile(message);
                 break;
             case PRIVATE_TEXT:
@@ -77,15 +77,15 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case EXIT:
                 run = false;
-                Session.close();
+                SessionContainer.close();
                 break;
             case BIO_UPDATE:
                 notifyUser(message);
                 break;
-            case OWN_BIO:
+            case BIO:
                 clientController.showOwnBio(message);
                 break;
-            case BIO:
+            case PROFILE:
                 clientController.showUserBio(message);
                 break;
             case DELETE_ACCOUNT:

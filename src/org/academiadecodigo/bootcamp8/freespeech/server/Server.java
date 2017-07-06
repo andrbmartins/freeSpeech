@@ -169,7 +169,7 @@ public class Server {
     /**
      * Iterates the list of ClientHandlers, searching for the client that the Sendable msg is destined to.
      * When it finds it, it calls the write method of that client, sending the message.
-     * The Sendable has to respect the following structure: The type must be PRIVATE_TEXT or PRIVATE_DATA;
+     * The Sendable has to respect the following structure: The type must be PRIVATE_TEXT or DATA;
      * and the content must be an HashMap with 2 String: an Values.Destiny_User field and a text field.
      *
      * @param msg to write

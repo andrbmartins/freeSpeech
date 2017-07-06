@@ -1,6 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.service;
-
-import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
+package org.academiadecodigo.bootcamp8.freespeech.client.utils;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -12,10 +10,7 @@ import java.security.NoSuchAlgorithmException;
  * <Code Cadet> Filipe Santos Sá
  */
 
-
-//TODO documentation
-
-public class HashService {
+public class Hash {
 
     private static final String ALGORITHM = "SHA-512";
     private static final int HASH_SIZE = 32;

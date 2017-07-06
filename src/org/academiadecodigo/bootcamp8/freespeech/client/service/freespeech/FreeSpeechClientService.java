@@ -1,17 +1,15 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
 import javafx.scene.control.TextArea;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Hash;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +21,6 @@ import java.util.Map;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO documentation - file manager singleton?
-
 public class FreeSpeechClientService implements ClientService {
 
     @Override
@@ -34,7 +30,7 @@ public class FreeSpeechClientService implements ClientService {
             return;
         }
 
-        String text = Session.getUsername() + ": " + textArea.getText();
+        String text = SessionContainer.getInstance().getUsername() + ": " + textArea.getText();
 
         Message<String> message = new Message<>(text);
         writeObject(MessageType.TEXT, message);
@@ -42,7 +38,6 @@ public class FreeSpeechClientService implements ClientService {
         textArea.clear();
     }
 
-    // Sends a request bio to server
     @Override
     public void sendPrivateText(TextArea textArea, String tabId, Set<String> destinySet) {
 
@@ -50,11 +45,11 @@ public class FreeSpeechClientService implements ClientService {
             return;
         }
 
-        String text = Session.getUsername() + ": " + textArea.getText();
+        String text = SessionContainer.getInstance().getUsername() + ": " + textArea.getText();
 
         HashMap<String,String> map = new HashMap<>();
         map.put(Values.TAB_ID, tabId);
-        map.put(Values.DESTINY,parseSetToString(destinySet));
+        map.put(Values.DESTINY,Parser.setToString(destinySet));
         map.put(Values.MESSAGE,text);
 
         System.out.println(map.toString());
@@ -65,17 +60,6 @@ public class FreeSpeechClientService implements ClientService {
         textArea.clear();
     }
 
-    private String parseSetToString(Set<String> destinySet) {
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (String s : destinySet){
-            stringBuilder.append(s);
-            stringBuilder.append(Values.SEPARATOR_CHARACTER);
-        }
-
-        return stringBuilder.toString();
-    }
 
     @Override
     public void sendBioRequest(MessageType type, String username) {
@@ -113,7 +97,7 @@ public class FreeSpeechClientService implements ClientService {
         map.put(Values.MESSAGE, byteList);
 
         Message<HashMap<String, List<Byte>>> message = new Message<>(map);
-        writeObject(MessageType.PRIVATE_DATA, message);
+        writeObject(MessageType.DATA, message);
     }
 
     @Override
@@ -125,7 +109,7 @@ public class FreeSpeechClientService implements ClientService {
 
     public void deleteAccount (String password) {
 
-        Message<String> message = new Message<>(HashService.getHash(password));
+        Message<String> message = new Message<>(Hash.getHash(password));
         writeObject(MessageType.DELETE_ACCOUNT, message);
     }
 
@@ -139,8 +123,8 @@ public class FreeSpeechClientService implements ClientService {
     public void changePassword(String[] passSet) {
         Map<String, String> messageContent = new HashMap<>();
 
-        messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passSet[0]));
-        messageContent.put(Values.NEW_PASSWORD, HashService.getHash(passSet[1]));
+        messageContent.put(Values.PASSWORD_KEY, Hash.getHash(passSet[0]));
+        messageContent.put(Values.NEW_PASSWORD, Hash.getHash(passSet[1]));
 
         Message<Map> message = new Message<>(messageContent);
 
@@ -148,12 +132,12 @@ public class FreeSpeechClientService implements ClientService {
 
     }
 
-    //TODO - logout
-
     private void writeObject(MessageType type, Sendable message) {
 
-        SealedSendable sealedMessage = Session.getCrypto().encrypt(type, message);
-        Stream.write(Session.getOutput(), sealedMessage);
+        SessionContainer sessionContainer = SessionContainer.getInstance();
+
+        SealedSendable sealedMessage = sessionContainer.getCrypto().encrypt(type, message);
+        Stream.write(sessionContainer.getOutput(), sealedMessage);
     }
 
     @Override
