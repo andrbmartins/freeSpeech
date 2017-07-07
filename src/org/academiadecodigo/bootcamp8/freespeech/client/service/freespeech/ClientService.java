@@ -1,12 +1,9 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
-import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.Service;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 
 import java.io.*;
-import java.util.List;
-import java.net.Socket;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +20,9 @@ public interface ClientService extends Service {
      *
      * @param textField - the specified element
      */
-    void sendUserText(TextArea textField);
+    void sendUserText(String textField);
 
-    void sendPrivateText(TextArea textArea, String tabID, Set<String> destinySet);
+    void sendPrivateText(String textArea, String tabID, Set<String> destinySet);
 
     void sendUserData(File file, String destiny, String origin);
 

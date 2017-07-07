@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.login;
 
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
@@ -27,12 +28,14 @@ public class LoginClientService implements LoginService {
      * @see LoginService#sendMessage(MessageType, Map)
      */
     @Override
-    public void sendMessage(MessageType messageType, Map<String, String> messageContent) {
+    public void sendMessage(MessageType messageType, Map<MapKey, String> messageContent) {
+
+        SessionContainer sessionContainer = SessionContainer.getInstance();
 
         Sendable<Map> message = new Message<>(messageContent);
-        SealedSendable sealed = Session.getCrypto().encrypt(
-                messageType, message, Session.getCrypto().getForeignKey());
-        Stream.write(Session.getOutput(), sealed);
+        SealedSendable sealed = sessionContainer.getCrypto().encrypt(
+                messageType, message, sessionContainer.getCrypto().getForeignKey());
+        Stream.write(sessionContainer.getOutput(), sealed);
     }
 
     /**
@@ -42,8 +45,10 @@ public class LoginClientService implements LoginService {
     @Override
     public Sendable<String> readMessage() {
 
-        SealedSendable serverRsp = Stream.readSendable(Session.getInput());
-        return serverRsp.getContent(Session.getCrypto().getPrivateKey());
+        SessionContainer sessionContainer = SessionContainer.getInstance();
+
+        SealedSendable serverRsp = Stream.readSendable(sessionContainer.getInput());
+        return serverRsp.getContent(sessionContainer.getCrypto().getPrivateKey());
     }
 
     /**
@@ -52,9 +57,11 @@ public class LoginClientService implements LoginService {
     @Override
     public void receiveSymKey() {
 
-        SealedSendable sealed = Stream.readSendable(Session.getInput());
-        Sendable<Key> key = sealed.getContent(Session.getCrypto().getPrivateKey());
-        Session.getCrypto().setSymKey(key.getContent());
+        SessionContainer sessionContainer = SessionContainer.getInstance();
+
+        SealedSendable sealed = Stream.readSendable(sessionContainer.getInput());
+        Sendable<Key> key = sealed.getContent(sessionContainer.getCrypto().getPrivateKey());
+        sessionContainer.getCrypto().setSymKey(key.getContent());
 
     }
 
@@ -64,9 +71,11 @@ public class LoginClientService implements LoginService {
     @Override
     public void exit() {
 
+        SessionContainer sessionContainer = SessionContainer.getInstance();
+
         Sendable<String> message = new Message<>("");
-        SealedSendable sealed = Session.getCrypto().encrypt(
-                MessageType.EXIT, message, Session.getCrypto().getForeignKey());
-        Stream.write(Session.getOutput(), sealed);
+        SealedSendable sealed = sessionContainer.getCrypto().encrypt(
+                MessageType.EXIT, message, sessionContainer.getCrypto().getForeignKey());
+        Stream.write(sessionContainer.getOutput(), sealed);
     }
 }

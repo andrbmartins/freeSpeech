@@ -10,14 +10,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import org.academiadecodigo.bootcamp8.freespeech.client.service.HashService;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.Hash;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
-import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -113,7 +113,7 @@ public class LoginController implements Controller {
 
         if (serverResponse.getContent().equals(Values.LOGIN_OK)) {
             loginService.receiveSymKey();
-            Session.getInstance().setUsername(nameField.getText());
+            SessionContainer.getInstance().setUsername(nameField.getText());
             //TODO method to reset fields for when logout is requested ---> logout is not requested anymore
             //resetFields();
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
@@ -161,15 +161,15 @@ public class LoginController implements Controller {
     @FXML
     void onClose(ActionEvent event) {
         loginService.exit();
-        Session.close();
+        SessionContainer.close();
         Navigation.getInstance().close();
     }
 
     private void sendData(MessageType messageType) {
 
-        Map<String, String> messageContent = new HashMap<>();
-        messageContent.put(Values.NAME_KEY, nameField.getText());
-        messageContent.put(Values.PASSWORD_KEY, HashService.getHash(passwordField.getText()));
+        Map<MapKey, String> messageContent = new HashMap<>();
+        messageContent.put(MapKey.USERNAME, nameField.getText());
+        messageContent.put(MapKey.PASSWORD, Hash.getHash(passwordField.getText()));
 
         loginService.sendMessage(messageType, messageContent);
     }

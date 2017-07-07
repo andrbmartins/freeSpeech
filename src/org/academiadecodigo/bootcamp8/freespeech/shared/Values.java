@@ -16,16 +16,6 @@ public class Values {
 
     public static final Long SERIAL_VERSION_UID = 12345678998432L;
 
-    public static final String NAME_KEY = "username";
-    public static final String PASSWORD_KEY = "password";
-    public static final String TAB_ID = "Tab Id";
-    public static final String NEW_PASSWORD = "newPassword";
-    public static final String DESTINY = "to";
-    public static final String ORIGIN = "from";
-    public static final String MESSAGE = "text";
-    public static final String FILE_EXTENSION = "file extension";
-
-
     public static final String LOGIN_OK = "Successfully logged in!";
     public static final String LOGIN_FAIL = "Unable to login.";
     public static final String ALREADY_LOGGED = "This user is already logged elsewhere";
@@ -53,10 +43,6 @@ public class Values {
     public static final String INVALID_INPUT = "Required fields are empty.";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
-
-    public static final String URL_DB_SERVER = "jdbc:mysql://localhost:3306/freespeech";
-    public static final String USER_DB_SERVER = "root";
-    public static final String PASSWORD_DB_SERVER = "";
 
     public static final String SEPARATOR_CHARACTER = ",";
 

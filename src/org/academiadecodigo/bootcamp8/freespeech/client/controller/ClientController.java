@@ -23,7 +23,10 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.Serve
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
+import org.academiadecodigo.bootcamp8.freespeech.dialog.ChangePassDialog;
+import org.academiadecodigo.bootcamp8.freespeech.dialog.DeleteAccountDialog;
+import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -109,7 +112,7 @@ public class ClientController implements Controller {
     public void initialize(URL location, ResourceBundle resources) {
 
         //TODO just testing, don't delete yet
-        username.setText(Session.getUsername());
+        username.setText(SessionContainer.getInstance().getUsername());
         username.setStyle("-fx-text-fill: #000000;");
 
         rooms.put(getSelectedTab(), lobbyTextArea);
@@ -121,12 +124,7 @@ public class ClientController implements Controller {
     }
 
     private Tab getSelectedTab() {
-
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-
-
-
-        return tab;
+        return tabPane.getSelectionModel().getSelectedItem();
     }
 
     private void focusUserInput() {
@@ -162,7 +160,7 @@ public class ClientController implements Controller {
     void onActionPrivateChat(ActionEvent event) {
 
         String name = onlineUsersList.getSelectionModel().getSelectedItem();
-        String clientName = Session.getUsername();
+        String clientName = SessionContainer.getInstance().getUsername();
 
         if (!clientName.equals(name)) {
             createNewTab(name);
@@ -176,14 +174,24 @@ public class ClientController implements Controller {
     @FXML
     void onAddToChatAction(ActionEvent event) {
 
-        String name = onlineUsersList.getSelectionModel().getSelectedItem();
+        String name;
 
-        String tabId = tabPane.getSelectionModel().getSelectedItem().getId();
-        Set<String> userSet = usersPerTab.get(tabId);
+        if((name = onlineUsersList.getSelectionModel().getSelectedItem()) == null){
+            return;
+        }
+
+        String currentTabId = getSelectedTab().getId();
+        String userSelected = onlineUsersList.getSelectionModel().getSelectedItem();
+
+        if (getSelectedTab().getText().equals("Lobby") || usersPerTab.get(currentTabId).contains(userSelected)){
+            return;
+        }
+
+        Set<String> userSet = usersPerTab.get(currentTabId);
 
         if (!userSet.contains(name)) {
             userSet.add(name);
-            usersPerTab.replace(tabId, userSet);
+            usersPerTab.replace(currentTabId, userSet);
         }
 
     }
@@ -201,11 +209,13 @@ public class ClientController implements Controller {
 
         if (getSelectedTab().getText().equals("Lobby")) {
             System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
-            clientService.sendUserText(inputTextArea);
+            clientService.sendUserText(inputTextArea.getText());
+            inputTextArea.clear();
         } else {
             String tabID = getSelectedTab().getId();
             System.out.println("PRIVATE");
-            clientService.sendPrivateText(inputTextArea, tabID, usersPerTab.get(tabID));
+            clientService.sendPrivateText(inputTextArea.getText(), tabID, usersPerTab.get(tabID));
+            inputTextArea.clear();
         }
 
     }
@@ -225,7 +235,6 @@ public class ClientController implements Controller {
 
             sendPrivateMessage();
 
-            //clientService.sendUserText(inputTextArea);
             event.consume(); //nullifies enter key effect (new line)
         }
     }
@@ -248,7 +257,7 @@ public class ClientController implements Controller {
 
         String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
 
-        clientService.sendUserData(file, destiny, Session.getUsername());
+        clientService.sendUserData(file, destiny, SessionContainer.getInstance().getUsername());
     }
 
     public TextArea getCurrentRoom() {
@@ -266,6 +275,10 @@ public class ClientController implements Controller {
 
         this.stage.setMinHeight(Values.CLIENT_HEIGHT);
         this.stage.setMaxHeight(screen.getHeight());
+
+        this.stage.setX(screen.getWidth() / 2 - stage.getWidth() / 2);
+        this.stage.setY(screen.getHeight() / 2 - stage.getHeight() / 2);
+
     }
 
     public void processUsersList(Sendable<List<String>> message) {
@@ -285,12 +298,12 @@ public class ClientController implements Controller {
 
         Object user = onlineUsersList.getSelectionModel().selectedItemProperty().get();
 
-        if (user == null || user.equals(Session.getUsername())) {
+        if (user == null || user.equals(SessionContainer.getInstance().getUsername())) {
             onlineUsersList.getSelectionModel().clearSelection();
             return;
         }
 
-        clientService.sendBioRequest(MessageType.BIO, (String) user);
+        clientService.sendBioRequest(MessageType.PROFILE, (String) user);
     }
 
     @FXML
@@ -358,15 +371,9 @@ public class ClientController implements Controller {
         return alert.showAndWait();
     }
 
-
-    @FXML
-    void startPrivateChat(MouseEvent event) {
-
-    }
-
     @FXML
     void editUserInfo(ActionEvent event) {
-        clientService.sendBioRequest(MessageType.OWN_BIO, Session.getUsername());
+        clientService.sendBioRequest(MessageType.BIO, SessionContainer.getInstance().getUsername());
     }
 
 
@@ -428,7 +435,7 @@ public class ClientController implements Controller {
     void onUpdateProfile(ActionEvent event) {
 
         List<String> updatedBio = new LinkedList<>();
-        updatedBio.add(Session.getUsername());
+        updatedBio.add(SessionContainer.getInstance().getUsername());
         updatedBio.add(emailBio.getText());
         updatedBio.add(dateBirthBio.getText());
         updatedBio.add(userBio.getText());
@@ -444,7 +451,7 @@ public class ClientController implements Controller {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date date = new Date();
 
-        String id = Session.getUsername() +
+        String id = SessionContainer.getInstance().getUsername() +
                 "_" + user + dateFormat.format(date);
 
         Tab tab = new Tab("label " + id);
@@ -464,7 +471,7 @@ public class ClientController implements Controller {
         //creating the data to update usersPerTab
         HashSet<String> set = new HashSet<>();
         set.add(user);
-        set.add(Session.getUsername());
+        set.add(SessionContainer.getInstance().getUsername());
         usersPerTab.put(id, set);
 
         tabPane.getTabs().add(tab);
@@ -472,34 +479,32 @@ public class ClientController implements Controller {
 
     private void addClosingTabHandler(Tab tab) {
 
-        if(tabPane.getTabs().size() == 1){
-
-            EventHandler<Event> event = new EventHandler<Event>() {
-                @Override
-                public void handle(Event event) {
-                    Tab tab1 = (Tab) event.getSource();
-                    String leaveText = new String("<<<<< " + Session.getUsername() + " has left the building!>>>>>");
-
-                    //removes the tab from the various maps.
-                    Set<String> destinySet = usersPerTab.remove(tab1.getId());
-                    destinySet.remove(Session.getUsername());
-
-                    rooms.remove(tab1);
-                    tabId.remove(tab1.getId());
-                    //
-
-                    clientService.sendPrivateText(new TextArea(leaveText),tab1.getId(),destinySet);
-                }
-
-
-            };
-
-            tab.setOnClosed(event);
-        }
-        else {
+        if (tabPane.getTabs().size() != 1) {
             tab.setOnClosed(tabPane.getTabs().get(1).getOnClosed());
+            return;
         }
 
+        EventHandler<Event> event = new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                Tab tab1 = (Tab) event.getSource();
+                String leaveText = "< " + SessionContainer.getInstance().getUsername() + " has left the building! >";
+
+                //removes the tab from the various maps.
+                Set<String> destinySet = usersPerTab.remove(tab1.getId());
+                destinySet.remove(SessionContainer.getInstance().getUsername());
+
+                rooms.remove(tab1);
+                tabId.remove(tab1.getId());
+                //
+
+                clientService.sendPrivateText(leaveText, tab1.getId(), destinySet);
+            }
+
+
+        };
+
+        tab.setOnClosed(event);
     }
 
     public void createReceivedTab(Set<String> users, String id) {
@@ -575,6 +580,13 @@ public class ClientController implements Controller {
                 return o.contains(searchBar.getText());
             }
         });
+
+        try {
+            int code = java.awt.event.KeyEvent.VK_ENTER;
+            new Robot().keyPress(code);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
 
         onlineUsersList.setItems(list);
 

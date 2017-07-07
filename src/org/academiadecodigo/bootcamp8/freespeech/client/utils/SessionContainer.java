@@ -14,20 +14,20 @@ import java.net.Socket;
  * <Code Cadet> Filipe Santos Sá
  */
 
-public class Session {
+public class SessionContainer {
 
-    private static String username;
+    private String username;
     private Socket userSocket;
     private Crypto cryptographer;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
 
-    private static Session instance = null;
+    private static SessionContainer instance = null;
 
     /**
-     * Instantiates a Session and a Crypto.
+     * Instantiates a SessionContainer and a Crypto.
      */
-    private Session() {
+    private SessionContainer() {
         cryptographer = new Crypto();
     }
 
@@ -36,11 +36,11 @@ public class Session {
      *
      * @return - the instance.
      */
-    public static Session getInstance() {
+    public static SessionContainer getInstance() {
         if (instance == null) {
-            synchronized (Navigation.class) {
+            synchronized (SessionContainer.class) {
                 if (instance == null) {
-                    instance = new Session();
+                    instance = new SessionContainer();
                 }
             }
         }
@@ -74,19 +74,19 @@ public class Session {
         }
     }
 
-    public static ObjectOutputStream getOutput() {
-        return getInstance().outputStream;
+    public Crypto getCrypto() {
+        return cryptographer;
     }
 
-    public static ObjectInputStream getInput() {
-        return getInstance().inputStream;
+    public ObjectInputStream getInput() {
+        return inputStream;
     }
 
-    public static Crypto getCrypto() {
-        return getInstance().cryptographer;
+    public ObjectOutputStream getOutput() {
+        return outputStream;
     }
 
-    public static String getUsername() {
+    public String getUsername() {
         return username;
     }
 
@@ -94,6 +94,6 @@ public class Session {
      * Closes the socket.
      */
     public static void close() {
-        Stream.close(Session.getInstance().userSocket);
+        Stream.close(SessionContainer.getInstance().userSocket);
     }
 }

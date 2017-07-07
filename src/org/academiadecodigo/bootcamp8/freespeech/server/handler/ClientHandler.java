@@ -6,15 +6,19 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
+
 import java.io.*;
 import java.net.Socket;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Developed @ <Academia de Código_>
@@ -105,14 +109,14 @@ public class ClientHandler implements Runnable {
 
     private void register(SealedSendable sealedSendable) {
 
-        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
-        HashMap<String, String> register = sendable.getContent();
-        String username = register.get(Values.NAME_KEY);
+        Sendable<HashMap<MapKey, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
+        HashMap<MapKey, String> register = sendable.getContent();
+        String username = register.get(MapKey.USERNAME);
 
         synchronized (userService) {
 
             if (userService.getUser(username) == null &&
-                    userService.addUser(new User(username, register.get(Values.PASSWORD_KEY)))) {
+                    userService.addUser(new User(username, register.get(MapKey.PASSWORD)))) {
                 Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_REGISTERED + username);
                 responseToClient(sealedSendable.getType(), Values.REGISTER_OK);
                 return;
@@ -127,10 +131,10 @@ public class ClientHandler implements Runnable {
 
     private boolean login(SealedSendable sealedSendable) {
 
-        Sendable<HashMap<String, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
-        HashMap<String, String> login = sendable.getContent();
-        String username = login.get(Values.NAME_KEY);
-        String password = login.get(Values.PASSWORD_KEY);
+        Sendable<HashMap<MapKey, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
+        HashMap<MapKey, String> login = sendable.getContent();
+        String username = login.get(MapKey.USERNAME);
+        String password = login.get(MapKey.PASSWORD);
 
         if (server.userLogged(username)) {
             responseToClient(sealedSendable.getType(), Values.ALREADY_LOGGED);
@@ -171,6 +175,9 @@ public class ClientHandler implements Runnable {
 
     private void readFromClient() {
 
+        final int MAX_THREADS = 4;
+        ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
+
         SealedSendable msg;
 
         while (run) {
@@ -178,7 +185,9 @@ public class ClientHandler implements Runnable {
                 run = false;
                 continue;
             }
-            handleMessage(msg);
+
+            pool.submit(new MessageHandler(msg));
+
         }
 
         server.removeUser(this);
@@ -187,52 +196,68 @@ public class ClientHandler implements Runnable {
 
     }
 
-    private void handleMessage(SealedSendable msg) {
+    private class MessageHandler implements Runnable {
 
-        MessageType type = msg.getType();
+        private final SealedSendable msg;
 
-        switch (type) {
-            case REPORT:
-                reportUser(msg);
-                break;
-            case TEXT:
-                server.writeToAll(msg);
-                break;
-            case PRIVATE_DATA:
-                server.sendFile(msg);
-                break;
-            case PRIVATE_TEXT:
-                server.write(msg);
-                break;
-            case BIO:
-            case OWN_BIO:
-                sendUserBio(msg);
-                break;
-            case BIO_UPDATE:
-                updateBio(msg);
-                break;
-            case PASS_CHANGE:
-                changePass(msg, type);
-                break;
-            case EXIT:
-                run = false;
-                Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
-                server.removeUser(this);
-                write(msg);
-                Stream.close(clientSocket);
-                break;
-            case DELETE_ACCOUNT:
-                if (deleteAccount(msg, type)) {
+        public MessageHandler(SealedSendable msg) {
+            this.msg = msg;
+        }
+
+        @Override
+        public void run() {
+            handleMessage();
+        }
+
+        private void handleMessage() {
+
+            MessageType type = msg.getType();
+
+            switch (type) {
+                case REPORT:
+                    reportUser(msg);
+                    break;
+                case TEXT:
+                    server.writeToAll(msg);
+                    break;
+                case DATA:
+                    server.sendFile(msg);
+                    break;
+                case PRIVATE_TEXT:
+                    server.write(msg);
+                    break;
+                case PROFILE:
+                case BIO:
+                    sendUserBio(msg);
+                    break;
+                case BIO_UPDATE:
+                    updateBio(msg);
+                    break;
+                case PASS_CHANGE:
+                    changePass(msg, type);
+                    break;
+                case EXIT:
                     run = false;
-                    server.removeUser(this);
+                    Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
+                    server.removeUser(ClientHandler.this);
+                    write(msg);
                     Stream.close(clientSocket);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException();
+                    break;
+                case DELETE_ACCOUNT:
+                    if (deleteAccount(msg, type)) {
+                        run = false;
+                        server.removeUser(ClientHandler.this);
+                        Stream.close(clientSocket);
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException();
 
+            }
         }
     }
+
+
 
     private void reportUser(SealedSendable msg) {
 
@@ -296,11 +321,11 @@ public class ClientHandler implements Runnable {
 
     private void changePass(SealedSendable msg, MessageType type) {
 
-        Sendable<HashMap<String, String>> sendable = msg.getContent(crypto.getSymKey());
-        HashMap<String, String> map = sendable.getContent();
+        Sendable<HashMap<MapKey, String>> sendable = msg.getContent(crypto.getSymKey());
+        HashMap<MapKey, String> map = sendable.getContent();
         Sendable<String> message;
-        String oldPassword = map.get(Values.PASSWORD_KEY);
-        String newPassword = map.get(Values.NEW_PASSWORD);
+        String oldPassword = map.get(MapKey.PASSWORD);
+        String newPassword = map.get(MapKey.NEW_PASSWORD);
 
         if (userService.changePassword(clientName, oldPassword, newPassword)) {
             message = new Message<>(Values.PASS_CHANGED);

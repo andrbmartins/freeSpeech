@@ -22,12 +22,10 @@ public class Navigation {
 
     private static Navigation instance = null;
 
-    private Map<String, Controller> controllers;
     private Stage stage;
     private String css;
 
     private Navigation() {
-        controllers = new HashMap<>();
     }
 
     /**
@@ -58,8 +56,7 @@ public class Navigation {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW_PATH + "/" + view + ".fxml"));
             Parent root = loader.load();
 
-            controllers.put(view, loader.getController());
-            controllers.get(view).setStage(stage);
+            ((Controller) loader.getController()).setStage(stage);
 
             Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
             scene.getStylesheets().add(css);

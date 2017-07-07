@@ -21,6 +21,19 @@ public class Parser {
         return bytes;
     }
 
+
+    public static String setToString(Set<String> destinySet) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String s : destinySet){
+            stringBuilder.append(s);
+            stringBuilder.append(Values.SEPARATOR_CHARACTER);
+        }
+
+        return stringBuilder.toString();
+    }
+
     public static Set<String> stringToSet(String destinyString) {
 
         HashSet<String> set = new HashSet<>();

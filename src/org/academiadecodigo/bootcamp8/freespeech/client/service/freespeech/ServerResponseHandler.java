@@ -6,9 +6,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.DialogText;
-import org.academiadecodigo.bootcamp8.freespeech.client.utils.Session;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
+import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -17,10 +18,8 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -44,9 +43,11 @@ public class ServerResponseHandler implements Runnable {
     @Override
     public void run() {
 
+        SessionContainer sessionContainer = SessionContainer.getInstance();
+
         while (run) {
-            SealedSendable sealedMessage = Stream.readSendable(Session.getInput());
-            Sendable message = sealedMessage.getContent(Session.getCrypto().getSymKey());
+            SealedSendable sealedMessage = Stream.readSendable(sessionContainer.getInput());
+            Sendable message = sealedMessage.getContent(sessionContainer.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
 
@@ -66,7 +67,7 @@ public class ServerResponseHandler implements Runnable {
             case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
-            case PRIVATE_DATA:
+            case DATA:
                 saveReceivedFile(message);
                 break;
             case PRIVATE_TEXT:
@@ -77,15 +78,15 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case EXIT:
                 run = false;
-                Session.close();
+                SessionContainer.close();
                 break;
             case BIO_UPDATE:
                 notifyUser(message);
                 break;
-            case OWN_BIO:
+            case BIO:
                 clientController.showOwnBio(message);
                 break;
-            case BIO:
+            case PROFILE:
                 clientController.showUserBio(message);
                 break;
             case DELETE_ACCOUNT:
@@ -98,17 +99,17 @@ public class ServerResponseHandler implements Runnable {
         }
     }
 
-    private void saveReceivedFile(Sendable<HashMap<String, List<Byte>>> message) {
+    private void saveReceivedFile(Sendable<HashMap<MapKey, List<Byte>>> message) {
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
 
-                HashMap<String, List<Byte>> map = message.getContent();
-                List<Byte> extensionList = map.get(Values.FILE_EXTENSION);
-                List<Byte> byteList = map.get(Values.MESSAGE);
+                HashMap<MapKey, List<Byte>> map = message.getContent();
+                List<Byte> extensionList = map.get(MapKey.FILE_EXTENSION);
+                List<Byte> byteList = map.get(MapKey.MESSAGE);
                 String fileExtension = new String(Parser.listToByteArray(extensionList));
-                String sender = new String(Parser.listToByteArray(map.get(Values.ORIGIN)));
+                String sender = new String(Parser.listToByteArray(map.get(MapKey.SOURCE)));
 
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("You have received a file from " + sender);
@@ -132,13 +133,13 @@ public class ServerResponseHandler implements Runnable {
 
     }
 
-    private void printPrivateChat(Sendable<HashMap<String, String>> message) {
+    private void printPrivateChat(Sendable<HashMap<MapKey, String>> message) {
 
-        HashMap<String, String> map = message.getContent();
+        HashMap<MapKey, String> map = message.getContent();
 
-        String tabId = map.get(Values.TAB_ID);
-        String destinyString = map.get(Values.DESTINY);
-        String text = map.get(Values.MESSAGE);
+        String tabId = map.get(MapKey.TAB_ID);
+        String destinyString = map.get(MapKey.SOURCE);
+        String text = map.get(MapKey.MESSAGE);
         TextArea textArea;
         Set<String> destinySet = Parser.stringToSet(destinyString);
 
