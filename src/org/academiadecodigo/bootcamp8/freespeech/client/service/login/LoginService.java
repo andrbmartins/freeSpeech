@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.login;
 
 import org.academiadecodigo.bootcamp8.freespeech.client.service.Service;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 
@@ -21,7 +22,7 @@ public interface LoginService extends Service {
      * @param messageType    - the type.
      * @param messageContent - the content.
      */
-    void sendMessage(MessageType messageType, Map<String, String> messageContent);
+    void sendMessage(MessageType messageType, Map<MapKey, String> messageContent);
 
     /**
      * Receives a message from the server.

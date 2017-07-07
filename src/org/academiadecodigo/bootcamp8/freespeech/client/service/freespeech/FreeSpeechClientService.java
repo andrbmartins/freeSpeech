@@ -4,6 +4,7 @@ import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Hash;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
@@ -45,14 +46,14 @@ public class FreeSpeechClientService implements ClientService {
 
         String text = SessionContainer.getInstance().getUsername() + ": " + textArea;
 
-        HashMap<String,String> map = new HashMap<>();
-        map.put(Values.TAB_ID, tabId);
-        map.put(Values.DESTINY,Parser.setToString(destinySet));
-        map.put(Values.MESSAGE,text);
+        HashMap<MapKey, String> map = new HashMap<>();
+        map.put(MapKey.TAB_ID, tabId);
+        map.put(MapKey.DESTINATION, Parser.setToString(destinySet));
+        map.put(MapKey.MESSAGE, text);
 
         System.out.println(map.toString());
 
-        Message<HashMap<String,String>> message = new Message<>(map);
+        Message<HashMap<MapKey, String>> message = new Message<>(map);
         writeObject(MessageType.PRIVATE_TEXT, message);
     }
 
@@ -81,18 +82,18 @@ public class FreeSpeechClientService implements ClientService {
 
         byte[] buffer = Parser.fileToByteArray(file);
         List<Byte> byteList = Parser.byteArrayToList(buffer);
-        HashMap<String, List<Byte>> map = new HashMap<>();
+        HashMap<MapKey, List<Byte>> map = new HashMap<>();
 
         List<Byte> destinyList = Parser.byteArrayToList(destiny.getBytes());
         List<Byte> originList = Parser.byteArrayToList(origin.getBytes());
         List<Byte> extensionList = Parser.byteArrayToList(fileExtension.getBytes());
 
-        map.put(Values.DESTINY, destinyList);
-        map.put(Values.ORIGIN, originList);
-        map.put(Values.FILE_EXTENSION, extensionList);
-        map.put(Values.MESSAGE, byteList);
+        map.put(MapKey.DESTINATION, destinyList);
+        map.put(MapKey.SOURCE, originList);
+        map.put(MapKey.FILE_EXTENSION, extensionList);
+        map.put(MapKey.MESSAGE, byteList);
 
-        Message<HashMap<String, List<Byte>>> message = new Message<>(map);
+        Message<HashMap<MapKey, List<Byte>>> message = new Message<>(map);
         writeObject(MessageType.DATA, message);
     }
 
@@ -103,7 +104,7 @@ public class FreeSpeechClientService implements ClientService {
     }
 
 
-    public void deleteAccount (String password) {
+    public void deleteAccount(String password) {
 
         Message<String> message = new Message<>(Hash.getHash(password));
         writeObject(MessageType.DELETE_ACCOUNT, message);
@@ -117,10 +118,10 @@ public class FreeSpeechClientService implements ClientService {
 
     @Override
     public void changePassword(String[] passSet) {
-        Map<String, String> messageContent = new HashMap<>();
+        Map<MapKey, String> messageContent = new HashMap<>();
 
-        messageContent.put(Values.PASSWORD_KEY, Hash.getHash(passSet[0]));
-        messageContent.put(Values.NEW_PASSWORD, Hash.getHash(passSet[1]));
+        messageContent.put(MapKey.PASSWORD, Hash.getHash(passSet[0]));
+        messageContent.put(MapKey.NEW_PASSWORD, Hash.getHash(passSet[1]));
 
         Message<Map> message = new Message<>(messageContent);
 

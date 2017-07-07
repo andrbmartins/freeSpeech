@@ -7,6 +7,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Message;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -176,9 +177,9 @@ public class Server {
      */
     public void write(SealedSendable msg) {
 
-        Sendable<HashMap<String, String>> sendable = msg.getContent(symKey);
-        HashMap<String, String> content = sendable.getContent();
-        String destinyString = content.get(Values.DESTINY);
+        Sendable<HashMap<MapKey, String>> sendable = msg.getContent(symKey);
+        HashMap<MapKey, String> content = sendable.getContent();
+        String destinyString = content.get(MapKey.DESTINATION);
         Set<String> destinySet = Parser.stringToSet(destinyString);
 
         System.out.println("SERVER DESTINY SET: " + destinySet.toString());
@@ -257,9 +258,9 @@ public class Server {
 
     public void sendFile(SealedSendable msg) {
 
-        Sendable<HashMap<String, List<Byte>>> sendable = msg.getContent(symKey);
-        HashMap<String, List<Byte>> content = sendable.getContent();
-        String destiny = new String(Parser.byteListToArray(content.get(Values.DESTINY)));
+        Sendable<HashMap<MapKey, List<Byte>>> sendable = msg.getContent(symKey);
+        HashMap<MapKey, List<Byte>> content = sendable.getContent();
+        String destiny = new String(Parser.byteListToArray(content.get(MapKey.DESTINATION)));
 
         for (ClientHandler c : loggedUsers) {
 
