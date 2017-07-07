@@ -23,9 +23,9 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.Serve
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
+import org.academiadecodigo.bootcamp8.freespeech.client.utils.DeleteAccountDialog;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.dialog.ChangePassDialog;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.DeleteAccountDialog;
 import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;

@@ -1,18 +1,23 @@
 package org.academiadecodigo.bootcamp8.freespeech.dialog;
-
 import javafx.application.Platform;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 /**
  * Developed @ <Academia de Código_>
  * Created by
  * <Code Cadet> PedroMAlves
  */
+
+//TODO refactor
 
 public class ChangePassDialog extends Dialog<String[]> {
     private PasswordField currPassword;
@@ -23,34 +28,36 @@ public class ChangePassDialog extends Dialog<String[]> {
 
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.initStyle(StageStyle.UNDECORATED);
+        getDialogPane().getScene().getStylesheets().clear();
+        getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
 
-        setTitle("freeSpeech Password Change");
-        setHeaderText("Confirm your current password and enter new one");
+        Label label = new Label("Confirm your current password and enter new one");
 
+        //TODO can we use buttons instead?
         ButtonType setPass = new ButtonType("Set New Password", ButtonBar.ButtonData.OK_DONE);
         getDialogPane().getButtonTypes().addAll(setPass, ButtonType.CANCEL);
 
         currPassword = new PasswordField();
-        currPassword.setPromptText("current password");
+        currPassword.setPromptText("current password_");
 
         newPassword = new PasswordField();
-        newPassword.setPromptText("new password");
+        newPassword.setPromptText("new password_");
 
         confirmPass = new PasswordField();
-        confirmPass.setPromptText("confirm password");
-
-        Label currPass = new Label("Current password");
-        Label newPass = new Label("New password");
-        Label confirm = new Label("Confirm new password");
+        confirmPass.setPromptText("confirm new password_");
 
         GridPane grid = new GridPane();
+        GridPane.setHalignment(label, HPos.CENTER);
+        GridPane.setHalignment(currPassword, HPos.CENTER);
+        GridPane.setHalignment(newPassword, HPos.CENTER);
+        GridPane.setHalignment(confirmPass, HPos.CENTER);
 
-        grid.add(currPass, 0, 0);
-        grid.add(currPassword, 1, 0);
-        grid.add(newPass, 0, 1);
-        grid.add(newPassword, 1, 1);
-        grid.add(confirm, 0, 2);
-        grid.add(confirmPass, 1, 2);
+
+
+        grid.add(label, 0, 0);
+        grid.add(currPassword, 0, 1);
+        grid.add(newPassword, 0, 2);
+        grid.add(confirmPass, 0, 3);
         grid.setHgap(40);
         grid.setVgap(10);
         grid.setPadding(new Insets(40));
@@ -72,7 +79,8 @@ public class ChangePassDialog extends Dialog<String[]> {
                     String[] result = {currPassword.getText(), newPassword.getText(), confirmPass.getText()};
                     return result;
                 }
-                return null;           }
+                return null;
+            }
         });
     }
 }
