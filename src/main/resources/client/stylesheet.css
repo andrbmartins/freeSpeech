@@ -1,0 +1,136 @@
+.root {
+    -fx-alignment: center;
+    -fx-cursor: default;
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, #FF0000 0%, #690504 100%);
+    -fx-background-radius: 0;
+    -fx-font: 10pt Helvetica;
+}
+
+.button {
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 50px;
+}
+
+#closeButton,
+#exitButton,
+#closeConnection {
+    -fx-background-image: url("icons/exit.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
+}
+
+#privateChatButton {
+    -fx-background-image: url("icons/private.png");
+}
+
+#reportButton {
+    -fx-background-image: url("icons/report.png");
+}
+
+#fileButton {
+    -fx-background-image: url("icons/file.png");
+}
+
+#loginButton {
+    -fx-background-image: url("icons/login.png");
+}
+
+#backButton {
+    -fx-background-image: url("icons/back.png");
+}
+
+#registerButton {
+    -fx-background-image: url("icons/register.png");
+}
+
+#confirmButton,
+#sendButton {
+    -fx-background-image: url("icons/confirm.png");
+}
+
+.text-field {
+    -fx-max-width: 20em;
+}
+
+.label {
+    -fx-text-fill: #FFFFFF;
+}
+
+#topBar {
+    -fx-background-color: #FFFFFF;
+}
+
+.list-view {
+    -fx-background-color: #FF0000;
+    -fx-opacity: 0.9;
+    -fx-font-weight: bold;
+}
+
+.list-cell {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: #000000;
+}
+
+.list-cell:selected {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #690504;
+    -fx-opacity: 0.7;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #690504;
+}
+
+.tab {
+    -fx-background-color: #D3D3D3;
+    -fx-background-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tab:selected {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+    -fx-background-insets: 0 1 0 -1;
+}
+
+
+
+.text-area,
+.text-area:focused .content {
+    -fx-text-fill: #000000;
+    -fx-background-radius: 0;
+    -fx-background-color: white;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+#inputTextArea {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea .content {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea:focused {
+    -fx-background-insets: 0;
+}
+
+.increment-button,
+.decrement-button {
+    -fx-pref-height: 0; /*hides button*/
+}
+
+.text-area .scroll-bar .track {
+    -fx-background-color: maroon;
+}
