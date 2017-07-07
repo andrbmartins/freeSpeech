@@ -145,6 +145,7 @@ public class ServerResponseHandler implements Runnable {
 
         if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
             clientController.updateUsersSet(tabId, destinySet);
+            clientController.updateTooltipText(tabId, destinySet);
 
         } else {
             clientController.createReceivedTab(destinySet, tabId);
