@@ -18,9 +18,19 @@
     -fx-background-size: 50px;
 }
 
+
+#deleteAccountButton {
+    -fx-background-image: url("icons/confirm.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
+}
+
 #closeButton,
 #exitButton,
-#closeConnection {
+#closeConnection,
+#cancelRemoveButton {   /* testing */
     -fx-background-image: url("icons/exit.png");
     -fx-pref-width: 30px;
     -fx-pref-height: 30px;
@@ -161,3 +171,11 @@
 .text-area .scroll-bar .track {
     -fx-background-color: maroon;
 }
+
+#buttons {
+    -fx-padding: -10px 40px 0 10px;
+}
+
+
+
+

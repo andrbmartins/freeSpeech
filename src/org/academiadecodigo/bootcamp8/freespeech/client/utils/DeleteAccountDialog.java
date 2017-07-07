@@ -29,8 +29,13 @@ public class DeleteAccountDialog extends Dialog<String> {
         styleStage();
 
         //TODO can we use buttons instead?
-        ButtonType deleteButton = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().addAll(deleteButton, ButtonType.CANCEL);
+        ButtonType deleteButton = new ButtonType("", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("", ButtonBar.ButtonData.CANCEL_CLOSE);
+        getDialogPane().getButtonTypes().addAll(deleteButton, cancelButton);
+
+        getDialogPane().lookupButton(deleteButton).setId("deleteAccountButton");
+        getDialogPane().lookupButton(cancelButton).setId("cancelRemoveButton");
+        getDialogPane().lookup(".button-bar").setId("buttons");
 
         VBox vBox = styleVBox();
         getDialogPane().setContent(vBox);
@@ -66,7 +71,7 @@ public class DeleteAccountDialog extends Dialog<String> {
 
     private VBox styleVBox() {
 
-        final String DELETE = "Enter password in order to delete account";
+        final String DELETE = "Enter password in order to delete account\n";
 
         Label label = new Label(DELETE);
         passwordField = new PasswordField();
