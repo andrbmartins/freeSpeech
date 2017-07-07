@@ -155,7 +155,10 @@ public class ClientController implements Controller {
         });
     }
 
-    //TODO
+    /**
+     * Gets name of selected user and creates new private chat (new tab)
+     * @param event
+     */
     @FXML
     void onActionPrivateChat(ActionEvent event) {
 
@@ -170,7 +173,10 @@ public class ClientController implements Controller {
         addToChatButton.setVisible(true);
     }
 
-    //TODO
+    /**
+     * Adds new users to the current private chat
+     * @param event
+     */
     @FXML
     void onAddToChatAction(ActionEvent event) {
 
@@ -196,31 +202,28 @@ public class ClientController implements Controller {
 
     }
 
-    //TODO
+    /**
+     * Sends message for currently active tab
+     * @param event
+     */
     @FXML
     void onSend(ActionEvent event) {
 
-        System.out.println("parent: " + getSelectedTab());
-        System.out.println("parent ID: " + getSelectedTab().getText());
-        sendPrivateMessage();
-    }
-
-    private void sendPrivateMessage() {
-
         if (getSelectedTab().getText().equals("Lobby")) {
-            System.out.println("mensagem da tab Lobby --" + getSelectedTab().getText());
             clientService.sendUserText(inputTextArea.getText());
             inputTextArea.clear();
         } else {
             String tabID = getSelectedTab().getId();
-            System.out.println("PRIVATE");
             clientService.sendPrivateText(inputTextArea.getText(), tabID, usersPerTab.get(tabID));
             inputTextArea.clear();
         }
 
     }
 
-    //TODO
+    /**
+     * Sends message on enter key
+     * @param event
+     */
     @FXML
     void onSendKey(KeyEvent event) {
 
@@ -230,21 +233,20 @@ public class ClientController implements Controller {
         }
         if (event.getCode() == KeyCode.ENTER) {
 
-            System.out.println("parent: " + getSelectedTab());
-            System.out.println("parent ID: " + getSelectedTab().getText());
-
-            sendPrivateMessage();
+            onSend(null);
 
             event.consume(); //nullifies enter key effect (new line)
         }
     }
 
+    /**
+     * Opens dialog to select file to send on button pressed if a file is selected and file is less than 50MB
+     * @param event
+     */
     @FXML
     void onFile(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(stage);
         final int MAX_FILE_SIZE = 52428800; //50 MB
-
+        File file = new FileChooser().showOpenDialog(stage);
 
         if (file == null) {
             return;
@@ -256,14 +258,16 @@ public class ClientController implements Controller {
         }
 
         String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
-
         clientService.sendUserData(file, destiny, SessionContainer.getInstance().getUsername());
     }
 
+    /*
     public TextArea getCurrentRoom() {
         return rooms.get(getSelectedTab());
     }
+*/
 
+    //TODO
     @Override
     public void setStage(Stage stage) {
 
@@ -281,6 +285,10 @@ public class ClientController implements Controller {
 
     }
 
+    /**
+     * Updates logged users list
+     * @param message
+     */
     public void processUsersList(Sendable<List<String>> message) {
 
         Platform.runLater(new Runnable() {
@@ -293,6 +301,10 @@ public class ClientController implements Controller {
         });
     }
 
+    /**
+     * Processes request for the bio of other users. Returns if an empty field or the own name were selected
+     * @param event
+     */
     @FXML
     void getUserBio(MouseEvent event) {
 
@@ -306,6 +318,10 @@ public class ClientController implements Controller {
         clientService.sendBioRequest(MessageType.PROFILE, (String) user);
     }
 
+    /**
+     * Opens change password dialog. Validates if fields aren't empty
+     * @param event
+     */
     @FXML
     void changePassword(ActionEvent event) {
         ChangePassDialog change = new ChangePassDialog();
@@ -321,7 +337,7 @@ public class ClientController implements Controller {
                 clientService.changePassword(result.get());
                 return;
             }
-            userPromptExternal(Alert.AlertType.ERROR, DialogText.INVALID_FIELDS, DialogText.INVALID_FORM);
+            userPrompt1(Alert.AlertType.ERROR, DialogText.INVALID_FIELDS, DialogText.INVALID_FORM);
         }
     }
 
@@ -363,6 +379,7 @@ public class ClientController implements Controller {
         });
     }
 
+    //TODO css for dialogs
     private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
