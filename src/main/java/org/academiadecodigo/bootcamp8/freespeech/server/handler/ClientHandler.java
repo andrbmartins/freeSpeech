@@ -305,7 +305,7 @@ public class ClientHandler implements Runnable {
         Sendable<String> message = msg.getContent(crypto.getSymKey());
         List<String> messagebio = userService.getUserBio(message.getContent());
 
-        Message<List> bio = new Message<>(messagebio);
+        Message<List<String>> bio = new Message<>(messagebio);
         SealedSendable sealedMessage = crypto.encrypt(msg.getType(), bio);
         write(sealedMessage);
 
