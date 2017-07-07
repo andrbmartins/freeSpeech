@@ -260,11 +260,6 @@ public class ClientController implements Controller {
         clientService.sendUserData(file, destiny, SessionContainer.getInstance().getUsername());
     }
 
-    /*
-    public TextArea getCurrentRoom() {
-        return rooms.get(getSelectedTab());
-    }
-*/
 
     //TODO
     @Override
@@ -340,6 +335,11 @@ public class ClientController implements Controller {
         }
     }
 
+    /**
+     * Checks if no passwordfield is empty and validates input
+     * @param results an array of strings with the text input from the user
+     * @return true is fields are not empty and text on field 1 and 2 is equal, false if empty or fields 1 and 2 not equal
+     */
     private boolean areFieldsValid(String[] results) {
         for (String s : results) {
             if (s.isEmpty()) {
@@ -349,15 +349,22 @@ public class ClientController implements Controller {
         return results[1].equals(results[2]);
     }
 
+    /**
+     * Closes app on exit button press
+     * @param event
+     */
     @FXML
     void onExit(ActionEvent event) {
-
         clientService.sendExit();
         Navigation.getInstance().close();
-
     }
 
-
+    /**
+     * Creates dialog prompt confirming deletion of user account and closes app
+     * @param alertType Type of dialog
+     * @param title for the dialog
+     * @param content information for user
+     */
     public void userPromptQuit(Alert.AlertType alertType, String title, String content) {
         Platform.runLater(new Runnable() {
             public void run() {
@@ -370,6 +377,12 @@ public class ClientController implements Controller {
 
     }
 
+    /**
+     * Creates new thread with a dialog invoked by an event coming from the network
+     * @param alertType
+     * @param title
+     * @param content
+     */
     public void userPromptExternal(Alert.AlertType alertType, String title, String content) {
         Platform.runLater(new Runnable() {
             public void run() {
@@ -387,6 +400,10 @@ public class ClientController implements Controller {
         return alert.showAndWait();
     }
 
+    /**
+     * Sends request for own user info
+     * @param event
+     */
     @FXML
     void editUserInfo(ActionEvent event) {
         clientService.sendBioRequest(MessageType.BIO, SessionContainer.getInstance().getUsername());
@@ -463,7 +480,7 @@ public class ClientController implements Controller {
 
     private void createNewTab(String user) {
 
-        //gets current time in the that I want
+        //gets current time in the tab I want
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date date = new Date();
 
@@ -577,14 +594,6 @@ public class ClientController implements Controller {
         usersPerTab.replace(tabId, destinySet);
     }
 
-
-    public File filePopUPWindow() {
-
-        FileChooser fileChooser = new FileChooser();
-
-        return fileChooser.showSaveDialog(stage);
-
-    }
 
 
     @FXML

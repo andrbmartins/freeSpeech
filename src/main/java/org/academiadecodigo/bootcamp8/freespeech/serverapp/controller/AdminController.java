@@ -127,7 +127,7 @@ public class AdminController implements Initializable {
             return;
         }
 
-        if (!isQueryAllowed(query)) {
+        if (isQueryAllowed(query)) {
 
             userPrompt(Alert.AlertType.ERROR, Utils.VALIDATING_QUERY, Utils.INVALID_QUERY);
             customQuery.setText("");
@@ -268,8 +268,8 @@ public class AdminController implements Initializable {
      */
     private boolean isQueryAllowed(String query) {
         String lowerCase = query.toLowerCase();
-        return (customQuery.getText().contains("delete") || customQuery.getText().contains("insert")
-                || customQuery.getText().contains("update") || customQuery.getText().contains("admin"));
+        return (lowerCase.contains("delete") || lowerCase.contains("insert")
+                || lowerCase.contains("update") || lowerCase.contains("admin"));
     }
 
     /**

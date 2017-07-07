@@ -10,7 +10,7 @@ public class LoggerMessages {
     public static final String SERVER_START = "SERVER START";
     public static final String SERVER_STOP = "SERVER STOP";
     public static final String DB_CONNECT = "CONNECTION TO DATABASE ESTABLISHED";
-    public static final String DB_DISCONNECT = "SERVER NOT CONNECTED TO DATABASE";
+    public static final String DB_DISCONNECT = "SERVER NOT CONNECTED TO DATABASE, PLEASE CHECK IF YOUR DB IS RUNNING. ";
     public static final String DB_TERMINATE = "CONNECTION TO DATABASE TERMINATED";
     public static final String CONNECT_CLIENT = "CLIENT CONNECTED";
     public static final String CLIENT_ILLEGAL_LOG = "CLIENT ILLEGAL INIT MESSAGE HEADER";

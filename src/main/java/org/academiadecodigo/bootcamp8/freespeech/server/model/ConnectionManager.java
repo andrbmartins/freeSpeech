@@ -4,8 +4,6 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
-import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
-
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +24,7 @@ public class ConnectionManager {
             }
         } catch (SQLException ex) {
             System.err.println(LoggerMessages.DB_DISCONNECT + ex.getMessage());
+            System.exit(1);
         }
         return connection;
     }
@@ -265,10 +264,6 @@ public class ConnectionManager {
         }
         return 0;
     }
-
-
-
-
 
 
     public void close() {
