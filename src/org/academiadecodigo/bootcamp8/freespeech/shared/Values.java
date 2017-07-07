@@ -43,13 +43,20 @@ public class Values {
     public static final String BIO_NOT_UPDATED = "Unable to update bio. We are experiencing database issues at the moment. " +
             "Please try later on.";
 
+    public static final String REPORT_OK = "USER REPORTED";
+    public static final String REPORT_KO = "USER ALREADY REPORTED";
+    public static final String REPORTED = " YOU HAVE BEEN REPORTED BY ";
+
+
+
+
     public static final String INVALID_INPUT = "Required fields are empty.";
 
     public static final String STYLESHEET = "resources/stylesheet.css";
 
     public static final String URL_DB_SERVER = "jdbc:mysql://localhost:3306/freespeech";
     public static final String USER_DB_SERVER = "root";
-    public static final String PASSWORD_DB_SERVER = "root";
+    public static final String PASSWORD_DB_SERVER = "";
 
     public static final String SEPARATOR_CHARACTER = ",";
 

@@ -90,6 +90,8 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case DELETE_ACCOUNT:
                 accDeleteNotify(message);
+            case REPORT:
+                notifyUser(message);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid message type");
