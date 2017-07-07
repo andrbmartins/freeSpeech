@@ -10,11 +10,14 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.server.model.User;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Crypto;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
+
 import java.io.*;
 import java.net.Socket;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Developed @ <Academia de Código_>
@@ -171,6 +174,9 @@ public class ClientHandler implements Runnable {
 
     private void readFromClient() {
 
+        final int MAX_THREADS = 4;
+        ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
+
         SealedSendable msg;
 
         while (run) {
@@ -178,7 +184,14 @@ public class ClientHandler implements Runnable {
                 run = false;
                 continue;
             }
-            handleMessage(msg);
+
+            pool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    handleMessage(msg);
+                }
+            });
+
         }
 
         server.removeUser(this);
