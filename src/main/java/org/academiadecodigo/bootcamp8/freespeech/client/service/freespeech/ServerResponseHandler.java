@@ -138,7 +138,7 @@ public class ServerResponseHandler implements Runnable {
         HashMap<MapKey, String> map = message.getContent();
 
         String tabId = map.get(MapKey.TAB_ID);
-        String destinyString = map.get(MapKey.SOURCE);
+        String destinyString = map.get(MapKey.DESTINATION);
         String text = map.get(MapKey.MESSAGE);
         TextArea textArea;
         Set<String> destinySet = Parser.stringToSet(destinyString);
