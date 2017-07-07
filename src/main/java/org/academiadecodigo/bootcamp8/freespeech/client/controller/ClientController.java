@@ -50,8 +50,6 @@ import java.util.function.Predicate;
 //TODO documentation
 public class ClientController implements Controller {
 
-    //TODO messages sent in lobby show in private but not lobby
-
     @FXML
     private GridPane userButtons;
     @FXML
@@ -91,19 +89,19 @@ public class ClientController implements Controller {
     @FXML
     private Button removeAccount;
 
-    private ListView<String> originalOnlineUsersList;
     private Stage stage;
     private ClientService clientService;
+    private ListView<String> originalOnlineUsersList;
     private Map<Tab, TextArea> rooms;
     private Map<String, Tab> tabId;
     private Map<String, Set<String>> usersPerTab;
-    private double[] position;
+    private double[] stagePosition;
 
     public ClientController() {
         rooms = new HashMap<>();
         tabId = new HashMap<>();
         usersPerTab = new HashMap<>();
-        position = new double[2];
+        stagePosition = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
         originalOnlineUsersList = new ListView<>();
     }
@@ -120,6 +118,7 @@ public class ClientController implements Controller {
 
         setDraggableTopBar();
         focusUserInput();
+
         new Thread(new ServerResponseHandler(this)).start();
     }
 
@@ -141,16 +140,16 @@ public class ClientController implements Controller {
         topBar.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                position[0] = event.getSceneX();
-                position[1] = event.getSceneY();
+                stagePosition[0] = event.getSceneX();
+                stagePosition[1] = event.getSceneY();
             }
         });
 
         topBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                stage.setX(event.getScreenX() - position[0]);
-                stage.setY(event.getScreenY() - position[1]);
+                stage.setX(event.getScreenX() - stagePosition[0]);
+                stage.setY(event.getScreenY() - stagePosition[1]);
             }
         });
     }

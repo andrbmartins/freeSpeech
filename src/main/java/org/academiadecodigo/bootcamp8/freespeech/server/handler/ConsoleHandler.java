@@ -23,7 +23,7 @@ public class ConsoleHandler implements Runnable {
     public void run() {
 
         String cmd;
-        // While cmd if different than "stop"
+        // While cmd is different than "stop"
         while (!(cmd = readCommand()).equals(Command.STOP.getString())) {
             processCommand(cmd);
         }
