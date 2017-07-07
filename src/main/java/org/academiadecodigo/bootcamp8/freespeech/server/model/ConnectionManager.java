@@ -13,13 +13,16 @@ import java.util.List;
  * Created by
  * <Code Cadet> JPM Ramos
  */
+
+//TODO changed password to work at home
+
 public class ConnectionManager {
     private Connection connection;
 
     public Connection getConnection() {
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/freespeech", "root", "");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/freespeech", "root", "1234" /*""*/);
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_CONNECT);
             }
         } catch (SQLException ex) {
