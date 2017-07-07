@@ -44,10 +44,12 @@ public class ServerResponseHandler implements Runnable {
     public void run() {
 
         SessionContainer sessionContainer = SessionContainer.getInstance();
+        SealedSendable sealedMessage;
+        Sendable message;
 
         while (run) {
-            SealedSendable sealedMessage = Stream.readSendable(sessionContainer.getInput());
-            Sendable message = sealedMessage.getContent(sessionContainer.getCrypto().getSymKey());
+            sealedMessage = Stream.readSendable(sessionContainer.getInput());
+            message = sealedMessage.getContent(sessionContainer.getCrypto().getSymKey());
             process(sealedMessage.getType(), message);
         }
 
