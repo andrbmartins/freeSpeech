@@ -30,6 +30,7 @@ import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 
 import java.awt.*;
 import java.io.File;
@@ -455,6 +456,7 @@ public class ClientController implements Controller {
 
         Tab tab = new Tab("label " + id);
         tab.setId(id);
+        tab.setTooltip(new Tooltip());
 
         addClosingTabHandler(tab);
 
@@ -467,10 +469,11 @@ public class ClientController implements Controller {
 
         tabId.put(id, tab);
         rooms.put(tab, textArea);
-        //creating the data to update usersPerTab
+        //creating the data to update usersPerTab and tooltip
         HashSet<String> set = new HashSet<>();
         set.add(user);
         set.add(SessionContainer.getInstance().getUsername());
+        tab.getTooltip().setText(Parser.setToString(set));
         usersPerTab.put(id, set);
 
         tabPane.getTabs().add(tab);
@@ -510,6 +513,7 @@ public class ClientController implements Controller {
 
         Tab tab = new Tab("label " + id);
         tab.setId(id);
+        tab.setTooltip(new Tooltip(Parser.setToString(users)));
 
         TextArea textArea = new TextArea();
         textArea.appendText("");
@@ -607,4 +611,7 @@ public class ClientController implements Controller {
 
     }
 
+    public void updateTooltipText(String tabId, Set<String> destinySet) {
+        this.tabId.get(tabId).getTooltip().setText(Parser.setToString(destinySet));
+    }
 }

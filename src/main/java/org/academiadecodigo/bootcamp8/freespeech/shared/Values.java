@@ -44,7 +44,7 @@ public class Values {
 
     public static final String STYLESHEET = "/client/stylesheet.css";
 
-    public static final String SEPARATOR_CHARACTER = ",";
+    public static final String SEPARATOR_CHARACTER = ", ";
 
     public static final double LOGIN_HEIGHT = 450d;
     public static final double LOGIN_WIDTH = 350d;

@@ -14,7 +14,7 @@ public class Parser {
 
         byte[] bytes = new byte[byteList.size()];
 
-        for (int i = 0; i < bytes.length; i++){
+        for (int i = 0; i < bytes.length; i++) {
             bytes[i] = byteList.get(i);
         }
 
@@ -25,10 +25,16 @@ public class Parser {
     public static String setToString(Set<String> destinySet) {
 
         StringBuilder stringBuilder = new StringBuilder();
+        int i = 1;
 
-        for (String s : destinySet){
+        for (String s : destinySet) {
             stringBuilder.append(s);
-            stringBuilder.append(Values.SEPARATOR_CHARACTER);
+
+            if (i != destinySet.size()) {
+                stringBuilder.append(Values.SEPARATOR_CHARACTER);
+            }
+
+            i++;
         }
 
         return stringBuilder.toString();
