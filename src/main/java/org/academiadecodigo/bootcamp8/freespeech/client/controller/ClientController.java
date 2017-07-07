@@ -246,7 +246,8 @@ public class ClientController implements Controller {
     @FXML
     void onFile(ActionEvent event) {
         final int MAX_FILE_SIZE = 52428800; //50 MB
-        File file = new FileChooser().showOpenDialog(stage);
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(stage);
 
         if (file == null) {
             return;
