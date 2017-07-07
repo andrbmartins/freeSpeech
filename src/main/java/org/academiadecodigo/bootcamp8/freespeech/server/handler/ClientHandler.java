@@ -257,8 +257,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
-
     private void reportUser(SealedSendable msg) {
 
         Sendable<String> message = msg.getContent(crypto.getSymKey());
@@ -283,12 +281,6 @@ public class ClientHandler implements Runnable {
         System.out.println("Mensagem recebida do tipo" + msg.getType());
         SealedSendable sealedMsg = crypto.encrypt(msg.getType(), userReply);
         write(sealedMsg);
-
-        // SENDS MESSAGE TO THE USER REPORTED
-
-
-
-
     }
 
     private void updateBio(SealedSendable msg) {
