@@ -53,7 +53,7 @@ public class Navigation {
     public void loadScreen(String view) {
         try {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW_PATH + "/" + view + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Values.VIEW_PATH + view + ".fxml"));
             Parent root = loader.load();
 
             ((Controller) loader.getController()).setStage(stage);
