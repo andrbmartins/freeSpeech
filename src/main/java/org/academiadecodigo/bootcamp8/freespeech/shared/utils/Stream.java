@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
 import java.io.*;
+import java.security.Key;
 
 /**
  * @author by André Martins <Code Cadet>
@@ -30,7 +31,7 @@ public class Stream {
             out.flush();
 
         } catch (IOException e) {
-            System.err.println("Error on trying to open stream. " + e.getMessage());
+            System.err.println("Error on writing to stream. " + e.getMessage());
         }
 
     }
@@ -52,12 +53,16 @@ public class Stream {
             System.out.println("RO - " + object.toString());
         } catch (IOException e) {
             //TODO log - client app closed
-            System.err.println("Error on trying to open object stream. " + e.getMessage());
+            System.err.println("Error on reading from stream. " + e.getMessage());
         } catch (ClassNotFoundException e) {
             System.err.println("Class not found. " + e.getMessage());
         }
 
-        return object;
+        if (object instanceof SealedSendable || object instanceof Key) {
+            return object;
+        }
+
+        return null;
 
     }
 

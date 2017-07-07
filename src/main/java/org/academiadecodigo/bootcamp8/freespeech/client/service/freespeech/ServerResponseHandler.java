@@ -56,7 +56,7 @@ public class ServerResponseHandler implements Runnable {
         final int MAX_THREADS = 2;
         ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 
-        while (run) {
+        while (oin != null) {
             sealedSendable = Stream.readSendable(oin);
 
             if (sealedSendable == null) {
@@ -124,6 +124,7 @@ public class ServerResponseHandler implements Runnable {
                 break;
             case DELETE_ACCOUNT:
                 accDeleteNotify(message);
+                break;
             case REPORT:
                 notifyUser(message);
                 break;
