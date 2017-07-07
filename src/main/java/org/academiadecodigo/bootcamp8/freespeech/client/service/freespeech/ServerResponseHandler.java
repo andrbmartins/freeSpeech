@@ -58,6 +58,11 @@ public class ServerResponseHandler implements Runnable {
 
         while (run) {
             sealedSendable = Stream.readSendable(oin);
+
+            if (sealedSendable == null) {
+                continue;
+            }
+
             sendable = sealedSendable.getContent(symKey);
             //process(sealedSendable.getType(), sendable);
             pool.submit(new MessageHandler(sealedSendable.getType(), sendable));
