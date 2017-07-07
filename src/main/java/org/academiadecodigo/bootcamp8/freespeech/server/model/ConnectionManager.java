@@ -157,19 +157,17 @@ public class ConnectionManager {
         PreparedStatement preparedStmt = connection.prepareStatement(Queries.SHOW_BIO);
         preparedStmt.setString(1, username);
         ResultSet resultSet = preparedStmt.executeQuery();
+            List<String> userbio = new LinkedList<String>();
 
         if (resultSet.next()) {
-
-            List<String> userbio = new LinkedList<String>();
             userbio.add(resultSet.getString("user_name"));
             userbio.add(resultSet.getString("email"));
             userbio.add(resultSet.getString("date_birth"));
             userbio.add(resultSet.getString("bio"));
-            return userbio;
         }
 
         preparedStmt.close();
-        return new LinkedList<>();
+        return userbio;
     }
 
     public boolean updateBio(String username, String email, String dateBirth, String bio) {
