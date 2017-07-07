@@ -18,11 +18,10 @@ import java.util.List;
 public class ConnectionManager {
     private Connection connection;
 
-
     public Connection getConnection() {
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection(Values.URL_DB_SERVER, Values.USER_DB_SERVER, Values.PASSWORD_DB_SERVER);
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/freespeech", "root", "");
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_CONNECT);
             }
         } catch (SQLException ex) {
