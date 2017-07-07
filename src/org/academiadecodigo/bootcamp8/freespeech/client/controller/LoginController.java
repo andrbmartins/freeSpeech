@@ -16,6 +16,7 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginServi
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 
 import java.net.URL;
@@ -166,9 +167,9 @@ public class LoginController implements Controller {
 
     private void sendData(MessageType messageType) {
 
-        Map<String, String> messageContent = new HashMap<>();
-        messageContent.put(Values.NAME_KEY, nameField.getText());
-        messageContent.put(Values.PASSWORD_KEY, Hash.getHash(passwordField.getText()));
+        Map<MapKey, String> messageContent = new HashMap<>();
+        messageContent.put(MapKey.USERNAME, nameField.getText());
+        messageContent.put(MapKey.PASSWORD, Hash.getHash(passwordField.getText()));
 
         loginService.sendMessage(messageType, messageContent);
     }

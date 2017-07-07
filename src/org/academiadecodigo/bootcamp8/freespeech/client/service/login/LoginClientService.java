@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.login;
 
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
+import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
@@ -27,7 +28,7 @@ public class LoginClientService implements LoginService {
      * @see LoginService#sendMessage(MessageType, Map)
      */
     @Override
-    public void sendMessage(MessageType messageType, Map<String, String> messageContent) {
+    public void sendMessage(MessageType messageType, Map<MapKey, String> messageContent) {
 
         SessionContainer sessionContainer = SessionContainer.getInstance();
 
