@@ -66,7 +66,7 @@ public class DeleteAccountDialog extends Dialog<String> {
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.initStyle(StageStyle.UNDECORATED);
         getDialogPane().getScene().getStylesheets().clear();
-        getDialogPane().getScene().getStylesheets().add(Values.DIALOG_STYLE);
+        getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
     }
 
     private VBox styleVBox() {

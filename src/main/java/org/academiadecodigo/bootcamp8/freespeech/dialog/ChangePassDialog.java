@@ -1,5 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.utils;
-
+package org.academiadecodigo.bootcamp8.freespeech.dialog;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -30,7 +29,7 @@ public class ChangePassDialog extends Dialog<String[]> {
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
         stage.initStyle(StageStyle.UNDECORATED);
         getDialogPane().getScene().getStylesheets().clear();
-        getDialogPane().getScene().getStylesheets().add(Values.DIALOG_STYLE);
+        getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
 
         Label label = new Label("Confirm your current password and enter new one");
 

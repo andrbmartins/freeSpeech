@@ -49,7 +49,7 @@ public class Stream {
         try {
 
             object = in.readObject();
-            System.out.println(object.toString());
+            System.out.println("RO - " + object.toString());
         } catch (IOException e) {
             //TODO log - client app closed
             System.err.println("Error on trying to open object stream. " + e.getMessage());

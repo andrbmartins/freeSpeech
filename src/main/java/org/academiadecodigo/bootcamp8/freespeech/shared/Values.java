@@ -6,7 +6,7 @@ package org.academiadecodigo.bootcamp8.freespeech.shared;
 
 public class Values {
 
-    public static final String HOST = "127.0.0.1";
+    public static final String HOST = "192.168.1.26";
     public static final int SERVER_PORT = 4040;
 
     public static final String VIEW_PATH = "/client/view/";
@@ -14,7 +14,7 @@ public class Values {
     public static final String LOGIN_SCENE = "login";
     public static final String USER_SCENE = "user";
 
-    public static final Long SERIAL_VERSION_UID = 12345678998432L;
+    public static final Long SERIAL_VERSION_UID = 10L;
 
     public static final String LOGIN_OK = "Successfully logged in!";
     public static final String LOGIN_FAIL = "Unable to login.";
@@ -44,7 +44,7 @@ public class Values {
 
     public static final String STYLESHEET = "/client/stylesheet.css";
 
-    public static final String SEPARATOR_CHARACTER = ",";
+    public static final String SEPARATOR_CHARACTER = ", ";
 
     public static final double LOGIN_HEIGHT = 450d;
     public static final double LOGIN_WIDTH = 350d;

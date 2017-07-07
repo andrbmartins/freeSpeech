@@ -35,7 +35,6 @@ public class ConsoleHandler implements Runnable {
     }
 
     private String readCommand() {
-        System.out.print("freespeech$ ");
         return in.nextLine();
     }
 

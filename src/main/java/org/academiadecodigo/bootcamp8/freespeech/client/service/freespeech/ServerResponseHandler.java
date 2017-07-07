@@ -19,9 +19,13 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,13 +48,42 @@ public class ServerResponseHandler implements Runnable {
     public void run() {
 
         SessionContainer sessionContainer = SessionContainer.getInstance();
+        ObjectInputStream oin = sessionContainer.getInput();
+        Key symKey = sessionContainer.getCrypto().getSymKey();
+        SealedSendable sealedSendable;
+        Sendable sendable;
+
+        final int MAX_THREADS = 2;
+        ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 
         while (run) {
-            SealedSendable sealedMessage = Stream.readSendable(sessionContainer.getInput());
-            Sendable message = sealedMessage.getContent(sessionContainer.getCrypto().getSymKey());
-            process(sealedMessage.getType(), message);
+            sealedSendable = Stream.readSendable(oin);
+
+            if (sealedSendable == null) {
+                continue;
+            }
+
+            sendable = sealedSendable.getContent(symKey);
+            //process(sealedSendable.getType(), sendable);
+            pool.submit(new MessageHandler(sealedSendable.getType(), sendable));
         }
 
+    }
+
+    private class MessageHandler implements Runnable {
+
+        private final MessageType type;
+        private final Sendable sendable;
+
+        public MessageHandler(MessageType type, Sendable sendable) {
+            this.type = type;
+            this.sendable = sendable;
+        }
+
+        @Override
+        public void run() {
+            process(type, sendable);
+        }
     }
 
     private void process(MessageType type, Sendable message) {
@@ -138,13 +171,14 @@ public class ServerResponseHandler implements Runnable {
         HashMap<MapKey, String> map = message.getContent();
 
         String tabId = map.get(MapKey.TAB_ID);
-        String destinyString = map.get(MapKey.SOURCE);
+        String destinyString = map.get(MapKey.DESTINATION);
         String text = map.get(MapKey.MESSAGE);
         TextArea textArea;
         Set<String> destinySet = Parser.stringToSet(destinyString);
 
         if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
             clientController.updateUsersSet(tabId, destinySet);
+            clientController.updateTooltipText(tabId, destinySet);
 
         } else {
             clientController.createReceivedTab(destinySet, tabId);

@@ -4,8 +4,6 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
-import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
-
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +24,7 @@ public class ConnectionManager {
             }
         } catch (SQLException ex) {
             System.err.println(LoggerMessages.DB_DISCONNECT + ex.getMessage());
+            System.exit(1);
         }
         return connection;
     }
@@ -158,19 +157,17 @@ public class ConnectionManager {
         PreparedStatement preparedStmt = connection.prepareStatement(Queries.SHOW_BIO);
         preparedStmt.setString(1, username);
         ResultSet resultSet = preparedStmt.executeQuery();
+            List<String> userbio = new LinkedList<String>();
 
         if (resultSet.next()) {
-
-            List<String> userbio = new LinkedList<String>();
             userbio.add(resultSet.getString("user_name"));
             userbio.add(resultSet.getString("email"));
             userbio.add(resultSet.getString("date_birth"));
             userbio.add(resultSet.getString("bio"));
-            return userbio;
         }
 
         preparedStmt.close();
-        return new LinkedList<>();
+        return userbio;
     }
 
     public boolean updateBio(String username, String email, String dateBirth, String bio) {
@@ -265,10 +262,6 @@ public class ConnectionManager {
         }
         return 0;
     }
-
-
-
-
 
 
     public void close() {
