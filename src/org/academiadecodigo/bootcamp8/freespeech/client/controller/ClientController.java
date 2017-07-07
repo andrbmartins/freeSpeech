@@ -275,6 +275,10 @@ public class ClientController implements Controller {
 
         this.stage.setMinHeight(Values.CLIENT_HEIGHT);
         this.stage.setMaxHeight(screen.getHeight());
+
+        this.stage.setX(screen.getWidth() / 2 - stage.getWidth() / 2);
+        this.stage.setY(screen.getHeight() / 2 - stage.getHeight() / 2);
+
     }
 
     public void processUsersList(Sendable<List<String>> message) {
