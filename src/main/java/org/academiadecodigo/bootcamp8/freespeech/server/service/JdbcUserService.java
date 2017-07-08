@@ -48,6 +48,11 @@ public class JdbcUserService implements UserService {
     }
 
     @Override
+    public int verifyUserReported(String username) {
+        return connectionManager.verifyUserReported(username);
+    }
+
+    @Override
     public boolean deleteAccount(String username, String password) {
         return (authenticate(username, password)) && connectionManager.deleteAccount(username);
     }

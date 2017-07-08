@@ -28,4 +28,6 @@ public interface UserService {
     void reportUser(String clientName, String reportedUser);
 
     int verifyReport(String clientName, String reportedUser);
+
+    int verifyUserReported(String username);
 }
