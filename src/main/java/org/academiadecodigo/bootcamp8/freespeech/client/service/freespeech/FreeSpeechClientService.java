@@ -1,9 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
-import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Hash;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
-import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.*;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
