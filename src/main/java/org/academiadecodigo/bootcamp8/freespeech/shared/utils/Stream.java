@@ -54,6 +54,7 @@ public class Stream {
         } catch (IOException e) {
             //TODO log - client app closed
             System.err.println("Error on reading from stream. " + e.getMessage());
+            throw new IllegalStateException();
         } catch (ClassNotFoundException e) {
             System.err.println("Class not found. " + e.getMessage());
         }
