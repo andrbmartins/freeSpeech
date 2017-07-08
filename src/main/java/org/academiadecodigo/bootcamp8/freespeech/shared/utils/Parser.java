@@ -116,4 +116,14 @@ public class Parser {
         return buffer;
     }
 
+    public static List<String> arrayToList(String[] randomNamesArray) {
+
+        LinkedList<String> strings = new LinkedList<>();
+
+        for (String s : randomNamesArray){
+            strings.add(s);
+        }
+
+        return strings;
+    }
 }

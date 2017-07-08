@@ -98,6 +98,7 @@ public class ClientController implements Controller {
     private Map<String, Tab> tabId;
     private Map<String, Set<String>> usersPerTab;
     private double[] stagePosition;
+    private List<String> randomNames;
 
     public ClientController() {
         rooms = new HashMap<>();
@@ -111,6 +112,8 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        randomNames = shuffleNames();
+
         //TODO just testing, don't delete yet
         username.setText(SessionContainer.getInstance().getUsername());
         username.setStyle("-fx-text-fill: #000000;");
@@ -122,6 +125,14 @@ public class ClientController implements Controller {
         focusUserInput();
 
         new Thread(new ServerResponseHandler(this)).start();
+    }
+
+    private List<String> shuffleNames() {
+
+        List<String> list = Parser.arrayToList(Values.RANDOM_NAMES_ARRAY);
+        Collections.shuffle(list);
+
+        return list;
     }
 
     private Tab getSelectedTab() {
@@ -503,6 +514,8 @@ public class ClientController implements Controller {
         Tab tab = new Tab("label " + id);
         tab.setId(id);
         tab.setTooltip(new Tooltip());
+        setTabName(tab);
+        tab.setText(randomNames.remove(0));
 
         addClosingTabHandler(tab);
 
@@ -523,6 +536,15 @@ public class ClientController implements Controller {
         usersPerTab.put(id, set);
 
         tabPane.getTabs().add(tab);
+    }
+
+    private void setTabName(Tab tab) {
+
+        if (randomNames.isEmpty()){
+            randomNames = shuffleNames();
+        }
+        tab.setText(randomNames.remove(0));
+
     }
 
     private void addClosingTabHandler(Tab tab) {
@@ -560,6 +582,7 @@ public class ClientController implements Controller {
         Tab tab = new Tab("label " + id);
         tab.setId(id);
         tab.setTooltip(new Tooltip(Parser.setToString(users)));
+        setTabName(tab);
 
         TextArea textArea = new TextArea();
         textArea.appendText("");
