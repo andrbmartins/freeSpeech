@@ -26,5 +26,7 @@ public class LoggerMessages {
     public static final String ACCOUNT_DELETED = "USER ACCOUNT DELETED: ";
     public static final String ACCOUNT_DEL_FAILED = "FAILED ATTEMPT AT DELETING ACCOUNT: ";
     public static final String CLIENT_REPORTED = " WAS REPORTED BY ";
+    public static final String CLIENT_BLOCKED = " CLIENT IS BLOCKED ";
+
 
 }

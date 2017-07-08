@@ -34,11 +34,12 @@ CREATE TABLE admin (
 
 
 CREATE TABLE report (
-  report_id 	INTEGER AUTO_INCREMENT,
+  /*report_id 	INTEGER AUTO_INCREMENT, */
   user_name     CHAR(15)  NOT NULL,
   user_reported CHAR(15) NOT NULL,
-  date_report 	DATE,
-  PRIMARY KEY (report_id, user_name, user_reported),
+  /*date_report 	DATE,
+  --PRIMARY KEY (report_id, user_name, user_reported),*/
+  PRIMARY KEY (user_name, user_reported),
   FOREIGN KEY (user_name) REFERENCES user (user_name) ON DELETE CASCADE,
   FOREIGN KEY (user_reported) REFERENCES user (user_name) ON DELETE CASCADE
 

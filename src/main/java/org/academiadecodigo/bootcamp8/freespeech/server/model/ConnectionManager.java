@@ -19,9 +19,9 @@ public class ConnectionManager {
 
     public Connection getConnection() {
 
-        final String PASSWORD = "";
-        final String USER = "root";
         final String URL = "jdbc:mysql://localhost:3306/freespeech";
+        final String USER = "root";
+        final String PASSWORD = "dbLord&Master9000";
 
         try {
             if (connection == null) {
@@ -32,23 +32,24 @@ public class ConnectionManager {
             System.err.println(LoggerMessages.DB_DISCONNECT + ex.getMessage());
             System.exit(1);
         }
+
         return connection;
     }
 
     public boolean insertUser(String username, String password) {
 
         boolean registered = true;
-        PreparedStatement preparedStmt = null;
+        PreparedStatement statement = null;
 
         try {
 
-            preparedStmt = connection.prepareStatement(Queries.INSERT_USER);
-            preparedStmt.setString(1, username);
-            preparedStmt.setString(2, password);
-            preparedStmt.execute();
-            preparedStmt = connection.prepareStatement(Queries.INSERT_INTO_BIO);
-            preparedStmt.setString(1, username);
-            preparedStmt.executeUpdate();
+            statement = connection.prepareStatement(Queries.INSERT_USER);
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.execute();
+            statement = connection.prepareStatement(Queries.INSERT_INTO_BIO);
+            statement.setString(1, username);
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
@@ -57,8 +58,8 @@ public class ConnectionManager {
         } finally {
 
             try {
-                if (preparedStmt != null) {
-                    preparedStmt.close();
+                if (statement != null) {
+                    statement.close();
                 }
             } catch (SQLException e) {
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
@@ -71,9 +72,9 @@ public class ConnectionManager {
     public User findUser(String username) throws SQLException {
 
         User user = null;
-        PreparedStatement preparedStmt = connection.prepareStatement(Queries.SELECT_USER);
-        preparedStmt.setString(1, username);
-        ResultSet resultSet = preparedStmt.executeQuery();
+        PreparedStatement statement = connection.prepareStatement(Queries.SELECT_USER);
+        statement.setString(1, username);
+        ResultSet resultSet = statement.executeQuery();
 
         if (resultSet.next()) {
 
@@ -82,7 +83,7 @@ public class ConnectionManager {
             user = new User(usernameValue, passwordValue);
         }
 
-        preparedStmt.close();
+        statement.close();
 
         return user;
     }
@@ -90,14 +91,14 @@ public class ConnectionManager {
     public boolean changePass(String username, String newPass) {
 
         boolean passChanged = true;
-        PreparedStatement preparedStmt = null;
+        PreparedStatement statement = null;
 
         try {
 
-            preparedStmt = connection.prepareStatement(Queries.ALTER_PASSWORD);
-            preparedStmt.setString(1, newPass);
-            preparedStmt.setString(2, username);
-            preparedStmt.execute();
+            statement = connection.prepareStatement(Queries.ALTER_PASSWORD);
+            statement.setString(1, newPass);
+            statement.setString(2, username);
+            statement.execute();
 
         } catch (SQLException e1) {
 
@@ -107,8 +108,8 @@ public class ConnectionManager {
         } finally {
 
             try {
-                if (preparedStmt != null) {
-                    preparedStmt.close();
+                if (statement != null) {
+                    statement.close();
                 }
             } catch (SQLException e) {
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
@@ -121,13 +122,13 @@ public class ConnectionManager {
     public boolean deleteAccount(String username) {
 
         boolean deleted = true;
-        PreparedStatement preparedStmt = null;
+        PreparedStatement statement = null;
 
         try {
 
-            preparedStmt = connection.prepareStatement(Queries.DELETE_USER);
-            preparedStmt.setString(1, username);
-            preparedStmt.execute();
+            statement = connection.prepareStatement(Queries.DELETE_USER);
+            statement.setString(1, username);
+            statement.execute();
 
         } catch (SQLException e1) {
 
@@ -137,8 +138,8 @@ public class ConnectionManager {
         } finally {
 
             try {
-                if (preparedStmt != null) {
-                    preparedStmt.close();
+                if (statement != null) {
+                    statement.close();
                 }
             } catch (SQLException e) {
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
@@ -149,6 +150,7 @@ public class ConnectionManager {
         return deleted;
     }
 
+    // TODO why not prepared statement?
     public int count() throws SQLException {
 
         Statement statement = connection.createStatement();
@@ -160,9 +162,9 @@ public class ConnectionManager {
 
     public List<String> getUserBio(String username) throws SQLException {
 
-        PreparedStatement preparedStmt = connection.prepareStatement(Queries.SHOW_BIO);
-        preparedStmt.setString(1, username);
-        ResultSet resultSet = preparedStmt.executeQuery();
+        PreparedStatement statement = connection.prepareStatement(Queries.SHOW_BIO);
+        statement.setString(1, username);
+        ResultSet resultSet = statement.executeQuery();
             List<String> userbio = new LinkedList<String>();
 
         if (resultSet.next()) {
@@ -172,23 +174,24 @@ public class ConnectionManager {
             userbio.add(resultSet.getString("bio"));
         }
 
-        preparedStmt.close();
+        statement.close();
+
         return userbio;
     }
 
     public boolean updateBio(String username, String email, String dateBirth, String bio) {
 
-        PreparedStatement preparedStmt = null;
+        PreparedStatement statement = null;
         boolean updated = true;
 
         try {
 
-            preparedStmt = connection.prepareStatement(Queries.UPDATE_BIO);
-            preparedStmt.setString(1, email);
-            preparedStmt.setString(2, dateBirth);
-            preparedStmt.setString(3, bio);
-            preparedStmt.setString(4, username);
-            preparedStmt.execute();
+            statement = connection.prepareStatement(Queries.UPDATE_BIO);
+            statement.setString(1, email);
+            statement.setString(2, dateBirth);
+            statement.setString(3, bio);
+            statement.setString(4, username);
+            statement.execute();
 
         } catch (SQLException e) {
             Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
@@ -196,8 +199,8 @@ public class ConnectionManager {
         } finally {
 
             try {
-                if (preparedStmt != null) {
-                    preparedStmt.close();
+                if (statement != null) {
+                    statement.close();
                 }
             } catch (SQLException e) {
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
@@ -210,26 +213,24 @@ public class ConnectionManager {
 
 
 
-    public boolean reportUser(String username , String user_reported){
+    public void reportUser(String username , String user_reported){
 
-        PreparedStatement preparedStmt = null;
-        boolean reported = true;
+        PreparedStatement statement = null;
 
         try {
 
-            preparedStmt = connection.prepareStatement(Queries.REPORT_USER);
-            preparedStmt.setString(1, username);
-            preparedStmt.setString(2, user_reported);
-            preparedStmt.execute();
+            statement = connection.prepareStatement(Queries.REPORT_USER);
+            statement.setString(1, username);
+            statement.setString(2, user_reported);
+            statement.execute();
 
         } catch (SQLException e) {
             Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
-            reported = false;
         } finally {
 
             try {
-                if (preparedStmt != null) {
-                    preparedStmt.close();
+                if (statement != null) {
+                    statement.close();
                 }
             } catch (SQLException e) {
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
@@ -237,20 +238,19 @@ public class ConnectionManager {
 
         }
 
-        return reported;
     }
 
 
     public int verifyReport(String username, String user_reported) {
 
-        PreparedStatement preparedStmt = null;
-        ResultSet resultSet = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet;
         try {
 
-            preparedStmt = connection.prepareStatement(Queries.REPORTED_USER);
-            preparedStmt.setString(1, username);
-            preparedStmt.setString(2, user_reported);
-            resultSet =  preparedStmt.executeQuery();
+            statement = connection.prepareStatement(Queries.REPORTED_USER);
+            statement.setString(1, username);
+            statement.setString(2, user_reported);
+            resultSet =  statement.executeQuery();
             return resultSet.next() ? resultSet.getInt(1) : 0;
 
         } catch (SQLException e) {
@@ -258,17 +258,46 @@ public class ConnectionManager {
         } finally {
 
             try {
-                if (preparedStmt != null) {
-                    preparedStmt.close();
+                if (statement != null) {
+                    statement.close();
                 }
             } catch (SQLException e) {
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
             }
 
         }
+
         return 0;
     }
 
+
+
+    public int verifyUserReported(String username) {
+        PreparedStatement statement = null;
+        ResultSet resultSet;
+        try {
+
+            statement = connection.prepareStatement(Queries.COUNT_REPORTED);
+            statement.setString(1, username);
+            resultSet =  statement.executeQuery();
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+
+        } catch (SQLException e) {
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+        } finally {
+
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e) {
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+            }
+
+        }
+
+        return 0;
+    }
 
     public void close() {
 
@@ -282,7 +311,4 @@ public class ConnectionManager {
         }
 
     }
-
-
 }
-
