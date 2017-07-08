@@ -31,7 +31,7 @@ public class FreeSpeechClientService implements ClientService {
             return;
         }
 
-        String text = SessionContainer.getInstance().getUsername() + ": " + textArea;
+        String text = "<" + SessionContainer.getInstance().getUsername() + ">   " + textArea;
 
         Message<String> message = new Message<>(text);
         writeObject(MessageType.TEXT, message);
@@ -44,7 +44,7 @@ public class FreeSpeechClientService implements ClientService {
             return;
         }
 
-        String text = SessionContainer.getInstance().getUsername() + ": " + textArea;
+        String text = "<" + SessionContainer.getInstance().getUsername() + ">   " + textArea;
 
         HashMap<MapKey, String> map = new HashMap<>();
         map.put(MapKey.TAB_ID, tabId);

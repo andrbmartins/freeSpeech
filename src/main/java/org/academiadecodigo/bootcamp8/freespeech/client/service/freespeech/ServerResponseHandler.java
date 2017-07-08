@@ -61,7 +61,7 @@ public class ServerResponseHandler implements Runnable {
             sealedSendable = Stream.readSendable(oin);
 
             if (sealedSendable == null) {
-                continue;
+                break;
             }
 
             sendable = sealedSendable.getContent(symKey);
@@ -204,19 +204,18 @@ public class ServerResponseHandler implements Runnable {
      */
     private String wipeWhiteSpaces(String text) {
 
-        //One or more characters and a colon
+        //One or more characters, a colon and a space
         //Every whitespace
         //Every word character, digit, whitespace, punctuation and symbol
         //A single character, punctuation or symbol
 
-        //TODO allow specials char
-        String regex = "(.+:)(\\s*)([\\w\\s\\p{P}\\p{S}\\p{L}]*)([\\w\\p{P}\\p{S}\\p{L}])";
+        String regex = "(<.+>   )(\\s*)([\\w\\s\\p{P}\\p{S}\\p{L}]*)([\\w\\p{P}\\p{S}\\p{L}])";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
         String result = "";
         while (matcher.find()) {
-            result = result.concat(matcher.group(1) + " ");
+            result = result.concat(matcher.group(1));
             result = result.concat(matcher.group(3));
             result = result.concat(matcher.group(4));
         }
