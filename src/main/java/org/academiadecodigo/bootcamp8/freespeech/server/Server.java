@@ -238,22 +238,9 @@ public class Server {
     }
 
     /**
-     * Get the server uptime, convert it to hh:mm:ss and returns it
-     *
-     * @return a string describing the up time
+     * Send a file to the destination user
+     * @param msg - package to send
      */
-    public String runtime() {
-
-        RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
-
-        long millis = runtime.getUptime();
-        long second = (millis / 1000) % 60;
-        long minute = (millis / (1000 * 60)) % 60;
-        long hour = (millis / (1000 * 60 * 60)) % 24;
-
-        return String.format("%02d:%02d:%02d", hour, minute, second);
-    }
-
     public void sendFile(SealedSendable msg) {
 
         Sendable<HashMap<MapKey, List<Byte>>> sendable = msg.getContent(symKey);
@@ -270,10 +257,37 @@ public class Server {
 
     }
 
+    /**
+     * Print the server uptime, convert it to hh:mm:ss and returns it
+     */
+    public void runtime() {
+
+        RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+
+        long millis = runtime.getUptime();
+        long second = (millis / 1000) % 60;
+        long minute = (millis / (1000 * 60)) % 60;
+        long hour = (millis / (1000 * 60 * 60)) % 24;
+
+        System.out.println(String.format("%02d:%02d:%02d", hour, minute, second));
+    }
+
+    /**
+     * Print the server online users
+     */
     public void printLoggedUsers() {
+
+        boolean onlineUsers = false;
+
         for (ClientHandler c : loggedUsers) {
+            onlineUsers = true;
             System.out.println(c.getClientName());
         }
+
+        if (!onlineUsers) {
+            System.out.println("No users are currently online");
+        }
+
     }
 
 }
