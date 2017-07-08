@@ -31,15 +31,24 @@ import java.util.ResourceBundle;
  * <Code Cadet> PedroMAlves
  */
 
+//TODO refactor
+
 public class LoginController implements Controller {
 
-    @FXML private TextField nameField;
-    @FXML private PasswordField passwordField;
-    @FXML private PasswordField confirmPassword;
-    @FXML private Label serverMessageLabel;
-    @FXML private GridPane loginPane;
-    @FXML private Button loginButton;
-    @FXML private Button registerButton;
+    @FXML
+    private TextField nameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private PasswordField confirmPassword;
+    @FXML
+    private Label serverMessageLabel;
+    @FXML
+    private GridPane loginPane;
+    @FXML
+    private Button loginButton;
+    @FXML
+    private Button registerButton;
 
     private Stage stage;
     private LoginService loginService;
@@ -78,6 +87,7 @@ public class LoginController implements Controller {
 
     /**
      * Logs in or registers user according to current scene status.
+     *
      * @param event
      */
     @FXML
@@ -121,8 +131,6 @@ public class LoginController implements Controller {
         if (serverResponse.getContent().equals(Values.LOGIN_OK)) {
             loginService.receiveSymKey();
             SessionContainer.getInstance().setUsername(nameField.getText());
-            //TODO method to reset fields for when logout is requested ---> logout is not requested anymore
-            //resetFields();
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
             return;
         }
@@ -179,6 +187,7 @@ public class LoginController implements Controller {
 
     /**
      * Creates a message with the with given type and sends it to the server.
+     *
      * @param messageType - the type.
      */
     private void sendData(MessageType messageType) {
@@ -192,6 +201,7 @@ public class LoginController implements Controller {
 
     /**
      * Verifies if there are any empty fields in the current scene.
+     *
      * @param register - scene identifier.
      * @return verification result.
      */
@@ -208,6 +218,7 @@ public class LoginController implements Controller {
 
     /**
      * Toggles need to confirm password.
+     *
      * @param show
      */
     private void passwordConfirmation(boolean show) {

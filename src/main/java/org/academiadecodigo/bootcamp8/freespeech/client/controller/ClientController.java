@@ -49,7 +49,6 @@ import java.util.function.Predicate;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO documentation
 public class ClientController implements Controller {
 
     @FXML
@@ -77,19 +76,9 @@ public class ClientController implements Controller {
     @FXML
     private TextField searchBar;
     @FXML
-    private Button clearSearchBar;
-    @FXML
-    private Button addToChatButton;
-    @FXML
     private TextField dateBirthBio;
     @FXML
     private TextArea userBio;
-    @FXML
-    private Button privateChatButton;
-    @FXML
-    private Button updateProfile;
-    @FXML
-    private Button removeAccount;
 
     private Stage stage;
     private ClientService clientService;
@@ -100,9 +89,12 @@ public class ClientController implements Controller {
     private double[] stagePosition;
 
     public ClientController() {
+
+        //TODO
         rooms = new HashMap<>();
         tabId = new HashMap<>();
         usersPerTab = new HashMap<>();
+
         stagePosition = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
         originalOnlineUsersList = new ListView<>();
@@ -111,10 +103,9 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        //TODO just testing, don't delete yet
         username.setText(SessionContainer.getInstance().getUsername());
-        username.setStyle("-fx-text-fill: #000000;");
 
+        //TODO
         rooms.put(getSelectedTab(), lobbyTextArea);
         tabId.put(getSelectedTab().getText(), getSelectedTab());
 
@@ -124,11 +115,20 @@ public class ClientController implements Controller {
         new Thread(new ServerResponseHandler(this)).start();
     }
 
+    /**
+     * Returns currently selected tab.
+     *
+     * @return - the tab.
+     */
     private Tab getSelectedTab() {
         return tabPane.getSelectionModel().getSelectedItem();
     }
 
+    /**
+     * Puts cursor focus on user's input area.
+     */
     private void focusUserInput() {
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -137,6 +137,9 @@ public class ClientController implements Controller {
         });
     }
 
+    /**
+     * Allows user to freely move the stage.
+     */
     private void setDraggableTopBar() {
 
         topBar.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -165,6 +168,9 @@ public class ClientController implements Controller {
     void onActionPrivateChat(ActionEvent event) {
 
         String name = onlineUsersList.getSelectionModel().getSelectedItem();
+
+        createNewTab(name);
+       /*
         String clientName = SessionContainer.getInstance().getUsername();
 
         if (!clientName.equals(name)) {
@@ -172,7 +178,7 @@ public class ClientController implements Controller {
 
         }
         addToChatButton.setDisable(false);
-        addToChatButton.setVisible(true);
+        addToChatButton.setVisible(true);*/
     }
 
     /**
@@ -375,8 +381,8 @@ public class ClientController implements Controller {
     /**
      * Creates dialog prompt confirming deletion of user account and closes app
      *
-     * @param title     for the dialog
-     * @param content   information for user
+     * @param title   for the dialog
+     * @param content information for user
      */
     public void userPromptQuit(String title, String content) {
         Alert.AlertType alertType = Alert.AlertType.INFORMATION;
@@ -435,7 +441,6 @@ public class ClientController implements Controller {
         dateBirthBio.setEditable(true);
 
         List<String> list = ownBio.getContent();
-        // TODO resolve unchecked casts
 
         setBioInfo(list);
     }
@@ -697,5 +702,12 @@ public class ClientController implements Controller {
         };
 
         Platform.runLater(runnable);
+    }
+
+    public void printToLobby(String messageText) {
+        TextArea textArea = getDestinyRoom("Lobby");
+        Boolean isEmpty = textArea.getText().isEmpty();
+
+        textArea.appendText((isEmpty ? "" : "\n") + messageText);
     }
 }

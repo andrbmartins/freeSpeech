@@ -118,6 +118,10 @@
     -fx-text-fill: #FFFFFF;
 }
 
+#username {
+    -fx-text-fill: #000000;
+}
+
 #topBar {
     -fx-background-color: #D3D3D3;
 }

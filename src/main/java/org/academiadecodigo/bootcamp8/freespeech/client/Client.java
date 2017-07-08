@@ -7,13 +7,11 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.connection.ConnectionService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.connection.FreeSpeechConnectionService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.FreeSpeechClientService;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.FreeSpeechService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.login.LoginService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.Navigation;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
-
-import java.io.File;
 
 /**
  * Developed @ <Academia de Código_>
@@ -47,7 +45,7 @@ public class Client extends Application {
 
         ConnectionService connectionService = new FreeSpeechConnectionService();
         LoginService loginService = new LoginClientService();
-        ClientService clientService = new FreeSpeechClientService();
+        ClientService clientService = new FreeSpeechService();
 
         RegistryService.getInstance().addService(connectionService);
         RegistryService.getInstance().addService(loginService);

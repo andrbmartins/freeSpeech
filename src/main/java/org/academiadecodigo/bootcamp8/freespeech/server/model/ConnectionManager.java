@@ -14,15 +14,18 @@ import java.util.List;
  * <Code Cadet> JPM Ramos
  */
 
-//TODO changed password to work at home
-
 public class ConnectionManager {
     private Connection connection;
 
     public Connection getConnection() {
+
+        final String PASSWORD = "";
+        final String USER = "root";
+        final String URL = "jdbc:mysql://localhost:3306/freespeech";
+
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/freespeech", "root", "");
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_CONNECT);
             }
         } catch (SQLException ex) {

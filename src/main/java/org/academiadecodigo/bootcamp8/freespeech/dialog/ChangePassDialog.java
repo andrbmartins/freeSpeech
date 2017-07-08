@@ -17,7 +17,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO refactor
 
 public class ChangePassDialog extends Dialog<String[]> {
     private PasswordField currPassword;
