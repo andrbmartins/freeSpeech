@@ -16,7 +16,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -61,7 +60,8 @@ public class ServerResponseHandler implements Runnable {
             sealedSendable = Stream.readSendable(oin);
 
             if (sealedSendable == null) {
-                continue;
+              break;
+
             }
 
             sendable = sealedSendable.getContent(symKey);
@@ -167,33 +167,48 @@ public class ServerResponseHandler implements Runnable {
 
     private void printPrivateChat(Sendable<HashMap<MapKey, String>> message) {
 
-        HashMap<MapKey, String> map = message.getContent();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                HashMap<MapKey, String> map = message.getContent();
 
-        String tabId = map.get(MapKey.TAB_ID);
-        String destinyString = map.get(MapKey.DESTINATION);
-        String text = map.get(MapKey.MESSAGE);
-        TextArea textArea;
-        Set<String> destinySet = Parser.stringToSet(destinyString);
+                String tabId = map.get(MapKey.TAB_ID);
+                String destinyString = map.get(MapKey.DESTINATION);
+                String text = map.get(MapKey.MESSAGE);
+                TextArea textArea;
+                Set<String> destinySet = Parser.stringToSet(destinyString);
 
-        if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
-            clientController.updateUsersSet(tabId, destinySet);
-            clientController.updateTooltipText(tabId, destinySet);
+                if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
+                    clientController.updateUsersSet(tabId, destinySet);
+                    clientController.updateTooltipText(tabId, destinySet);
 
-        } else {
-            clientController.createReceivedTab(destinySet, tabId);
-            textArea = clientController.getDestinyRoom(tabId);
-        }
-        textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
+                } else {
+                    clientController.createReceivedTab(destinySet, tabId);
+                    textArea = clientController.getDestinyRoom(tabId);
+                }
+                textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
+            }
+        };
+        Platform.runLater(runnable);
+
     }
 
     private void printToRoom(Sendable message) {
 
-        String messageText = (String) message.getContent();
-        messageText = wipeWhiteSpaces(messageText);
-        TextArea textArea = clientController.getDestinyRoom("Lobby");
-        Boolean isEmpty = textArea.getText().isEmpty();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
 
-        textArea.appendText((isEmpty ? "" : "\n") + messageText);
+                String messageText = (String) message.getContent();
+                messageText = wipeWhiteSpaces(messageText);
+                TextArea textArea = clientController.getDestinyRoom("Lobby");
+                Boolean isEmpty = textArea.getText().isEmpty();
+
+                textArea.appendText((isEmpty ? "" : "\n") + messageText);
+
+            }
+        };
+        Platform.runLater(runnable);
     }
 
     /**
