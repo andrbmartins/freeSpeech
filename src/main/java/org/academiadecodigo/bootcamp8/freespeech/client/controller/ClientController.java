@@ -270,7 +270,7 @@ public class ClientController implements Controller {
         }
 
         if (file.length() > MAX_FILE_SIZE) {
-            userPrompt1(Alert.AlertType.ERROR, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
+            notificationPrompt(Alert.AlertType.ERROR, DialogText.FILE_TOO_BIG);
             return;
         }
 
@@ -415,29 +415,20 @@ public class ClientController implements Controller {
 
     /**
      * Displays a notification to the user.
-     *
      * @param alertType - the notification type.
-     * @param title      - the notification text.
-     * @param content
-     * @return the user option.
+     * @param text - the notification text.
+     * @return the user option
      */
-    private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
+    private Optional<ButtonType> notificationPrompt(Alert.AlertType alertType, String text) {
 
         Alert alert = new Alert(alertType);
-
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.initStyle(StageStyle.UNDECORATED);
-
         alert.getDialogPane().getScene().getStylesheets().clear();
         alert.getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
 
-        alert.getDialogPane().lookupButton(ButtonType.OK).setVisible(false);
-        ButtonType okButton = new ButtonType("", ButtonBar.ButtonData.OK_DONE);
-        alert.getDialogPane().getButtonTypes().addAll(okButton);
-        alert.getDialogPane().lookupButton(okButton).setId("okButton");
-
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(text);
 
         return alert.showAndWait();
     }
