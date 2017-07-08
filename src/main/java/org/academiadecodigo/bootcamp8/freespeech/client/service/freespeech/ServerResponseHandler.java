@@ -57,7 +57,12 @@ public class ServerResponseHandler implements Runnable {
         ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 
         while (run) {
-            sealedSendable = Stream.readSendable(oin);
+
+            try {
+                sealedSendable = Stream.readSendable(oin);
+            } catch (IllegalStateException e) {
+                break;
+            }
 
             if (sealedSendable == null) {
                 continue;
@@ -66,6 +71,7 @@ public class ServerResponseHandler implements Runnable {
             sendable = sealedSendable.getContent(symKey);
             //process(sealedSendable.getType(), sendable);
             pool.submit(new MessageHandler(sealedSendable.getType(), sendable));
+            
         }
 
     }
