@@ -504,7 +504,7 @@ public class ClientController implements Controller {
     private void createNewTab(String user) {
 
         //gets current time in the tab I want
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
         Date date = new Date();
 
         String id = SessionContainer.getInstance().getUsername() +
@@ -597,30 +597,8 @@ public class ClientController implements Controller {
 
         addClosingTabHandler(tab);
 
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
+        tabPane.getTabs().add(tab);
 
-                synchronized (this) {
-                    tabPane.getTabs().add(tab);
-                    notifyAll();
-                }
-            }
-        };
-
-        Platform.runLater(runnable);
-
-        while (!tabPane.getTabs().contains(tab)) {
-
-            try {
-                synchronized (runnable) {
-                    runnable.wait();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
     }
 
     public TextArea getDestinyRoom(String tabId) {
