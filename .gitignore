@@ -4,9 +4,8 @@
 **.iml
 **/.idea/
 
-### Java ###
-
-
+### Maven ###
+target/**/*
 
 ### Windows ###
 

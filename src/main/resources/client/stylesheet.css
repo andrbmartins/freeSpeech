@@ -1,0 +1,224 @@
+.root {
+    -fx-alignment: center;
+    -fx-cursor: default;
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, #FF0000 0%, #690504 100%);
+    -fx-background-radius: 0;
+    -fx-font: 10pt Helvetica;
+}
+
+/* buttons */
+
+/* TODO BUTTON CLASSES */
+
+.button {
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 50px;
+}
+
+#reconnectButton {
+    -fx-background-image: url("icons/reconnect.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
+}
+
+#closeButton,
+#exitButton,
+#closeConnection,
+#cancelRemoveButton,
+#closeProfile,
+#clearSearchBar {
+    -fx-background-image: url("icons/exit.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
+}
+
+#loginButton {
+    -fx-background-image: url("icons/login.png");
+}
+
+#registerButton {
+    -fx-background-image: url("icons/register.png");
+}
+
+#backButton {
+    -fx-background-image: url("icons/back.png");
+}
+
+#editProfile {
+    -fx-background-image: url("icons/edit-profile.png");
+}
+
+#changePassword {
+    -fx-background-image: url("icons/password.png");
+}
+
+#updateProfile {
+    -fx-background-image: url("icons/update-profile.png");
+}
+
+#removeAccount {
+    -fx-background-image: url("icons/delete.png");
+}
+
+#confirmButton,
+#sendButton {
+    -fx-background-image: url("icons/confirm.png");
+}
+
+#addToChatButton {
+    -fx-background-image: url("icons/add.png");
+}
+
+#privateChatButton {
+    -fx-background-image: url("icons/private.png");
+}
+
+#reportButton {
+    -fx-background-image: url("icons/report.png");
+}
+
+#fileButton {
+    -fx-background-image: url("icons/file.png");
+}
+
+#buttons {
+    -fx-padding: -10px 40px 0 10px;
+}
+
+#deleteAccountButton {
+    -fx-background-image: url("icons/confirm.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
+}
+
+/* dialogs */
+
+.dialog-pane {
+    -fx-background-color: hotpink;
+}
+
+/* user data */
+
+.text-field {
+    -fx-max-width: 20em;
+}
+
+/* user name */
+
+.label {
+    -fx-text-fill: #FFFFFF;
+}
+
+#topBar {
+    -fx-background-color: #D3D3D3;
+}
+
+/* list view */
+
+.list-view {
+    -fx-background-color: #E20000;
+    /* -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, #FF0000 0%, #690504 100%); */
+    -fx-font-weight: bold;
+}
+
+.list-cell {
+
+    -fx-background-color: #E20000;
+    -fx-text-fill: #000000;
+}
+
+.list-cell:selected {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #690504;
+    -fx-opacity: 0.7;
+}
+
+/* tab pane */
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #690504;
+}
+
+.tab {
+    -fx-background-color: #D3D3D3;
+    -fx-background-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tab:selected {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+    -fx-background-insets: 0 1 0 -1;
+}
+
+/* text area */
+
+.text-area,
+.text-area:focused .content {
+    -fx-text-fill: #000000;
+    -fx-background-radius: 0;
+    -fx-background-color: white;
+    -fx-font-family: monospace;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-family: monospace;
+}
+
+/* input text area */
+
+#inputTextArea {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea .content {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea:focused {
+    -fx-background-insets: 0;
+}
+
+/* scroll bar */
+
+.increment-button,
+.increment-arrow,
+.decrement-button,
+.decrement-arrow {
+    -fx-pref-height: 0; /*hides button */
+    visibility: hidden;
+}
+
+.text-area .scroll-bar .track {
+    -fx-background-color: white;
+}
+
+.text-area .scroll-bar .thumb {
+    -fx-background-color: #690504;
+}
+
+
+#inputTextArea .scroll-bar .track {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea .scroll-bar .thumb {
+    -fx-background-color: hotpink;
+}
+
+
+
+
