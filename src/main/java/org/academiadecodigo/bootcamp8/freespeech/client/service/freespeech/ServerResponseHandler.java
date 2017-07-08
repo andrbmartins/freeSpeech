@@ -1,10 +1,6 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextArea;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.scene.control.Alert;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
@@ -16,15 +12,10 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Stream;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,21 +43,26 @@ public class ServerResponseHandler implements Runnable {
         SealedSendable sealedSendable;
         Sendable sendable;
 
-        while (run) {
+
+        int connect = 0;
+        while (run && connect < Values.MAX_CONNECT_ATTEMPT ) {
 
             sealedSendable = Stream.readSendable(oin);
 
             if (sealedSendable == null) {
-                break;
+                connect++;
+                continue;
 
             }
 
             sendable = sealedSendable.getContent(symKey);
             process(sealedSendable.getType(), sendable);
+            connect = 0;
 
         }
 
     }
+
 
     private void process(MessageType type, Sendable message) {
 
@@ -112,35 +108,15 @@ public class ServerResponseHandler implements Runnable {
 
     private void saveReceivedFile(Sendable<HashMap<MapKey, List<Byte>>> message) {
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
 
-                HashMap<MapKey, List<Byte>> map = message.getContent();
-                List<Byte> extensionList = map.get(MapKey.FILE_EXTENSION);
-                List<Byte> byteList = map.get(MapKey.MESSAGE);
-                String fileExtension = new String(Parser.listToByteArray(extensionList));
-                String sender = new String(Parser.listToByteArray(map.get(MapKey.SOURCE)));
+        HashMap<MapKey, List<Byte>> map = message.getContent();
+        List<Byte> extensionList = map.get(MapKey.FILE_EXTENSION);
+        List<Byte> byteList = map.get(MapKey.MESSAGE);
+        String fileExtension = new String(Parser.listToByteArray(extensionList));
+        String sender = new String(Parser.listToByteArray(map.get(MapKey.SOURCE)));
 
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("You have received a file from " + sender);
-                fileChooser.setInitialFileName("My file." + fileExtension);
-                File file = fileChooser.showSaveDialog(new Stage());
+        clientController.saveFile(sender, byteList, fileExtension);
 
-                try {
-
-                    if (file != null && file.createNewFile()) {
-                        Parser.byteListToFile(Parser.listToByteArray(byteList), file);
-                    }
-
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                }
-
-            }
-        };
-
-        Platform.runLater(runnable);
 
     }
 
@@ -151,18 +127,8 @@ public class ServerResponseHandler implements Runnable {
         String tabId = map.get(MapKey.TAB_ID);
         String destinyString = map.get(MapKey.DESTINATION);
         String text = map.get(MapKey.MESSAGE);
-        TextArea textArea;
-        Set<String> destinySet = Parser.stringToSet(destinyString);
 
-        if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
-            clientController.updateUsersSet(tabId, destinySet);
-            clientController.updateTooltipText(tabId, destinySet);
-
-        } else {
-            clientController.createReceivedTab(destinySet, tabId);
-            textArea = clientController.getDestinyRoom(tabId);
-        }
-        textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
+        clientController.printPrivateChat(tabId, destinyString, text);
     }
 
     private void printToRoom(Sendable message) {
@@ -184,7 +150,7 @@ public class ServerResponseHandler implements Runnable {
      */
     private String wipeWhiteSpaces(String text) {
 
-        //One or more characters, a colon and a space
+        //One or more characters, a colon and three spaces
         //Every whitespace
         //Every word character, digit, whitespace, punctuation and symbol
         //A single character, punctuation or symbol
@@ -205,7 +171,7 @@ public class ServerResponseHandler implements Runnable {
     private void notifyUser(Sendable<String> msg) {
         String info = msg.getContent();
 
-        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+        clientController.userPromptExternal(DialogText.ACCOUNT_MANAGER, info);
 
     }
 
@@ -213,10 +179,10 @@ public class ServerResponseHandler implements Runnable {
         String info = message.getContent();
         if (info.equals(Values.ACC_DELETED)) {
             run = false;
-            clientController.userPromptQuit(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+            clientController.userPromptQuit(DialogText.ACCOUNT_MANAGER, info);
             return;
         }
-        clientController.userPromptExternal(Alert.AlertType.INFORMATION, DialogText.ACCOUNT_MANAGER, info);
+        clientController.userPromptExternal(DialogText.ACCOUNT_MANAGER, info);
 
 
     }

@@ -34,6 +34,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -157,6 +158,7 @@ public class ClientController implements Controller {
 
     /**
      * Gets name of selected user and creates new private chat (new tab)
+     *
      * @param event
      */
     @FXML
@@ -175,6 +177,7 @@ public class ClientController implements Controller {
 
     /**
      * Adds new users to the current private chat
+     *
      * @param event
      */
     @FXML
@@ -182,14 +185,14 @@ public class ClientController implements Controller {
 
         String name;
 
-        if((name = onlineUsersList.getSelectionModel().getSelectedItem()) == null){
+        if ((name = onlineUsersList.getSelectionModel().getSelectedItem()) == null) {
             return;
         }
 
         String currentTabId = getSelectedTab().getId();
         String userSelected = onlineUsersList.getSelectionModel().getSelectedItem();
 
-        if (getSelectedTab().getText().equals("Lobby") || usersPerTab.get(currentTabId).contains(userSelected)){
+        if (getSelectedTab().getText().equals("Lobby") || usersPerTab.get(currentTabId).contains(userSelected)) {
             return;
         }
 
@@ -204,6 +207,7 @@ public class ClientController implements Controller {
 
     /**
      * Sends message for currently active tab
+     *
      * @param event
      */
     @FXML
@@ -222,6 +226,7 @@ public class ClientController implements Controller {
 
     /**
      * Sends message on enter key
+     *
      * @param event
      */
     @FXML
@@ -241,6 +246,7 @@ public class ClientController implements Controller {
 
     /**
      * Opens dialog to select file to send on button pressed if a file is selected and file is less than 50MB
+     *
      * @param event
      */
     @FXML
@@ -283,6 +289,7 @@ public class ClientController implements Controller {
 
     /**
      * Updates logged users list
+     *
      * @param message
      */
     public void processUsersList(Sendable<List<String>> message) {
@@ -299,6 +306,7 @@ public class ClientController implements Controller {
 
     /**
      * Processes request for the bio of other users. Returns if an empty field or the own name were selected
+     *
      * @param event
      */
     @FXML
@@ -316,6 +324,7 @@ public class ClientController implements Controller {
 
     /**
      * Opens change password dialog. Validates if fields aren't empty
+     *
      * @param event
      */
     @FXML
@@ -339,6 +348,7 @@ public class ClientController implements Controller {
 
     /**
      * Checks if no passwordfield is empty and validates input
+     *
      * @param results an array of strings with the text input from the user
      * @return true is fields are not empty and text on field 1 and 2 is equal, false if empty or fields 1 and 2 not equal
      */
@@ -353,6 +363,7 @@ public class ClientController implements Controller {
 
     /**
      * Closes app on exit button press
+     *
      * @param event
      */
     @FXML
@@ -363,11 +374,12 @@ public class ClientController implements Controller {
 
     /**
      * Creates dialog prompt confirming deletion of user account and closes app
-     * @param alertType Type of dialog
-     * @param title for the dialog
-     * @param content information for user
+     *
+     * @param title     for the dialog
+     * @param content   information for user
      */
-    public void userPromptQuit(Alert.AlertType alertType, String title, String content) {
+    public void userPromptQuit(String title, String content) {
+        Alert.AlertType alertType = Alert.AlertType.INFORMATION;
         Platform.runLater(new Runnable() {
             public void run() {
                 Optional<ButtonType> r = userPrompt1(alertType, title, content);
@@ -381,11 +393,12 @@ public class ClientController implements Controller {
 
     /**
      * Creates new thread with a dialog invoked by an event coming from the network
-     * @param alertType
+     *
      * @param title
      * @param content
      */
-    public void userPromptExternal(Alert.AlertType alertType, String title, String content) {
+    public void userPromptExternal(String title, String content) {
+        Alert.AlertType alertType = Alert.AlertType.INFORMATION;
         Platform.runLater(new Runnable() {
             public void run() {
                 Optional<ButtonType> r = userPrompt1(alertType, title, content);
@@ -404,13 +417,13 @@ public class ClientController implements Controller {
 
     /**
      * Sends request for own user info
+     *
      * @param event
      */
     @FXML
     void editUserInfo(ActionEvent event) {
         clientService.sendBioRequest(MessageType.BIO, SessionContainer.getInstance().getUsername());
     }
-
 
     public void showOwnBio(Sendable<List<String>> ownBio) {
 
@@ -465,7 +478,6 @@ public class ClientController implements Controller {
 
     }
 
-
     @FXML
     void onUpdateProfile(ActionEvent event) {
 
@@ -478,7 +490,6 @@ public class ClientController implements Controller {
         clientService.updateBio(updatedBio);
 
     }
-
 
     private void createNewTab(String user) {
 
@@ -600,7 +611,6 @@ public class ClientController implements Controller {
     }
 
 
-
     @FXML
     void search(KeyEvent event) {
 
@@ -624,7 +634,6 @@ public class ClientController implements Controller {
 
     @FXML
     void clearSearchBar(ActionEvent event) {
-
         searchBar.clear();
         onlineUsersList.setItems(originalOnlineUsersList.getItems());
 
@@ -640,5 +649,53 @@ public class ClientController implements Controller {
 
     public void updateTooltipText(String tabId, Set<String> destinySet) {
         this.tabId.get(tabId).getTooltip().setText(Parser.setToString(destinySet));
+    }
+
+    public void saveFile(String sender, List<Byte> byteList, String fileExtension) {
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("You have received a file from " + sender);
+                fileChooser.setInitialFileName("My file." + fileExtension);
+                File file = fileChooser.showSaveDialog(new Stage());
+
+                try {
+
+                    if (file != null && file.createNewFile()) {
+                        Parser.byteListToFile(Parser.listToByteArray(byteList), file);
+                    }
+
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        };
+        Platform.runLater(runnable);
+    }
+
+    public void printPrivateChat(String tabId, String destinyString, String text) {
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                TextArea textArea;
+                Set<String> destinySet = Parser.stringToSet(destinyString);
+
+                if ((textArea = getDestinyRoom(tabId)) != null) {
+                    updateUsersSet(tabId, destinySet);
+                    updateTooltipText(tabId, destinySet);
+
+                } else {
+                    createReceivedTab(destinySet, tabId);
+                    textArea = getDestinyRoom(tabId);
+                }
+                textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
+            }
+        };
+
+        Platform.runLater(runnable);
     }
 }
