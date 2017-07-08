@@ -17,9 +17,6 @@ public class FreeSpeechConnectionService implements ConnectionService {
 
     /**
      * @see ConnectionService#connect(String, int)
-     * @param server
-     * @param port
-     * @return
      */
     @Override
     public boolean connect(String server, int port) {

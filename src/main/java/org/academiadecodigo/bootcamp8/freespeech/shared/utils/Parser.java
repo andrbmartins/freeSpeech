@@ -104,11 +104,11 @@ public class Parser {
         try {
 
             fileInputStream = new FileInputStream(file);
-            buffer = new byte[(int) file.length()];
+            buffer = new byte[fileInputStream.available()];
             fileInputStream.read(buffer);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error on file reading.");
         } finally {
             Stream.close(fileInputStream);
         }

@@ -23,9 +23,9 @@ public class LoginClientService implements LoginService {
     }
 
     /**
-     * @param messageType    - the type.
-     * @param messageContent - the content.
      * @see LoginService#sendMessage(MessageType, Map)
+     *      * @param messageType    - the type.
+     * @param messageContent - the content.
      */
     @Override
     public void sendMessage(MessageType messageType, Map<MapKey, String> messageContent) {

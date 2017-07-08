@@ -262,7 +262,7 @@ public class ClientController implements Controller {
      */
     @FXML
     void onFile(ActionEvent event) {
-        final int MAX_FILE_SIZE = 52428800; //50 MB
+        final int MAX_FILE_SIZE = 5120; // 5 MB
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
 
@@ -275,8 +275,7 @@ public class ClientController implements Controller {
             return;
         }
 
-        String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
-        clientService.sendUserData(file, destiny, SessionContainer.getInstance().getUsername());
+        clientService.sendUserData(file, nameBio.getText(), SessionContainer.getInstance().getUsername());
     }
 
 
