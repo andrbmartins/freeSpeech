@@ -1,6 +1,6 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
+package org.academiadecodigo.bootcamp8.freespeech.client.controller.user;
 
-import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
+import org.academiadecodigo.bootcamp8.freespeech.client.controller.user.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
@@ -72,6 +72,8 @@ public class ServerResponseHandler implements Runnable {
      * @param message - the instance.
      */
     private void process(MessageType type, Sendable message) {
+
+
 
         switch (type) {
             case TEXT:

@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.controller;
+package org.academiadecodigo.bootcamp8.freespeech.client.controller.user;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -19,7 +19,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javafx.stage.StageStyle;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
+import org.academiadecodigo.bootcamp8.freespeech.client.controller.Controller;
+import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ChatRoomManager;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
@@ -83,17 +84,11 @@ public class ClientController implements Controller {
     private Stage stage;
     private ClientService clientService;
     private ListView<String> originalOnlineUsersList;
-    private Map<Tab, TextArea> rooms;
-    private Map<String, Tab> tabId;
-    private Map<String, Set<String>> usersPerTab;
+    private ChatRoomManager chatRoomManager;
     private double[] stagePosition;
+    private List<String> randomNames;
 
     public ClientController() {
-
-        //TODO
-        rooms = new HashMap<>();
-        tabId = new HashMap<>();
-        usersPerTab = new HashMap<>();
 
         stagePosition = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
@@ -103,11 +98,9 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        username.setText(SessionContainer.getInstance().getUsername());
 
-        //TODO
-        rooms.put(getSelectedTab(), lobbyTextArea);
-        tabId.put(getSelectedTab().getText(), getSelectedTab());
+        username.setText(SessionContainer.getInstance().getUsername());
+        chatRoomManager = new ChatRoomManager(tabPane);
 
         setDraggableTopBar();
         focusUserInput();
@@ -115,14 +108,9 @@ public class ClientController implements Controller {
         new Thread(new ServerResponseHandler(this)).start();
     }
 
-    /**
-     * Returns currently selected tab.
-     *
-     * @return - the tab.
-     */
-    private Tab getSelectedTab() {
-        return tabPane.getSelectionModel().getSelectedItem();
-    }
+
+
+
 
     /**
      * Puts cursor focus on user's input area.
@@ -165,18 +153,9 @@ public class ClientController implements Controller {
     @FXML
     void startPrivateChat(ActionEvent event) {
 
-
         //TODO
-        createNewTab(nameBio.getText());
-       /*
-        String clientName = SessionContainer.getInstance().getUsername();
+        chatRoomManager.createNewTab(nameBio.getText());
 
-        if (!clientName.equals(name)) {
-            createNewTab(name);
-
-        }
-        addToChatButton.setDisable(false);
-        addToChatButton.setVisible(true);*/
     }
 
     /**
@@ -185,19 +164,7 @@ public class ClientController implements Controller {
     @FXML
     void addToChat(ActionEvent event) {
 
-        String currentTabId = getSelectedTab().getId();
-        String userSelected = nameBio.getText();
-
-        if (getSelectedTab().getText().equals("Lobby") || usersPerTab.get(currentTabId).contains(userSelected)) {
-            return;
-        }
-
-        Set<String> userSet = usersPerTab.get(currentTabId);
-
-        //   if (!userSet.contains(userSelected)) {
-        userSet.add(userSelected);
-        usersPerTab.replace(currentTabId, userSet);
-        // }
+        chatRoomManager.addToChat(nameBio.getText());
 
     }
 
@@ -207,14 +174,13 @@ public class ClientController implements Controller {
     @FXML
     void onSend(ActionEvent event) {
 
-        if (getSelectedTab().getText().equals("Lobby")) {
+        if (chatRoomManager.getSelectedTab().getText().equals("Lobby")) {
             clientService.sendUserText(inputTextArea.getText());
             inputTextArea.clear();
             return;
         }
-
-        String tabID = getSelectedTab().getId();
-        clientService.sendPrivateText(inputTextArea.getText(), tabID, usersPerTab.get(tabID));
+        Room currentRoom = chatRoomManager.getSelectedRoom();
+        clientService.sendPrivateText(inputTextArea.getText(), currentRoom.getId(), currentRoom.getUsersList() );
         inputTextArea.clear();
     }
 
@@ -283,7 +249,7 @@ public class ClientController implements Controller {
      *
      * @param message - the message.
      */
-    public void processUsersList(Sendable<List<String>> message) {
+    private void processUsersList(Sendable<List<String>> message) {
 
         Platform.runLater(new Runnable() {
             public void run() {
@@ -364,7 +330,7 @@ public class ClientController implements Controller {
      *
      * @param content - the dialog text.
      */
-    public void quitPrompt(String content) {
+    private void quitPrompt(String content) {
 
         Alert.AlertType alertType = Alert.AlertType.INFORMATION;
 
@@ -384,7 +350,7 @@ public class ClientController implements Controller {
      *
      * @param content - the dialog text.
      */
-    public void infoPrompt(String content) {
+    private void infoPrompt(String content) {
 
         Alert.AlertType alertType = Alert.AlertType.INFORMATION;
 
@@ -431,7 +397,7 @@ public class ClientController implements Controller {
      * @param ownBio - the users' profile.
      * @param isUser - true if current user, false otherwise.
      */
-    public void showProfile(Sendable<List<String>> ownBio, boolean isUser) {
+    private void showProfile(Sendable<List<String>> ownBio, boolean isUser) {
 
         toggleBio(isUser);
         List<String> list = ownBio.getContent();
@@ -452,15 +418,6 @@ public class ClientController implements Controller {
         userBio.setWrapText(true);
         dateBirthBio.setEditable(isUser);
     }
-
-  /*  public void showUserBio(Sendable<List<String>> message) {
-
-        toggleBio(false);
-
-        List<String> list = message.getContent();
-
-        displayProfile(list);
-    }*/
 
     /**
      * Sets values for profile fields.
@@ -516,77 +473,22 @@ public class ClientController implements Controller {
     }
 
 
-    /**
-     * Creates a new tab for a private chat with the specified user.
-     *
-     * @param user - the user name.
-     */
-    private void createNewTab(String user) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
-        Date date = new Date();
-
-        String id = SessionContainer.getInstance().getUsername() +
-                "_" + user + dateFormat.format(date);
-
-        Tab tab = new Tab("label " + id);
-        tab.setId(id);
-        tab.setTooltip(new Tooltip());
-
-        addClosingTabHandler(tab);
-
-        TextArea textArea = new TextArea();
-        textArea.appendText("");
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
-
-        tab.setContent(textArea);
-
-        tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
-
-        //TODO
-        tabId.put(id, tab);
-        rooms.put(tab, textArea);
-
-        HashSet<String> set = new HashSet<>();
-        set.add(user);
-        set.add(SessionContainer.getInstance().getUsername());
-        tab.getTooltip().setText(Parser.setToString(set));
-        usersPerTab.put(id, set);
-
-        tabPane.getTabs().add(tab);
-    }
 
     /**
-     * Defines closing behavior for the specified tab.
-     *
+     * Sets the name for the specified tab.
      * @param tab - the tab.
      */
-    private void addClosingTabHandler(Tab tab) {
+    private void setTabName(Tab tab) {
 
-        if (tabPane.getTabs().size() != 1) {
-            tab.setOnClosed(tabPane.getTabs().get(1).getOnClosed());
-            return;
+        if (randomNames.isEmpty()){
+            randomNames = shuffleNames();
         }
+        tab.setText(randomNames.remove(0));
 
-        EventHandler<Event> event = new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                Tab closedTab = (Tab) event.getSource();
-                String leaveText = "< has left the building! >";
-
-                Set<String> destinySet = usersPerTab.remove(closedTab.getId());
-                destinySet.remove(SessionContainer.getInstance().getUsername());
-
-                rooms.remove(closedTab);
-                tabId.remove(closedTab.getId());
-
-                clientService.sendPrivateText(leaveText, closedTab.getId(), destinySet);
-            }
-        };
-
-        tab.setOnClosed(event);
     }
+
+
 
     /**
      * Creates a new tab when receiving a private message.
@@ -599,6 +501,7 @@ public class ClientController implements Controller {
         Tab tab = new Tab("label " + id);
         tab.setId(id);
         tab.setTooltip(new Tooltip(Parser.setToString(users)));
+        setTabName(tab);
 
         TextArea textArea = new TextArea();
         textArea.appendText("");

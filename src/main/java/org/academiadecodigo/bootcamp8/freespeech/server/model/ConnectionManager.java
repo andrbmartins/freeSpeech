@@ -17,6 +17,7 @@ import java.util.List;
 public class ConnectionManager {
     private Connection connection;
 
+
     public Connection getConnection() {
 
         final String PASSWORD = "";
@@ -270,6 +271,34 @@ public class ConnectionManager {
     }
 
 
+
+    public int verifyUserReported(String username) {
+        PreparedStatement preparedStmt = null;
+        ResultSet resultSet = null;
+        try {
+
+            preparedStmt = connection.prepareStatement(Queries.COUNT_REPORTED);
+            preparedStmt.setString(1, username);
+            //preparedStmt.setString(2, user_reported);
+            resultSet =  preparedStmt.executeQuery();
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+
+        } catch (SQLException e) {
+            Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+        } finally {
+
+            try {
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
+            } catch (SQLException e) {
+                Logger.getInstance().eventlogger(TypeEvent.DATABASE, e.getMessage());
+            }
+
+        }
+        return 0;
+    }
+
     public void close() {
 
         try {
@@ -285,4 +314,5 @@ public class ConnectionManager {
 
 
 }
+
 
