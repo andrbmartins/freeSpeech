@@ -118,6 +118,11 @@ public class LoginController implements Controller {
         sendData(MessageType.LOGIN);
         Sendable<String> serverResponse = loginService.readMessage();
 
+        if (serverResponse.getContent().equals(Values.REPORTED)) {
+            serverMessageLabel.setText(serverResponse.getContent());
+            return;
+        }
+
         if (serverResponse.getContent().equals(Values.LOGIN_OK)) {
             loginService.receiveSymKey();
             SessionContainer.getInstance().setUsername(nameField.getText());
@@ -126,6 +131,7 @@ public class LoginController implements Controller {
             Navigation.getInstance().loadScreen(Values.USER_SCENE);
             return;
         }
+
 
         serverMessageLabel.setText(serverResponse.getContent());
     }

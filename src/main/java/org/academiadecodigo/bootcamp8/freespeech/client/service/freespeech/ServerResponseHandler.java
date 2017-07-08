@@ -68,6 +68,8 @@ public class ServerResponseHandler implements Runnable {
 
     private void process(MessageType type, Sendable message) {
 
+
+
         switch (type) {
             case TEXT:
                 printToRoom(message);

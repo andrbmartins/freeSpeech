@@ -139,6 +139,15 @@ public class ClientHandler implements Runnable {
         String username = login.get(MapKey.USERNAME);
         String password = login.get(MapKey.PASSWORD);
 
+
+
+        if (userService.verifyUserReported(username) > Values.MAX_REPORT_USER) {
+            responseToClient(sealedSendable.getType(), Values.REPORTED);
+            Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_BLOCKED + username);
+            return false;
+        }
+
+
         if (server.userLogged(username)) {
             responseToClient(sealedSendable.getType(), Values.ALREADY_LOGGED);
             Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_ALREADY_LOGGED + username);
@@ -263,6 +272,9 @@ public class ClientHandler implements Runnable {
 
         }
     }
+
+
+
 
     private void reportUser(SealedSendable msg) {
 

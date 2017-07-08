@@ -16,11 +16,10 @@ public class Queries {
     public static final String SHOW_BIO = "SELECT * FROM bio WHERE user_name = ?";
     public static final String LOG = "INSERT INTO log(date_event, type_event, message_event) VALUES (now(), ?, ?)";
 
-    public static final String REPORT_USER = "INSERT INTO report(user_name, user_reported, date_report) VALUES (?, ?, CURDATE())";
+    public static final String REPORT_USER = "INSERT INTO report(user_name, user_reported) VALUES (?, ?)";
     public static final String DELETE_USER_REPORTED = "DELETE from report WHERE report.user_reported = ? ";
     public static final String COUNT_REPORTED = "SELECT count(*) from report WHERE report.user_reported = ?";
-    public static final String REPORTED_USER = "SELECT count(*) FROM report WHERE user_name = ? AND user_reported = ? AND date_report = CURDATE()";
-
+    public static final String REPORTED_USER = "SELECT count(*) FROM report WHERE user_name = ? AND user_reported = ?";
 
 
 }
