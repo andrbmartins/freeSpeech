@@ -56,7 +56,7 @@ public class ServerResponseHandler implements Runnable {
         final int MAX_THREADS = 2;
         ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 
-        while (oin != null) {
+        while (run) {
             sealedSendable = Stream.readSendable(oin);
 
             if (sealedSendable == null) {
