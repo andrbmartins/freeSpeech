@@ -44,6 +44,9 @@ public class ConsoleHandler implements Runnable {
             case RUNTIME:
                 System.out.println(server.runtime());
                 break;
+            case USERS:
+                server.printLoggedUsers();
+                break;
             default:
                 System.out.println("Invalid command");
         }
@@ -54,6 +57,7 @@ public class ConsoleHandler implements Runnable {
 
         STOP("stop"),
         RUNTIME("runtime"),
+        USERS("users"),
         INVALID("");
 
         private final String string;

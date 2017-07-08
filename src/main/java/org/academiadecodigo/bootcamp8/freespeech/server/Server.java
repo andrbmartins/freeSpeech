@@ -270,5 +270,10 @@ public class Server {
 
     }
 
+    public void printLoggedUsers() {
+        for (ClientHandler c : loggedUsers) {
+            System.out.println(c.getClientName());
+        }
+    }
 
 }

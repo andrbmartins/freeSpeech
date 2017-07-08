@@ -32,7 +32,7 @@ public class Stream {
             out.flush();
 
         } catch (IOException e) {
-            System.err.println("Error on writing to stream. " + e.getMessage());
+            System.err.println("Socket abruptly closed!");
         }
 
     }
@@ -46,23 +46,20 @@ public class Stream {
      */
     public static Object read(ObjectInputStream in) {
 
-        Object object;
+        Object object = null;
 
         try {
 
             object = in.readObject();
-            System.out.println("read " + object.toString());
 
-
-        } catch (IOException | ClassNotFoundException e) {
-            //TODO log - client app closed
-            System.err.println("Error on reading from stream. " + e.getMessage());
-            e.printStackTrace();
-            object = null;
-        }
-
-        if (!(object instanceof SealedSendable || object instanceof Key)) {
-            object = null;
+        } catch (IOException e) {
+            System.err.println("Socket abruptly closed!");
+        } catch (ClassNotFoundException e) {
+            System.err.println("Communication protocol violation!");
+        } finally {
+            if (!(object instanceof SealedSendable || object instanceof Key)) {
+                object = null;
+            }
         }
 
         return object;
@@ -94,7 +91,7 @@ public class Stream {
             }
 
         } catch (IOException e) {
-            System.err.println("Error on trying to close stream. " + e.getMessage());
+            System.err.println(e.getMessage());
         }
 
     }

@@ -58,8 +58,7 @@ public class ServerResponseHandler implements Runnable {
 
         while (run) {
 
-                sealedSendable = Stream.readSendable(oin);
-
+            sealedSendable = Stream.readSendable(oin);
 
             if (sealedSendable == null) {
                 continue;

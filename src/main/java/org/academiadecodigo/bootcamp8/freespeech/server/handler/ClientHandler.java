@@ -200,7 +200,7 @@ public class ClientHandler implements Runnable {
 
     }
 
-    /*private class MessageHandler implements Runnable {
+    private class MessageHandler implements Runnable {
 
         private final SealedSendable msg;
 
@@ -210,9 +210,9 @@ public class ClientHandler implements Runnable {
 
         @Override
         public void run() {
-            handleMessage();
+            handleMessage(msg);
         }
-    }*/
+    }
 
     private void handleMessage(SealedSendable msg) {
 
@@ -357,6 +357,7 @@ public class ClientHandler implements Runnable {
 
     public void write(Object object) {
 
+        System.out.println("Object to write: " + object.getClass().getSimpleName());
         Stream.write(objectOutputStream, object);
     }
 
