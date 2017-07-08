@@ -168,12 +168,14 @@
     -fx-text-fill: #000000;
     -fx-background-radius: 0;
     -fx-background-color: white;
+    -fx-font-family: monospace;
 }
 
 .text-area .content {
     -fx-background-color: white;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-font-family: monospace;
 }
 
 /* input text area */
