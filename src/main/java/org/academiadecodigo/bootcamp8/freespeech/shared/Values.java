@@ -36,7 +36,7 @@ public class Values {
 
     public static final String REPORT_OK = "USER REPORTED";
     public static final String REPORT_KO = "USER ALREADY REPORTED";
-    public static final String REPORTED = " YOU HAVE BEEN REPORTED ";
+    public static final String REPORTED = " YOU HAVE BEEN BLOCKED BY MAX REPORTS ";
 
 
     public static final String INVALID_INPUT = "Required fields are empty.";
@@ -50,7 +50,7 @@ public class Values {
     public static final double CLIENT_WIDTH = 900d;
     public static final double CLIENT_HEIGHT = 600d;
 
-    public static final int MAX_CONNECT_ATTEMPT = 3;
+    public static final int MAX_CONNECT_ATTEMPT = 10;
 
     public static final int MAX_REPORT_USER = 3;
 }

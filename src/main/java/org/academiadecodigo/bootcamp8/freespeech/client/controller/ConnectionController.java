@@ -105,18 +105,22 @@ public class ConnectionController implements Controller {
         }).start();
     }
 
+    /**
+     * Attempts to connect to the server.
+     */
     private void connectToServer() {
+
         boolean success = connectionService.connect(Values.HOST, Values.SERVER_PORT);
 
         if (!success) {
-            notifyNoConnection();
+            connectionFailed();
             return;
         }
 
-        loginScreen();
+        loadLoginScreen();
     }
 
-    private void loginScreen() {
+    private void loadLoginScreen() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -125,7 +129,10 @@ public class ConnectionController implements Controller {
         });
     }
 
-    private void notifyNoConnection() {
+    /**
+     * Notifies user that connection failed and provides him with the option to retry or quit.
+     */
+    private void connectionFailed() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -135,6 +142,9 @@ public class ConnectionController implements Controller {
         });
     }
 
+    /**
+     * @see ConnectionController#connectToServer()
+     */
     @FXML
     void onReconnect(ActionEvent event) {
         connectionButtons.setVisible(false);
@@ -142,6 +152,9 @@ public class ConnectionController implements Controller {
         createBackgroundThread();
     }
 
+    /**
+     * Quits the application.
+     */
     @FXML
     void onClose(ActionEvent event) {
         Navigation.getInstance().close();

@@ -76,6 +76,10 @@ public class LoginController implements Controller {
         });
     }
 
+    /**
+     * Logs in or registers user according to current scene status.
+     * @param event
+     */
     @FXML
     void onEnter(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
@@ -84,6 +88,9 @@ public class LoginController implements Controller {
         }
     }
 
+    /**
+     * Attempts to log in user.
+     */
     @FXML
     void onLogin(ActionEvent event) {
 
@@ -129,7 +136,9 @@ public class LoginController implements Controller {
         serverMessageLabel.setText(serverResponse.getContent());
     }
 
-
+    /**
+     * Attempts to register user.
+     */
     @FXML
     void onRegister(ActionEvent event) {
 
@@ -164,6 +173,9 @@ public class LoginController implements Controller {
         serverMessageLabel.setText(Values.REGISTER_FAIL);
     }
 
+    /**
+     * Quits the application.
+     */
     @FXML
     void onClose(ActionEvent event) {
         loginService.exit();
@@ -171,6 +183,10 @@ public class LoginController implements Controller {
         Navigation.getInstance().close();
     }
 
+    /**
+     * Creates a message with the with given type and sends it to the server.
+     * @param messageType - the type.
+     */
     private void sendData(MessageType messageType) {
 
         Map<MapKey, String> messageContent = new HashMap<>();
@@ -180,6 +196,11 @@ public class LoginController implements Controller {
         loginService.sendMessage(messageType, messageContent);
     }
 
+    /**
+     * Verifies if there are any empty fields in the current scene.
+     * @param register - scene identifier.
+     * @return verification result.
+     */
     private boolean emptyFields(boolean register) {
 
         boolean empty = nameField.getText().isEmpty() || passwordField.getText().isEmpty();
@@ -191,6 +212,10 @@ public class LoginController implements Controller {
         return empty;
     }
 
+    /**
+     * Toggles need to confirm password.
+     * @param show
+     */
     private void passwordConfirmation(boolean show) {
 
         confirmPassword.setVisible(show);

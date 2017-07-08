@@ -164,7 +164,7 @@ public class ClientController implements Controller {
     @FXML
     void onActionPrivateChat(ActionEvent event) {
 
-        String name = onlineUsersList.getSelectionModel().getSelectedItem();
+        String name = nameBio.getText();
         String clientName = SessionContainer.getInstance().getUsername();
 
         if (!clientName.equals(name)) {
@@ -190,7 +190,7 @@ public class ClientController implements Controller {
         }
 
         String currentTabId = getSelectedTab().getId();
-        String userSelected = onlineUsersList.getSelectionModel().getSelectedItem();
+        String userSelected = nameBio.getText();
 
         if (getSelectedTab().getText().equals("Lobby") || usersPerTab.get(currentTabId).contains(userSelected)) {
             return;
@@ -251,7 +251,7 @@ public class ClientController implements Controller {
      */
     @FXML
     void onFile(ActionEvent event) {
-        final int MAX_FILE_SIZE = 52428800; //50 MB
+        final int MAX_FILE_SIZE = 5242880; // 5 MB
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
 
@@ -264,8 +264,7 @@ public class ClientController implements Controller {
             return;
         }
 
-        String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
-        clientService.sendUserData(file, destiny, SessionContainer.getInstance().getUsername());
+        clientService.sendUserData(file, nameBio.getText(), SessionContainer.getInstance().getUsername());
     }
 
 
@@ -464,7 +463,7 @@ public class ClientController implements Controller {
 
     @FXML
     void onReport(ActionEvent event) {
-        String userToReport = onlineUsersList.getSelectionModel().getSelectedItem();
+        String userToReport = nameBio.getText();
         clientService.sendReport(userToReport);
     }
 
@@ -575,30 +574,8 @@ public class ClientController implements Controller {
 
         addClosingTabHandler(tab);
 
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                synchronized (this) {
-                    tabPane.getTabs().add(tab);
-                    notifyAll();
-                }
-            }
-        };
-
-        Platform.runLater(runnable);
-
-        while (!tabPane.getTabs().contains(tab)) {
-
-            try {
-                synchronized (runnable) {
-                    runnable.wait();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
+        tabPane.getTabs().add(tab);
+        
     }
 
     public TextArea getDestinyRoom(String tabId) {

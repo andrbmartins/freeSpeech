@@ -22,6 +22,9 @@ import java.util.Map;
 
 public class FreeSpeechClientService implements ClientService {
 
+    /**
+     * @see ClientService#sendUserData(File, String, String)
+     */
     @Override
     public void sendUserText(String textArea) {
 
@@ -35,6 +38,9 @@ public class FreeSpeechClientService implements ClientService {
         writeObject(MessageType.TEXT, message);
     }
 
+    /**
+     * @see ClientService#sendPrivateText(String, String, Set)
+     */
     @Override
     public void sendPrivateText(String textArea, String tabId, Set<String> destinySet) {
 
@@ -53,7 +59,9 @@ public class FreeSpeechClientService implements ClientService {
         writeObject(MessageType.PRIVATE_TEXT, message);
     }
 
-
+    /**
+     * @see ClientService#sendBioRequest(MessageType, String)
+     */
     @Override
     public void sendBioRequest(MessageType type, String username) {
         Message<String> message = new Message<>(username);
@@ -61,6 +69,9 @@ public class FreeSpeechClientService implements ClientService {
 
     }
 
+    /**
+     * @see ClientService#updateBio(List)
+     */
     @Override
     public void updateBio(List<String> updatedBio) {
         Message<List> message = new Message<>(updatedBio);
@@ -68,6 +79,9 @@ public class FreeSpeechClientService implements ClientService {
 
     }
 
+    /**
+     * @see ClientService#sendUserData(File, String, String)
+     */
     @Override
     public void sendUserData(File file, String destiny, String origin) {
 
@@ -91,25 +105,37 @@ public class FreeSpeechClientService implements ClientService {
         writeObject(MessageType.DATA, message);
     }
 
+    /**
+     * @see ClientService#sendExit()
+     */
     @Override
     public void sendExit() {
         Message<String> message = new Message<>(" ");
         writeObject(MessageType.EXIT, message);
     }
 
-
+    /**
+     * @see ClientService#deleteAccount(String)
+     */
     public void deleteAccount(String password) {
 
         Message<String> message = new Message<>(Hash.getHash(password));
         writeObject(MessageType.DELETE_ACCOUNT, message);
     }
 
+    /**
+     * @see ClientService#sendReport(String)
+     */
     @Override
     public void sendReport(String userToReport) {
         Message<String> message = new Message<>(userToReport);
         writeObject(MessageType.REPORT, message);
     }
 
+    /**
+     * @param passSet - the old and new password.
+     * @see ClientService#changePassword(String[])
+     */
     @Override
     public void changePassword(String[] passSet) {
         Map<MapKey, String> messageContent = new HashMap<>();
@@ -123,6 +149,12 @@ public class FreeSpeechClientService implements ClientService {
 
     }
 
+    /**
+     * Sends an object of the specified type with the specified content to the server.
+     *
+     * @param type    - the type.
+     * @param message - the content.
+     */
     private void writeObject(MessageType type, Sendable message) {
 
         SessionContainer sessionContainer = SessionContainer.getInstance();
