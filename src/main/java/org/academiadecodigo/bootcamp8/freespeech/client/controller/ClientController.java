@@ -8,6 +8,7 @@ import javafx.event.*;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -25,8 +26,8 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.Clien
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.DeleteAccountDialog;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.ChangePassDialog;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.ChangePassDialog;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -76,9 +77,19 @@ public class ClientController implements Controller {
     @FXML
     private TextField searchBar;
     @FXML
+    private Button clearSearchBar;
+    @FXML
+    private Button addToChatButton;
+    @FXML
     private TextField dateBirthBio;
     @FXML
     private TextArea userBio;
+    @FXML
+    private Button privateChatButton;
+    @FXML
+    private Button updateProfile;
+    @FXML
+    private Button removeAccount;
 
     private Stage stage;
     private ClientService clientService;
@@ -90,12 +101,9 @@ public class ClientController implements Controller {
     private List<String> randomNames;
 
     public ClientController() {
-
-        //TODO
         rooms = new HashMap<>();
         tabId = new HashMap<>();
         usersPerTab = new HashMap<>();
-
         stagePosition = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
         originalOnlineUsersList = new ListView<>();
@@ -106,10 +114,8 @@ public class ClientController implements Controller {
 
         randomNames = shuffleNames();
 
-        //TODO just testing, don't delete yet
-        username.setText(SessionContainer.getInstance().getUsername());
+        username.setText(SessionContainer.getInstance().getUsername().toUpperCase());
 
-        //TODO
         rooms.put(getSelectedTab(), lobbyTextArea);
         tabId.put(getSelectedTab().getText(), getSelectedTab());
 
@@ -264,7 +270,7 @@ public class ClientController implements Controller {
         }
 
         if (file.length() > MAX_FILE_SIZE) {
-            notificationPrompt(Alert.AlertType.INFORMATION, DialogText.FILE_TOO_BIG);
+            userPrompt1(Alert.AlertType.ERROR, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
             return;
         }
 
@@ -411,20 +417,27 @@ public class ClientController implements Controller {
      * Displays a notification to the user.
      *
      * @param alertType - the notification type.
-     * @param text      - the notification text.
+     * @param title      - the notification text.
+     * @param content
      * @return the user option.
      */
-    //TODO css for dialogs
-    private Optional<ButtonType> notificationPrompt(Alert.AlertType alertType, String text) {
+    private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
 
         Alert alert = new Alert(alertType);
+
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.initStyle(StageStyle.UNDECORATED);
+
         alert.getDialogPane().getScene().getStylesheets().clear();
         alert.getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
 
+        alert.getDialogPane().lookupButton(ButtonType.OK).setVisible(false);
+        ButtonType okButton = new ButtonType("", ButtonBar.ButtonData.OK_DONE);
+        alert.getDialogPane().getButtonTypes().addAll(okButton);
+        alert.getDialogPane().lookupButton(okButton).setId("okButton");
+
         alert.setHeaderText(null);
-        alert.setContentText(text);
+        alert.setContentText(content);
 
         return alert.showAndWait();
     }

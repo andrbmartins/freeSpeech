@@ -33,7 +33,6 @@ public class DeleteAccountDialog extends Dialog<String> {
 
         getDialogPane().lookupButton(deleteButton).setId("deleteAccountButton");
         getDialogPane().lookupButton(cancelButton).setId("cancelRemoveButton");
-        getDialogPane().lookup(".button-bar").setId("buttons");
 
         VBox vBox = styleVBox();
         getDialogPane().setContent(vBox);
