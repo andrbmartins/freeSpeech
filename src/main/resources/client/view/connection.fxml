@@ -39,7 +39,7 @@
                   <Insets right="15.0" top="15.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="reconnectButton" mnemonicParsing="false" onAction="#onReconnect" text="R" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+            <Button fx:id="reconnectButton" mnemonicParsing="false" onAction="#onReconnect" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="15.0" top="15.0" />
                </GridPane.margin>
