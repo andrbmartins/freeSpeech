@@ -54,7 +54,7 @@ public class Crypto {
 
         try {
 
-            symKey = KeyGenerator.getInstance("Blowfish").generateKey();
+            symKey = KeyGenerator.getInstance("DES").generateKey();
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Invalid encryption algorithm. " + e.getMessage());

@@ -59,7 +59,7 @@ public class Stream {
             System.err.println("Class not found. " + e.getMessage());
         }
 
-        if (object instanceof SealedSendable || object instanceof Key) {
+        if (object != null && (object instanceof SealedSendable || object instanceof Key)) {
             return object;
         }
 
@@ -75,7 +75,8 @@ public class Stream {
      * @see Stream#read(ObjectInputStream)
      */
     public static SealedSendable readSendable(ObjectInputStream in) {
-        return (SealedSendable) read(in);
+        Object object = read(in);
+        return object == null ? null : (SealedSendable) object;
     }
 
     /**

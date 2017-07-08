@@ -53,8 +53,8 @@ public class ServerResponseHandler implements Runnable {
         SealedSendable sealedSendable;
         Sendable sendable;
 
-        final int MAX_THREADS = 2;
-        ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
+        //final int MAX_THREADS = 2;
+        //ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 
         while (run) {
 
@@ -69,14 +69,14 @@ public class ServerResponseHandler implements Runnable {
             }
 
             sendable = sealedSendable.getContent(symKey);
-            //process(sealedSendable.getType(), sendable);
-            pool.submit(new MessageHandler(sealedSendable.getType(), sendable));
-            
+            process(sealedSendable.getType(), sendable);
+            //pool.submit(new MessageHandler(sealedSendable.getType(), sendable));
+
         }
 
     }
 
-    private class MessageHandler implements Runnable {
+    /*private class MessageHandler implements Runnable {
 
         private final MessageType type;
         private final Sendable sendable;
@@ -90,7 +90,7 @@ public class ServerResponseHandler implements Runnable {
         public void run() {
             process(type, sendable);
         }
-    }
+    }*/
 
     private void process(MessageType type, Sendable message) {
 

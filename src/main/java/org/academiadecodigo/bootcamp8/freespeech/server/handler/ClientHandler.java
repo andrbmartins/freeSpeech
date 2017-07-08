@@ -175,8 +175,8 @@ public class ClientHandler implements Runnable {
 
     private void readFromClient() {
 
-        final int MAX_THREADS = 4;
-        ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
+        //final int MAX_THREADS = 4;
+        //ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 
         SealedSendable msg;
 
@@ -186,7 +186,8 @@ public class ClientHandler implements Runnable {
                 continue;
             }
 
-            pool.submit(new MessageHandler(msg));
+            handleMessage(msg);
+            //pool.submit(new MessageHandler(msg));
 
         }
 
@@ -196,7 +197,7 @@ public class ClientHandler implements Runnable {
 
     }
 
-    private class MessageHandler implements Runnable {
+    /*private class MessageHandler implements Runnable {
 
         private final SealedSendable msg;
 
@@ -208,52 +209,52 @@ public class ClientHandler implements Runnable {
         public void run() {
             handleMessage();
         }
+    }*/
 
-        private void handleMessage() {
+    private void handleMessage(SealedSendable msg) {
 
-            MessageType type = msg.getType();
+        MessageType type = msg.getType();
 
-            switch (type) {
-                case REPORT:
-                    reportUser(msg);
-                    break;
-                case TEXT:
-                    server.writeToAll(msg);
-                    break;
-                case DATA:
-                    server.sendFile(msg);
-                    break;
-                case PRIVATE_TEXT:
-                    server.write(msg);
-                    break;
-                case PROFILE:
-                case BIO:
-                    sendUserBio(msg);
-                    break;
-                case BIO_UPDATE:
-                    updateBio(msg);
-                    break;
-                case PASS_CHANGE:
-                    changePass(msg, type);
-                    break;
-                case EXIT:
+        switch (type) {
+            case REPORT:
+                reportUser(msg);
+                break;
+            case TEXT:
+                server.writeToAll(msg);
+                break;
+            case DATA:
+                server.sendFile(msg);
+                break;
+            case PRIVATE_TEXT:
+                server.write(msg);
+                break;
+            case PROFILE:
+            case BIO:
+                sendUserBio(msg);
+                break;
+            case BIO_UPDATE:
+                updateBio(msg);
+                break;
+            case PASS_CHANGE:
+                changePass(msg, type);
+                break;
+            case EXIT:
+                run = false;
+                Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
+                server.removeUser(ClientHandler.this);
+                write(msg);
+                Stream.close(clientSocket);
+                break;
+            case DELETE_ACCOUNT:
+                if (deleteAccount(msg, type)) {
                     run = false;
-                    Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
                     server.removeUser(ClientHandler.this);
-                    write(msg);
                     Stream.close(clientSocket);
-                    break;
-                case DELETE_ACCOUNT:
-                    if (deleteAccount(msg, type)) {
-                        run = false;
-                        server.removeUser(ClientHandler.this);
-                        Stream.close(clientSocket);
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException();
+                }
+                break;
+            default:
+                throw new IllegalArgumentException();
 
-            }
         }
     }
 
