@@ -264,7 +264,6 @@ public class ClientController implements Controller {
             return;
         }
 
-        //String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
         clientService.sendUserData(file, nameBio.getText(), SessionContainer.getInstance().getUsername());
     }
 
