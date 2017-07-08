@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
+
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,9 +22,13 @@ public class ConnectionManager {
 
 
     public Connection getConnection() {
+        final String PASSWORD = "1234";
+        final String USER = "root";
+        final String URL = "jdbc:mysql://localhost:3306/freespeech";
+
         try {
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/freespeech", "root", "");
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 Logger.getInstance().eventlogger(TypeEvent.DATABASE, LoggerMessages.DB_CONNECT);
             }
         } catch (SQLException ex) {
@@ -161,7 +166,7 @@ public class ConnectionManager {
         PreparedStatement preparedStmt = connection.prepareStatement(Queries.SHOW_BIO);
         preparedStmt.setString(1, username);
         ResultSet resultSet = preparedStmt.executeQuery();
-            List<String> userbio = new LinkedList<String>();
+        List<String> userbio = new LinkedList<String>();
 
         if (resultSet.next()) {
             userbio.add(resultSet.getString("user_name"));
@@ -207,8 +212,7 @@ public class ConnectionManager {
     }
 
 
-
-    public boolean reportUser(String username , String user_reported){
+    public boolean reportUser(String username, String user_reported) {
 
         PreparedStatement preparedStmt = null;
         boolean reported = true;
@@ -248,7 +252,7 @@ public class ConnectionManager {
             preparedStmt = connection.prepareStatement(Queries.REPORTED_USER);
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, user_reported);
-            resultSet =  preparedStmt.executeQuery();
+            resultSet = preparedStmt.executeQuery();
             return resultSet.next() ? resultSet.getInt(1) : 0;
 
         } catch (SQLException e) {
@@ -268,7 +272,6 @@ public class ConnectionManager {
     }
 
 
-
     public int verifyUserReported(String username) {
         PreparedStatement preparedStmt = null;
         ResultSet resultSet = null;
@@ -277,7 +280,7 @@ public class ConnectionManager {
             preparedStmt = connection.prepareStatement(Queries.COUNT_REPORTED);
             preparedStmt.setString(1, username);
             //preparedStmt.setString(2, user_reported);
-            resultSet =  preparedStmt.executeQuery();
+            resultSet = preparedStmt.executeQuery();
             return resultSet.next() ? resultSet.getInt(1) : 0;
 
         } catch (SQLException e) {

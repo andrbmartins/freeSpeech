@@ -3,7 +3,7 @@ package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 import javafx.scene.control.TextArea;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
@@ -38,36 +38,37 @@ public class ServerResponseHandler implements Runnable {
     public void run() {
 
         SessionContainer sessionContainer = SessionContainer.getInstance();
-        ObjectInputStream oin = sessionContainer.getInput();
+
+        ObjectInputStream input = sessionContainer.getInput();
         Key symKey = sessionContainer.getCrypto().getSymKey();
-        SealedSendable sealedSendable;
+        SealedSendable sealed;
+
         Sendable sendable;
 
 
-        int connect = 0;
-        while (run && connect < Values.MAX_CONNECT_ATTEMPT ) {
+        int readingAttempts = 0;
+        while (run && readingAttempts < Values.MAX_CONNECT_ATTEMPT) {
 
-            sealedSendable = Stream.readSendable(oin);
+            sealed = Stream.readSendable(input);
 
-            if (sealedSendable == null) {
-                connect++;
+            if (sealed == null) {
+                readingAttempts++;
                 continue;
 
             }
 
-            sendable = sealedSendable.getContent(symKey);
-            process(sealedSendable.getType(), sendable);
-            connect = 0;
+            sendable = sealed.getContent(symKey);
+            process(sealed.getType(), sendable);
+            readingAttempts = 0;
 
         }
-        if (connect == Values.MAX_CONNECT_ATTEMPT) {
+        if (readingAttempts == Values.MAX_CONNECT_ATTEMPT) {
             clientController.userPromptExternal(DialogText.SERVER_INFO, DialogText.SERVER_DOWN);
         }
     }
 
 
     private void process(MessageType type, Sendable message) {
-
 
 
         switch (type) {

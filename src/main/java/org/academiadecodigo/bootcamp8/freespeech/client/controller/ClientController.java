@@ -19,14 +19,15 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javafx.stage.StageStyle;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.DeleteAccountDialog;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.ChangePassDialog;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.ChangePassDialog;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -114,9 +115,7 @@ public class ClientController implements Controller {
 
         randomNames = shuffleNames();
 
-        //TODO just testing, don't delete yet
-        username.setText(SessionContainer.getInstance().getUsername());
-        username.setStyle("-fx-text-fill: #000000;");
+        username.setText(SessionContainer.getInstance().getUsername().toUpperCase());
 
         rooms.put(getSelectedTab(), lobbyTextArea);
         tabId.put(getSelectedTab().getText(), getSelectedTab());
@@ -271,7 +270,7 @@ public class ClientController implements Controller {
         }
 
         if (file.length() > MAX_FILE_SIZE) {
-            userPrompt1(Alert.AlertType.INFORMATION, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
+            userPrompt1(Alert.AlertType.ERROR, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
             return;
         }
 
@@ -416,10 +415,21 @@ public class ClientController implements Controller {
         });
     }
 
-    //TODO css for dialogs
     private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
+
         Alert alert = new Alert(alertType);
-        alert.setTitle(title);
+
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.initStyle(StageStyle.UNDECORATED);
+
+        alert.getDialogPane().getScene().getStylesheets().clear();
+        alert.getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
+
+        alert.getDialogPane().lookupButton(ButtonType.OK).setVisible(false);
+        ButtonType okButton = new ButtonType("", ButtonBar.ButtonData.OK_DONE);
+        alert.getDialogPane().getButtonTypes().addAll(okButton);
+        alert.getDialogPane().lookupButton(okButton).setId("okButton");
+
         alert.setHeaderText(null);
         alert.setContentText(content);
         return alert.showAndWait();
@@ -442,6 +452,7 @@ public class ClientController implements Controller {
         contactButtons.setVisible(false);
         emailBio.setEditable(true);
         userBio.setEditable(true);
+        userBio.setWrapText(true);
         dateBirthBio.setEditable(true);
 
         List<String> list = ownBio.getContent();
@@ -457,6 +468,7 @@ public class ClientController implements Controller {
         contactButtons.setVisible(true);
         emailBio.setEditable(false);
         userBio.setEditable(false);
+        userBio.setWrapText(true);
         dateBirthBio.setEditable(false);
 
         List<String> list = message.getContent();

@@ -49,8 +49,8 @@ public class Values {
 
     public static final double LOGIN_HEIGHT = 450d;
     public static final double LOGIN_WIDTH = 350d;
-    public static final double CLIENT_WIDTH = 900d;
-    public static final double CLIENT_HEIGHT = 600d;
+    public static final double CLIENT_WIDTH = 1280d;
+    public static final double CLIENT_HEIGHT = 720;
 
     public static final int MAX_CONNECT_ATTEMPT = 10;
 
