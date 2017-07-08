@@ -53,7 +53,7 @@ public class Stream {
             object = in.readObject();
 
         } catch (IOException e) {
-            System.err.println("Socket abruptly closed!");
+            System.err.println("Socket abruptly closed!\n" + e.getMessage() + "\n" + e.getCause());
         } catch (ClassNotFoundException e) {
             System.err.println("Communication protocol violation!");
         } finally {

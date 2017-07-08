@@ -52,44 +52,23 @@ public class ServerResponseHandler implements Runnable {
         SealedSendable sealedSendable;
         Sendable sendable;
 
-        //final int MAX_THREADS = 2;
-        //ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
-
         while (run) {
 
             sealedSendable = Stream.readSendable(oin);
 
             if (sealedSendable == null) {
-              break;
+                break;
 
             }
 
             sendable = sealedSendable.getContent(symKey);
             process(sealedSendable.getType(), sendable);
-            //pool.submit(new MessageHandler(sealedSendable.getType(), sendable));
 
         }
 
     }
 
-    /*private class MessageHandler implements Runnable {
-
-        private final MessageType type;
-        private final Sendable sendable;
-
-        public MessageHandler(MessageType type, Sendable sendable) {
-            this.type = type;
-            this.sendable = sendable;
-        }
-
-        @Override
-        public void run() {
-            process(type, sendable);
-        }
-    }*/
-
     private void process(MessageType type, Sendable message) {
-
 
         switch (type) {
             case TEXT:
@@ -167,48 +146,34 @@ public class ServerResponseHandler implements Runnable {
 
     private void printPrivateChat(Sendable<HashMap<MapKey, String>> message) {
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                HashMap<MapKey, String> map = message.getContent();
+        HashMap<MapKey, String> map = message.getContent();
 
-                String tabId = map.get(MapKey.TAB_ID);
-                String destinyString = map.get(MapKey.DESTINATION);
-                String text = map.get(MapKey.MESSAGE);
-                TextArea textArea;
-                Set<String> destinySet = Parser.stringToSet(destinyString);
+        String tabId = map.get(MapKey.TAB_ID);
+        String destinyString = map.get(MapKey.DESTINATION);
+        String text = map.get(MapKey.MESSAGE);
+        TextArea textArea;
+        Set<String> destinySet = Parser.stringToSet(destinyString);
 
-                if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
-                    clientController.updateUsersSet(tabId, destinySet);
-                    clientController.updateTooltipText(tabId, destinySet);
+        if ((textArea = clientController.getDestinyRoom(tabId)) != null) {
+            clientController.updateUsersSet(tabId, destinySet);
+            clientController.updateTooltipText(tabId, destinySet);
 
-                } else {
-                    clientController.createReceivedTab(destinySet, tabId);
-                    textArea = clientController.getDestinyRoom(tabId);
-                }
-                textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
-            }
-        };
-        Platform.runLater(runnable);
-
+        } else {
+            clientController.createReceivedTab(destinySet, tabId);
+            textArea = clientController.getDestinyRoom(tabId);
+        }
+        textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
     }
 
     private void printToRoom(Sendable message) {
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
+        String messageText = (String) message.getContent();
+        messageText = wipeWhiteSpaces(messageText);
+        TextArea textArea = clientController.getDestinyRoom("Lobby");
+        Boolean isEmpty = textArea.getText().isEmpty();
 
-                String messageText = (String) message.getContent();
-                messageText = wipeWhiteSpaces(messageText);
-                TextArea textArea = clientController.getDestinyRoom("Lobby");
-                Boolean isEmpty = textArea.getText().isEmpty();
+        textArea.appendText((isEmpty ? "" : "\n") + messageText);
 
-                textArea.appendText((isEmpty ? "" : "\n") + messageText);
-
-            }
-        };
-        Platform.runLater(runnable);
     }
 
     /**

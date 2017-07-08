@@ -183,15 +183,18 @@ public class ClientHandler implements Runnable {
 
         SealedSendable msg;
 
-        while (run) {
+        int connect = 0;
+        while (run && connect < Values.MAX_CONNECT_ATTEMPT) {
+
             if ((msg = Stream.readSendable(objectInputStream)) == null) {
-                run = false;
-                break;
+                connect++;
+                continue;
             }
 
             handleMessage(msg);
             //pool.submit(new MessageHandler(msg));
 
+            connect = 0;
         }
 
         server.removeUser(this);

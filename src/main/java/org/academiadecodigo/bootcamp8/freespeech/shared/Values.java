@@ -50,4 +50,6 @@ public class Values {
     public static final double CLIENT_WIDTH = 900d;
     public static final double CLIENT_HEIGHT = 600d;
 
+    public static final int MAX_CONNECT_ATTEMPT = 3;
+
 }
