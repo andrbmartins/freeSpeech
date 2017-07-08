@@ -58,11 +58,8 @@ public class ServerResponseHandler implements Runnable {
 
         while (run) {
 
-            try {
                 sealedSendable = Stream.readSendable(oin);
-            } catch (IllegalStateException e) {
-                break;
-            }
+
 
             if (sealedSendable == null) {
                 continue;
@@ -94,10 +91,6 @@ public class ServerResponseHandler implements Runnable {
 
     private void process(MessageType type, Sendable message) {
 
-        //TODO remove these souts...
-        System.out.println(type.toString());
-        System.out.println(message.toString());
-        System.out.println();
 
         switch (type) {
             case TEXT:

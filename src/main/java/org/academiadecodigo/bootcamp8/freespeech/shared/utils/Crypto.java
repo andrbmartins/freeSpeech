@@ -116,7 +116,7 @@ public class Crypto {
             cipher.init(Cipher.ENCRYPT_MODE, key);
 
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
-            System.err.println("Failure on cipher creation :: " + e.getMessage());
+            System.err.println("Failure on cipher creation : " + e.getMessage());
         }
 
         return cipher;

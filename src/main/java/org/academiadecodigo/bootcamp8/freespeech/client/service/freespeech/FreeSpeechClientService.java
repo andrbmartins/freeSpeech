@@ -51,8 +51,6 @@ public class FreeSpeechClientService implements ClientService {
         map.put(MapKey.DESTINATION, Parser.setToString(destinySet));
         map.put(MapKey.MESSAGE, text);
 
-        System.out.println(map.toString());
-
         Message<HashMap<MapKey, String>> message = new Message<>(map);
         writeObject(MessageType.PRIVATE_TEXT, message);
     }
@@ -77,8 +75,6 @@ public class FreeSpeechClientService implements ClientService {
 
         String fileExtension = file.getName();
         fileExtension = fileExtension.substring(fileExtension.lastIndexOf(".") + 1);
-
-        System.out.println("file extension: " + fileExtension);
 
         byte[] buffer = Parser.fileToByteArray(file);
         List<Byte> byteList = Parser.byteArrayToList(buffer);

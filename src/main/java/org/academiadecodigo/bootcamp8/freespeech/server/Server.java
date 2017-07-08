@@ -182,25 +182,16 @@ public class Server {
         String destinyString = content.get(MapKey.DESTINATION);
         Set<String> destinySet = Parser.stringToSet(destinyString);
 
-        System.out.println("SERVER DESTINY SET: " + destinySet.toString());
-        System.out.println("loggedUsers size is " + loggedUsers.size());
 
         for (ClientHandler c : loggedUsers) {
 
-            System.out.println("checking ig user " + c.getClientName() + "will recieve message");
 
             if (destinySet.contains(c.getClientName())) {
-                System.out.println("user " + c.getClientName() + " WILL recieve a message");
                 c.write(msg);
             }
         }
 
     }
-
-
-
-
-
 
 
 

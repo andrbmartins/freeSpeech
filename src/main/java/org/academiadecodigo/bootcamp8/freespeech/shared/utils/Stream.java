@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.shared.utils;
 
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.SealedSendable;
+
 import java.io.*;
 import java.security.Key;
 
@@ -45,25 +46,26 @@ public class Stream {
      */
     public static Object read(ObjectInputStream in) {
 
-        Object object = null;
+        Object object;
 
         try {
 
             object = in.readObject();
-            System.out.println("RO - " + object.toString());
-        } catch (IOException e) {
+            System.out.println("read " + object.toString());
+
+
+        } catch (IOException | ClassNotFoundException e) {
             //TODO log - client app closed
             System.err.println("Error on reading from stream. " + e.getMessage());
-            throw new IllegalStateException();
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class not found. " + e.getMessage());
+            e.printStackTrace();
+            object = null;
         }
 
-        if (object != null && (object instanceof SealedSendable || object instanceof Key)) {
-            return object;
+        if (!(object instanceof SealedSendable || object instanceof Key)) {
+            object = null;
         }
 
-        return null;
+        return object;
 
     }
 
@@ -75,8 +77,7 @@ public class Stream {
      * @see Stream#read(ObjectInputStream)
      */
     public static SealedSendable readSendable(ObjectInputStream in) {
-        Object object = read(in);
-        return object == null ? null : (SealedSendable) object;
+        return (SealedSendable) read(in);
     }
 
     /**

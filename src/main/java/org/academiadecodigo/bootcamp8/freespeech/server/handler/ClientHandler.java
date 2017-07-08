@@ -86,6 +86,10 @@ public class ClientHandler implements Runnable {
 
             sealedSendable = Stream.readSendable(objectInputStream);
 
+            if (sealedSendable == null) {
+                continue;
+            }
+
             switch (sealedSendable.getType()) {
 
                 case LOGIN:
@@ -99,7 +103,6 @@ public class ClientHandler implements Runnable {
                     break;
                 default:
                     Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_ILLEGAL_LOG);
-                    throw new IllegalArgumentException();
 
             }
 
@@ -183,7 +186,7 @@ public class ClientHandler implements Runnable {
         while (run) {
             if ((msg = Stream.readSendable(objectInputStream)) == null) {
                 run = false;
-                continue;
+                break;
             }
 
             handleMessage(msg);
@@ -241,8 +244,8 @@ public class ClientHandler implements Runnable {
             case EXIT:
                 run = false;
                 Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_LOGOUT + clientName);
-                server.removeUser(ClientHandler.this);
                 write(msg);
+                server.removeUser(ClientHandler.this);
                 Stream.close(clientSocket);
                 break;
             case DELETE_ACCOUNT:
@@ -267,19 +270,12 @@ public class ClientHandler implements Runnable {
         if (userService.verifyReport(clientName, reportedUser) == 0 ){
             userService.reportUser(clientName,reportedUser);
             Logger.getInstance().eventlogger(TypeEvent.CLIENT, reportedUser + LoggerMessages.CLIENT_REPORTED + clientName);
-            System.out.println("REPORTED " + reportedUser);
             userReply = new Message<>(Values.REPORT_OK);
         }
         else {
             userReply = new Message<>(Values.REPORT_KO);
-            System.out.println("USER ALREADY REPORTED TODAY BY SAME PERSON" + reportedUser);
         }
 
-
-        //TODO finish implementation of reporting
-        // SENDS MESSAGE TO THE USER WHO REPORT
-        //System.out.println(reportedUser.getClass().getSimpleName());
-        System.out.println("Mensagem recebida do tipo" + msg.getType());
         SealedSendable sealedMsg = crypto.encrypt(msg.getType(), userReply);
         write(sealedMsg);
     }
