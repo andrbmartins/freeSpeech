@@ -20,6 +20,10 @@
 
 #reconnectButton {
     -fx-background-image: url("icons/reconnect.png");
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-size: 30px;
+    -fx-max-height: 30px;
 }
 
 #closeButton,
