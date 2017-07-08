@@ -18,4 +18,9 @@ public class DialogText {
 
     public static final String FILE_TOO_BIG = "File too big. You can only send files of size up to 50MB";
 
+    public static final String SERVER_INFO = "freeSpeech server";
+
+    public static final String SERVER_DOWN = "We are experiencing issues with our server. Hackers are attacking us. " +
+            "Please restart your application.";
+
 }

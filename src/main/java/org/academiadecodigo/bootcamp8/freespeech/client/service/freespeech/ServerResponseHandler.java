@@ -60,7 +60,9 @@ public class ServerResponseHandler implements Runnable {
             connect = 0;
 
         }
-
+        if (connect == Values.MAX_CONNECT_ATTEMPT) {
+            clientController.userPromptExternal(DialogText.SERVER_INFO, DialogText.SERVER_DOWN);
+        }
     }
 
 
