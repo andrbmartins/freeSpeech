@@ -25,7 +25,6 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label fx:id="nameLabel" text="username_" visible="false" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
       <TextField fx:id="nameField" promptText="username_" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
       <Label fx:id="serverMessageLabel" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
       <PasswordField fx:id="passwordField" promptText="password_" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />

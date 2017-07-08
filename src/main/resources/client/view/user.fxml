@@ -59,8 +59,14 @@
                 </Tab>
             </tabs>
         </TabPane>
-        <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSend" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+        <TextArea fx:id="inputTextArea" onKeyPressed="#onSendKey" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+         <padding>
+            <Insets right="70.0" />
+         </padding></TextArea>
+        <Button fx:id="sendButton" blendMode="SRC_ATOP" mnemonicParsing="false" onAction="#onSend" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
             <GridPane.margin>
                 <Insets right="20.0" />
             </GridPane.margin>
@@ -101,7 +107,7 @@
                     </rowConstraints>
                     <children>
                         <Button fx:id="changePassword" mnemonicParsing="false" onAction="#changePassword" GridPane.columnIndex="2" />
-                        <Button fx:id="removeAccount" mnemonicParsing="false" onAction="#onRemoveAccount" text="Remove Account" />
+                        <Button fx:id="removeAccount" mnemonicParsing="false" onAction="#onRemoveAccount" />
                         <Button fx:id="updateProfile" mnemonicParsing="false" onAction="#onUpdateProfile" GridPane.columnIndex="1" />
                     </children>
                 </GridPane>
@@ -125,7 +131,7 @@
                 <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#onActionPrivateChat" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                 <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                 <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                <Button fx:id="addToChatButton" mnemonicParsing="false" onAction="#onAddToChatAction" text="add " GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                <Button fx:id="addToChatButton" mnemonicParsing="false" onAction="#onAddToChatAction" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>

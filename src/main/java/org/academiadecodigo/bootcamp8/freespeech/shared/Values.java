@@ -7,7 +7,7 @@ package org.academiadecodigo.bootcamp8.freespeech.shared;
 public class Values {
 
     //TODO changed IP to work at home
-    public static final String HOST = "192.168.1.3";
+    public static final String HOST = "localhost"; // "192.168.1.3";
     public static final int SERVER_PORT = 4040;
 
     public static final String VIEW_PATH = "/client/view/";

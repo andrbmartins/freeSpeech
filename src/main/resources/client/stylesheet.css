@@ -193,12 +193,28 @@
 /* scroll bar */
 
 .increment-button,
-.decrement-button {
-    -fx-pref-height: 0; /*hides button*/
+.increment-arrow,
+.decrement-button,
+.decrement-arrow {
+    -fx-pref-height: 0; /*hides button */
+    visibility: hidden;
 }
 
 .text-area .scroll-bar .track {
-    -fx-background-color: maroon;
+    -fx-background-color: white;
+}
+
+.text-area .scroll-bar .thumb {
+    -fx-background-color: #690504;
+}
+
+
+#inputTextArea .scroll-bar .track {
+    -fx-background-color: #D3D3D3;
+}
+
+#inputTextArea .scroll-bar .thumb {
+    -fx-background-color: hotpink;
 }
 
 
