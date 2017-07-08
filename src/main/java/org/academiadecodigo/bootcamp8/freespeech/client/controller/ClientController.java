@@ -8,7 +8,6 @@ import javafx.event.*;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -19,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javafx.stage.StageStyle;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ServerResponseHandler;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
@@ -160,16 +160,14 @@ public class ClientController implements Controller {
     }
 
     /**
-     * Gets name of selected user and creates new private chat (new tab)
-     *
-     * @param event
+     * Creates a new tab.
      */
     @FXML
-    void onActionPrivateChat(ActionEvent event) {
+    void startPrivateChat(ActionEvent event) {
 
-        String name = onlineUsersList.getSelectionModel().getSelectedItem();
 
-        createNewTab(name);
+        //TODO
+        createNewTab(nameBio.getText());
        /*
         String clientName = SessionContainer.getInstance().getUsername();
 
@@ -182,21 +180,13 @@ public class ClientController implements Controller {
     }
 
     /**
-     * Adds new users to the current private chat
-     *
-     * @param event
+     * Adds select user to selected private room.
      */
     @FXML
-    void onAddToChatAction(ActionEvent event) {
-
-        String name;
-
-        if ((name = onlineUsersList.getSelectionModel().getSelectedItem()) == null) {
-            return;
-        }
+    void addToChat(ActionEvent event) {
 
         String currentTabId = getSelectedTab().getId();
-        String userSelected = onlineUsersList.getSelectionModel().getSelectedItem();
+        String userSelected = nameBio.getText();
 
         if (getSelectedTab().getText().equals("Lobby") || usersPerTab.get(currentTabId).contains(userSelected)) {
             return;
@@ -204,17 +194,15 @@ public class ClientController implements Controller {
 
         Set<String> userSet = usersPerTab.get(currentTabId);
 
-        if (!userSet.contains(name)) {
-            userSet.add(name);
-            usersPerTab.replace(currentTabId, userSet);
-        }
+        //   if (!userSet.contains(userSelected)) {
+        userSet.add(userSelected);
+        usersPerTab.replace(currentTabId, userSet);
+        // }
 
     }
 
     /**
-     * Sends message for currently active tab
-     *
-     * @param event
+     * Sends a message to the currently selected tab.
      */
     @FXML
     void onSend(ActionEvent event) {
@@ -222,18 +210,16 @@ public class ClientController implements Controller {
         if (getSelectedTab().getText().equals("Lobby")) {
             clientService.sendUserText(inputTextArea.getText());
             inputTextArea.clear();
-        } else {
-            String tabID = getSelectedTab().getId();
-            clientService.sendPrivateText(inputTextArea.getText(), tabID, usersPerTab.get(tabID));
-            inputTextArea.clear();
+            return;
         }
 
+        String tabID = getSelectedTab().getId();
+        clientService.sendPrivateText(inputTextArea.getText(), tabID, usersPerTab.get(tabID));
+        inputTextArea.clear();
     }
 
     /**
-     * Sends message on enter key
-     *
-     * @param event
+     * @see ClientController#onSend(ActionEvent)
      */
     @FXML
     void onSendKey(KeyEvent event) {
@@ -242,22 +228,22 @@ public class ClientController implements Controller {
             inputTextArea.appendText("\n");
             return;
         }
+
         if (event.getCode() == KeyCode.ENTER) {
-
             onSend(null);
-
             event.consume(); //nullifies enter key effect (new line)
         }
     }
 
     /**
-     * Opens dialog to select file to send on button pressed if a file is selected and file is less than 50MB
+     * Opens dialog to select a file to send and sends that same file.
      *
      * @param event
      */
     @FXML
     void onFile(ActionEvent event) {
-        final int MAX_FILE_SIZE = 52428800; //50 MB
+
+        final int MAX_FILE_SIZE = 5242880; // 5 MB
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
 
@@ -266,16 +252,16 @@ public class ClientController implements Controller {
         }
 
         if (file.length() > MAX_FILE_SIZE) {
-            userPrompt1(Alert.AlertType.INFORMATION, DialogText.FILE_TRANSFER, DialogText.FILE_TOO_BIG);
+            notificationPrompt(Alert.AlertType.INFORMATION, DialogText.FILE_TOO_BIG);
             return;
         }
 
-        String destiny = onlineUsersList.getSelectionModel().getSelectedItem();
-        clientService.sendUserData(file, destiny, SessionContainer.getInstance().getUsername());
+        clientService.sendUserData(file, nameBio.getText(), SessionContainer.getInstance().getUsername());
     }
 
-
-    //TODO
+    /**
+     * Sets the stage and centers it.
+     */
     @Override
     public void setStage(Stage stage) {
 
@@ -290,13 +276,12 @@ public class ClientController implements Controller {
 
         this.stage.setX(screen.getWidth() / 2 - stage.getWidth() / 2);
         this.stage.setY(screen.getHeight() / 2 - stage.getHeight() / 2);
-
     }
 
     /**
-     * Updates logged users list
+     * Displays the received message as a view list.
      *
-     * @param message
+     * @param message - the message.
      */
     public void processUsersList(Sendable<List<String>> message) {
 
@@ -311,9 +296,7 @@ public class ClientController implements Controller {
     }
 
     /**
-     * Processes request for the bio of other users. Returns if an empty field or the own name were selected
-     *
-     * @param event
+     * Displays the selected user's profile, except the current user's one.
      */
     @FXML
     void getUserBio(MouseEvent event) {
@@ -329,12 +312,11 @@ public class ClientController implements Controller {
     }
 
     /**
-     * Opens change password dialog. Validates if fields aren't empty
-     *
-     * @param event
+     * Opens dialog to allow user to change its password.
      */
     @FXML
     void changePassword(ActionEvent event) {
+
         ChangePassDialog change = new ChangePassDialog();
 
         while (true) {
@@ -344,21 +326,22 @@ public class ClientController implements Controller {
             if (!result.isPresent()) {
                 return;
             }
-            if (areFieldsValid(result.get())) {
+            if (isInputValid(result.get())) {
                 clientService.changePassword(result.get());
                 return;
             }
-            userPrompt1(Alert.AlertType.ERROR, DialogText.INVALID_FIELDS, DialogText.INVALID_FORM);
+            notificationPrompt(Alert.AlertType.ERROR, DialogText.INVALID_FORM);
         }
     }
 
     /**
-     * Checks if no passwordfield is empty and validates input
+     * Verifies if all fields are valid and match.
      *
-     * @param results an array of strings with the text input from the user
-     * @return true is fields are not empty and text on field 1 and 2 is equal, false if empty or fields 1 and 2 not equal
+     * @param results - the fields' content.
+     * @return true if all fields are valid, otherwise returns false.
      */
-    private boolean areFieldsValid(String[] results) {
+    private boolean isInputValid(String[] results) {
+
         for (String s : results) {
             if (s.isEmpty()) {
                 return false;
@@ -368,9 +351,7 @@ public class ClientController implements Controller {
     }
 
     /**
-     * Closes app on exit button press
-     *
-     * @param event
+     * Quits the application.
      */
     @FXML
     void onExit(ActionEvent event) {
@@ -379,87 +360,114 @@ public class ClientController implements Controller {
     }
 
     /**
-     * Creates dialog prompt confirming deletion of user account and closes app
+     * Notifies user about account deletion success and quits application if successful.
      *
-     * @param title   for the dialog
-     * @param content information for user
+     * @param content - the dialog text.
      */
-    public void userPromptQuit(String title, String content) {
+    public void quitPrompt(String content) {
+
         Alert.AlertType alertType = Alert.AlertType.INFORMATION;
+
         Platform.runLater(new Runnable() {
             public void run() {
-                Optional<ButtonType> r = userPrompt1(alertType, title, content);
+                Optional<ButtonType> r = notificationPrompt(alertType, content);
+
                 if (r.isPresent()) {
                     Navigation.getInstance().close();
                 }
             }
         });
-
     }
 
     /**
-     * Creates new thread with a dialog invoked by an event coming from the network
+     * Displays information to the user.
      *
-     * @param title
-     * @param content
+     * @param content - the dialog text.
      */
-    public void userPromptExternal(String title, String content) {
+    public void infoPrompt(String content) {
+
         Alert.AlertType alertType = Alert.AlertType.INFORMATION;
+
         Platform.runLater(new Runnable() {
             public void run() {
-                Optional<ButtonType> r = userPrompt1(alertType, title, content);
+                Optional<ButtonType> r = notificationPrompt(alertType, content);
             }
         });
     }
 
+    /**
+     * Displays a notification to the user.
+     *
+     * @param alertType - the notification type.
+     * @param text      - the notification text.
+     * @return the user option.
+     */
     //TODO css for dialogs
-    private Optional<ButtonType> userPrompt1(Alert.AlertType alertType, String title, String content) {
+    private Optional<ButtonType> notificationPrompt(Alert.AlertType alertType, String text) {
+
         Alert alert = new Alert(alertType);
-        alert.setTitle(title);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.initStyle(StageStyle.UNDECORATED);
+        alert.getDialogPane().getScene().getStylesheets().clear();
+        alert.getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
+
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(text);
+
         return alert.showAndWait();
     }
 
     /**
-     * Sends request for own user info
-     *
-     * @param event
+     * @see ClientService#sendBioRequest(MessageType, String)
      */
     @FXML
-    void editUserInfo(ActionEvent event) {
+    void editUserProfile(ActionEvent event) {
         clientService.sendBioRequest(MessageType.BIO, SessionContainer.getInstance().getUsername());
     }
 
-    public void showOwnBio(Sendable<List<String>> ownBio) {
+    /**
+     * Displays the users' account management menu.
+     *
+     * @param ownBio - the users' profile.
+     * @param isUser - true if current user, false otherwise.
+     */
+    public void showProfile(Sendable<List<String>> ownBio, boolean isUser) {
 
-        bioArea.setVisible(true);
-        userButtons.setVisible(true);
-        contactButtons.setVisible(false);
-        emailBio.setEditable(true);
-        userBio.setEditable(true);
-        dateBirthBio.setEditable(true);
-
+        toggleBio(isUser);
         List<String> list = ownBio.getContent();
-
-        setBioInfo(list);
+        displayProfile(list);
     }
 
-    public void showUserBio(Sendable<List<String>> message) {
-
+    /**
+     * Manages what commands are available according to current profile being shown.
+     *
+     * @param isUser - true if current user, false otherwise.
+     */
+    private void toggleBio(boolean isUser) {
         bioArea.setVisible(true);
-        userButtons.setVisible(false);
-        contactButtons.setVisible(true);
-        emailBio.setEditable(false);
-        userBio.setEditable(false);
-        dateBirthBio.setEditable(false);
+        userButtons.setVisible(isUser);
+        contactButtons.setVisible(!isUser);
+        emailBio.setEditable(isUser);
+        userBio.setEditable(isUser);
+        userBio.setWrapText(true);
+        dateBirthBio.setEditable(isUser);
+    }
+
+  /*  public void showUserBio(Sendable<List<String>> message) {
+
+        toggleBio(false);
 
         List<String> list = message.getContent();
 
-        setBioInfo(list);
-    }
+        displayProfile(list);
+    }*/
 
-    private void setBioInfo(List<String> list) {
+    /**
+     * Sets values for profile fields.
+     *
+     * @param list - the values.
+     */
+    private void displayProfile(List<String> list) {
 
         nameBio.setText(list.get(0));
         emailBio.setText(list.get(1));
@@ -467,15 +475,23 @@ public class ClientController implements Controller {
         userBio.setText(list.get(3));
     }
 
+    /**
+     * @see ClientService#sendReport(String)
+     */
     @FXML
     void onReport(ActionEvent event) {
-        String userToReport = onlineUsersList.getSelectionModel().getSelectedItem();
+        String userToReport = nameBio.getText();
         clientService.sendReport(userToReport);
     }
 
+    /**
+     * @see ClientService#deleteAccount(String)
+     */
     @FXML
     void onRemoveAccount(ActionEvent event) {
+
         DeleteAccountDialog delete = new DeleteAccountDialog();
+
         Optional<String> password = delete.showAndWait();
         if (password.isPresent()) {
             clientService.deleteAccount(password.get());
@@ -483,6 +499,9 @@ public class ClientController implements Controller {
 
     }
 
+    /**
+     * @see ClientService#updateBio(List)
+     */
     @FXML
     void onUpdateProfile(ActionEvent event) {
 
@@ -496,10 +515,15 @@ public class ClientController implements Controller {
 
     }
 
+
+    /**
+     * Creates a new tab for a private chat with the specified user.
+     *
+     * @param user - the user name.
+     */
     private void createNewTab(String user) {
 
-        //gets current time in the tab I want
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
         Date date = new Date();
 
         String id = SessionContainer.getInstance().getUsername() +
@@ -513,14 +537,17 @@ public class ClientController implements Controller {
 
         TextArea textArea = new TextArea();
         textArea.appendText("");
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+
         tab.setContent(textArea);
 
-        //add the onAction event to the tab
         tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
 
+        //TODO
         tabId.put(id, tab);
         rooms.put(tab, textArea);
-        //creating the data to update usersPerTab and tooltip
+
         HashSet<String> set = new HashSet<>();
         set.add(user);
         set.add(SessionContainer.getInstance().getUsername());
@@ -530,6 +557,11 @@ public class ClientController implements Controller {
         tabPane.getTabs().add(tab);
     }
 
+    /**
+     * Defines closing behavior for the specified tab.
+     *
+     * @param tab - the tab.
+     */
     private void addClosingTabHandler(Tab tab) {
 
         if (tabPane.getTabs().size() != 1) {
@@ -540,27 +572,29 @@ public class ClientController implements Controller {
         EventHandler<Event> event = new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
-                Tab tab1 = (Tab) event.getSource();
-                String leaveText = "< " + SessionContainer.getInstance().getUsername() + " has left the building! >";
+                Tab closedTab = (Tab) event.getSource();
+                String leaveText = "< has left the building! >";
 
-                //removes the tab from the various maps.
-                Set<String> destinySet = usersPerTab.remove(tab1.getId());
+                Set<String> destinySet = usersPerTab.remove(closedTab.getId());
                 destinySet.remove(SessionContainer.getInstance().getUsername());
 
-                rooms.remove(tab1);
-                tabId.remove(tab1.getId());
-                //
+                rooms.remove(closedTab);
+                tabId.remove(closedTab.getId());
 
-                clientService.sendPrivateText(leaveText, tab1.getId(), destinySet);
+                clientService.sendPrivateText(leaveText, closedTab.getId(), destinySet);
             }
-
-
         };
 
         tab.setOnClosed(event);
     }
 
-    public void createReceivedTab(Set<String> users, String id) {
+    /**
+     * Creates a new tab when receiving a private message.
+     *
+     * @param users - the users in the room.
+     * @param id    - tab identifier.
+     */
+    private void createReceivedTab(Set<String> users, String id) {
 
         Tab tab = new Tab("label " + id);
         tab.setId(id);
@@ -568,10 +602,10 @@ public class ClientController implements Controller {
 
         TextArea textArea = new TextArea();
         textArea.appendText("");
+        textArea.setWrapText(true);
         textArea.setEditable(false);
         tab.setContent(textArea);
 
-        //add the onAction event to the tab
         tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
 
         tabId.put(id, tab);
@@ -580,42 +614,35 @@ public class ClientController implements Controller {
 
         addClosingTabHandler(tab);
 
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
+        tabPane.getTabs().add(tab);
 
-                synchronized (this) {
-                    tabPane.getTabs().add(tab);
-                    notifyAll();
-                }
-            }
-        };
-
-        Platform.runLater(runnable);
-
-        while (!tabPane.getTabs().contains(tab)) {
-
-            try {
-                synchronized (runnable) {
-                    runnable.wait();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
     }
 
-    public TextArea getDestinyRoom(String tabId) {
+    /**
+     * Gets room corresponding to the specified id.
+     *
+     * @param tabId - the id.
+     * @return the room.
+     */
+    private TextArea getDestinyRoom(String tabId) {
         Tab tab = this.tabId.get(tabId);
         return (tab != null) ? rooms.get(tab) : null;
     }
 
-    public void updateUsersSet(String tabId, Set<String> destinySet) {
+    /**
+     * Updates users in the room.
+     *
+     * @param tabId      - the room identifier.
+     * @param destinySet - the users.
+     */
+    private void updateUsersSet(String tabId, Set<String> destinySet) {
         usersPerTab.replace(tabId, destinySet);
     }
 
 
+    /**
+     * Filters online users list by the given input.
+     */
     @FXML
     void search(KeyEvent event) {
 
@@ -637,6 +664,9 @@ public class ClientController implements Controller {
 
     }
 
+    /**
+     * Clears search bar.
+     */
     @FXML
     void clearSearchBar(ActionEvent event) {
         searchBar.clear();
@@ -644,6 +674,9 @@ public class ClientController implements Controller {
 
     }
 
+    /**
+     * Closes user profile.
+     */
     @FXML
     void closeProfile(ActionEvent event) {
         onlineUsersList.getSelectionModel().clearSelection();
@@ -652,10 +685,23 @@ public class ClientController implements Controller {
 
     }
 
-    public void updateTooltipText(String tabId, Set<String> destinySet) {
+    /**
+     * Updates visual indication of the users in the room.
+     *
+     * @param tabId      - the room identifier.
+     * @param destinySet - the users in the room.
+     */
+    private void updateTooltipText(String tabId, Set<String> destinySet) {
         this.tabId.get(tabId).getTooltip().setText(Parser.setToString(destinySet));
     }
 
+    /**
+     * Displays a notification to the user of a received file and allows him to save it.
+     *
+     * @param sender        - the origin.
+     * @param byteList      - the file content.
+     * @param fileExtension - the file extension.
+     */
     public void saveFile(String sender, List<Byte> byteList, String fileExtension) {
 
         Runnable runnable = new Runnable() {
@@ -664,7 +710,7 @@ public class ClientController implements Controller {
 
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("You have received a file from " + sender);
-                fileChooser.setInitialFileName("My file." + fileExtension);
+                fileChooser.setInitialFileName("file." + fileExtension);
                 File file = fileChooser.showSaveDialog(new Stage());
 
                 try {
@@ -681,6 +727,13 @@ public class ClientController implements Controller {
         Platform.runLater(runnable);
     }
 
+    /**
+     * Prints a private message in the corresponding room.
+     *
+     * @param tabId         - the room identifier.
+     * @param destinyString - the users in the room.
+     * @param text          - the message content.
+     */
     public void printPrivateChat(String tabId, String destinyString, String text) {
 
         Runnable runnable = new Runnable() {
@@ -704,6 +757,11 @@ public class ClientController implements Controller {
         Platform.runLater(runnable);
     }
 
+    /**
+     * Prints a message in the public room.
+     *
+     * @param messageText - the message content.
+     */
     public void printToLobby(String messageText) {
         TextArea textArea = getDestinyRoom("Lobby");
         Boolean isEmpty = textArea.getText().isEmpty();

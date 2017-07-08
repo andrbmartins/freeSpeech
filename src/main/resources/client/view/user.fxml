@@ -43,7 +43,7 @@
                         <Insets right="10.0" top="10.0" />
                     </GridPane.margin>
                 </Button>
-                <Button fx:id="editProfile" mnemonicParsing="false" onAction="#editUserInfo" GridPane.columnIndex="2" />
+                <Button fx:id="editProfile" mnemonicParsing="false" onAction="#editUserProfile" GridPane.columnIndex="2" />
                   <TextField fx:id="searchBar" onKeyTyped="#search" promptText="search_" />
                   <Button fx:id="clearSearchBar" mnemonicParsing="false" onAction="#clearSearchBar" GridPane.halignment="RIGHT" GridPane.valignment="CENTER" />
                   <Label fx:id="username" text="User name" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
@@ -128,10 +128,10 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#onActionPrivateChat" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                <Button fx:id="privateChatButton" mnemonicParsing="false" onAction="#startPrivateChat" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                 <Button fx:id="reportButton" mnemonicParsing="false" onAction="#onReport" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                 <Button fx:id="fileButton" mnemonicParsing="false" onAction="#onFile" prefHeight="26.0" prefWidth="32.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                <Button fx:id="addToChatButton" mnemonicParsing="false" onAction="#onAddToChatAction" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                <Button fx:id="addToChatButton" mnemonicParsing="false" onAction="#addToChat" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>

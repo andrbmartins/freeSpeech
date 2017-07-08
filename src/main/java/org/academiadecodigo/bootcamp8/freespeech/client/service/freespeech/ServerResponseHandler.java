@@ -60,6 +60,9 @@ public class ServerResponseHandler implements Runnable {
 
             readingAttempts = 0;
         }
+        if (readingAttempts == Values.MAX_CONNECT_ATTEMPT) {
+            clientController.infoPrompt(DialogText.SERVER_DOWN);
+        }
     }
 
     /**
@@ -92,10 +95,10 @@ public class ServerResponseHandler implements Runnable {
                 notifyUser(message);
                 break;
             case BIO:
-                clientController.showOwnBio(message);
+                clientController.showProfile(message, true);
                 break;
             case PROFILE:
-                clientController.showUserBio(message);
+                clientController.showProfile(message, false);
                 break;
             case EXIT:
                 run = false;
@@ -194,7 +197,7 @@ public class ServerResponseHandler implements Runnable {
     private void notifyUser(Sendable<String> message) {
 
         String info = message.getContent();
-        clientController.userPromptExternal(DialogText.ACCOUNT_MANAGER, info);
+        clientController.infoPrompt(info);
     }
 
     /**
@@ -208,10 +211,10 @@ public class ServerResponseHandler implements Runnable {
 
         if (info.equals(Values.ACC_DELETED)) {
             run = false;
-            clientController.userPromptQuit(DialogText.ACCOUNT_MANAGER, info);
+            clientController.quitPrompt(info);
             return;
         }
 
-        clientController.userPromptExternal(DialogText.ACCOUNT_MANAGER, info);
+        clientController.infoPrompt(info);
     }
 }
