@@ -20,7 +20,6 @@ import javafx.stage.Stage;
 
 import javafx.stage.StageStyle;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.Controller;
-import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ChatRoomManager;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.RegistryService;
 import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.ClientService;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
@@ -423,15 +422,6 @@ public class ClientController implements Controller {
         userBio.setWrapText(true);
         dateBirthBio.setEditable(isUser);
     }
-
-  /*  public void showUserBio(Sendable<List<String>> message) {
-
-        toggleBio(false);
-
-        List<String> list = message.getContent();
-
-        displayProfile(list);
-    }*/
 
     /**
      * Sets values for profile fields.

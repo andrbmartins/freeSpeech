@@ -1,4 +1,4 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
+package org.academiadecodigo.bootcamp8.freespeech.client.controller.user;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -149,7 +149,4 @@ public class ChatRoomManager {
         roomMap.get(tabId).appendText(text);
     }
 
-    public Room getRoom(String tabId) {
-        return roomMap.get(tabId);
-    }
 }

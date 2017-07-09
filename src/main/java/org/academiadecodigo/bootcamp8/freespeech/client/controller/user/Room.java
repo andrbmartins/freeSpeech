@@ -76,11 +76,7 @@ public class Room {
         return tab.getId();
     }
 
-    public String getText(){
-        return tab.getText();
-    }
-
-    public void updateUsersList(Set<String> newList){
+    private void updateUsersList(Set<String> newList){
         usersSet = newList;
     }
 
