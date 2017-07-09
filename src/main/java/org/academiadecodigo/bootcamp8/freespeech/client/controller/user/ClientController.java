@@ -60,8 +60,6 @@ public class ClientController implements Controller {
     @FXML
     private GridPane topBar;
     @FXML
-    private TextArea lobbyTextArea;
-    @FXML
     private TextArea inputTextArea;
     @FXML
     private ListView<String> onlineUsersList;
@@ -74,19 +72,9 @@ public class ClientController implements Controller {
     @FXML
     private TextField searchBar;
     @FXML
-    private Button clearSearchBar;
-    @FXML
-    private Button addToChatButton;
-    @FXML
     private TextField dateBirthBio;
     @FXML
     private TextArea userBio;
-    @FXML
-    private Button privateChatButton;
-    @FXML
-    private Button updateProfile;
-    @FXML
-    private Button removeAccount;
 
     private Stage stage;
     private ClientService clientService;
@@ -198,10 +186,7 @@ public class ClientController implements Controller {
     }
 
     /**
-     * sends the message text to the users in the usersSet for their tab with id tabid
-     * @param text
-     * @param tabId
-     * @param usersSet
+     * @see ClientService#sendPrivateText(String, String, Set)   
      */
     public void sendMessage(String text, String tabId, Set<String> usersSet) {
         clientService.sendPrivateText(text, tabId, usersSet);

@@ -39,5 +39,4 @@ public class Values {
     public static final double CLIENT_HEIGHT = 600d;
     public static final int MAX_CONNECT_ATTEMPT = 10;
     public static final int MAX_REPORT_USER = 3;
-
 }
