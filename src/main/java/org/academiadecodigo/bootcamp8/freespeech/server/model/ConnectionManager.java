@@ -17,6 +17,10 @@ import java.util.List;
 public class ConnectionManager {
     private Connection connection;
 
+    /**
+     * Gets the connection to the DB
+     * @return Returns the connection
+     */
     public Connection getConnection() {
 
         final String URL = "jdbc:mysql://localhost:3306/freespeech";
@@ -36,6 +40,12 @@ public class ConnectionManager {
         return connection;
     }
 
+    /**
+     * Inserts a user to the DB
+     * @param username Username of the client
+     * @param password Password of the client
+     * @return Returns if the operation was successful
+     */
     public boolean insertUser(String username, String password) {
 
         boolean registered = true;
@@ -69,6 +79,12 @@ public class ConnectionManager {
         return registered;
     }
 
+    /**
+     * Finds the user by his username
+     * @param username User's name
+     * @return Returns the User if he exists and null otherwise
+     * @throws SQLException
+     */
     public User findUser(String username) throws SQLException {
 
         User user = null;
