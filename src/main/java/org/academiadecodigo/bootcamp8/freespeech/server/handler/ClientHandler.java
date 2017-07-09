@@ -226,20 +226,6 @@ public class ClientHandler implements Runnable {
         Stream.close(clientSocket);
 
     }
-    //TODO and this????
-    private class MessageHandler implements Runnable {
-
-        private final SealedSendable msg;
-
-        public MessageHandler(SealedSendable msg) {
-            this.msg = msg;
-        }
-
-        @Override
-        public void run() {
-            handleMessage(msg);
-        }
-    }
 
     /**
      * Calls the right method for the received message.
