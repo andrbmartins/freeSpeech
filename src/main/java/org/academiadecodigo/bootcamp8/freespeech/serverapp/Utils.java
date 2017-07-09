@@ -22,7 +22,7 @@ public class Utils {
     public static final String DEFAULT_FILE = "/freeSpeechServerLog.txt";
     public static final String EMPTY_TABLE = "This query returned no results \n";
     public static final String VALIDATING_QUERY = "Query validator";
-    public static final String INVALID_QUERY = "Your query is not valid. Only SELECT is allowed";
+    public static final String INVALID_QUERY = "Your query is not valid. Only SELECT is allowed. Access to admin table blocked.";
     public static final String INVALID_LOG = "Invalid Login";
     public static final String ENTER_VALID = "Please enter valid password";
     public static final String LOGIN_QUERY = "SELECT admin_type FROM admin WHERE pass_word = ?";
