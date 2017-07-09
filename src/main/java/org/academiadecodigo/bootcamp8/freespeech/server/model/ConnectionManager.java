@@ -19,7 +19,7 @@ public class ConnectionManager {
 
     /**
      * Gets the connection to the DB
-     * @return Returns the connection
+     * @return the connection
      */
     public Connection getConnection() {
 
@@ -44,7 +44,7 @@ public class ConnectionManager {
      * Inserts a user to the DB
      * @param username Username of the client
      * @param password Password of the client
-     * @return Returns if the operation was successful
+     * @return true if the operation was successful
      */
     public boolean insertUser(String username, String password) {
 
@@ -82,8 +82,8 @@ public class ConnectionManager {
     /**
      * Finds the user by his username
      * @param username User's name
-     * @return Returns the User if he exists and null otherwise
-     * @throws SQLException
+     * @return the User if he exists and null otherwise
+     * @throws SQLException if exist an exception occurs when access the database
      */
     public User findUser(String username) throws SQLException {
 
@@ -104,6 +104,12 @@ public class ConnectionManager {
         return user;
     }
 
+    /**
+     * Changes the password of a username
+     * @param username to target password change
+     * @param newPass new password
+     * @return true if the actions was successful
+     */
     public boolean changePass(String username, String newPass) {
 
         boolean passChanged = true;
@@ -135,6 +141,11 @@ public class ConnectionManager {
         return passChanged;
     }
 
+    /**
+     * Delete the account of a specific username
+     * @param username the username to target
+     * @return true if the operation was successful
+     */
     public boolean deleteAccount(String username) {
 
         boolean deleted = true;
@@ -166,7 +177,11 @@ public class ConnectionManager {
         return deleted;
     }
 
-    // TODO why not prepared statement?
+    /**
+     * Return the number of user registered on the database
+     * @return the count of users
+     * @throws SQLException if exist an exception occurs when access the database
+     */
     public int count() throws SQLException {
 
         Statement statement = connection.createStatement();
@@ -176,6 +191,12 @@ public class ConnectionManager {
 
     }
 
+    /**
+     * Return the biography of a username
+     * @param username to target
+     * @return an list with the username biography
+     * @throws SQLException if exist an exception occurs when access the database
+     */
     public List<String> getUserBio(String username) throws SQLException {
 
         PreparedStatement statement = connection.prepareStatement(Queries.SHOW_BIO);
@@ -195,6 +216,14 @@ public class ConnectionManager {
         return userbio;
     }
 
+    /**
+     * Updates the username biography
+     * @param username username to target
+     * @param email new email information
+     * @param dateBirth new date birth information
+     * @param bio new bio information
+     * @return true if the operation was successful
+     */
     public boolean updateBio(String username, String email, String dateBirth, String bio) {
 
         PreparedStatement statement = null;
@@ -227,8 +256,11 @@ public class ConnectionManager {
         return updated;
     }
 
-
-
+    /**
+     * Report a specific user
+     * @param username the user who reported
+     * @param user_reported the reported user
+     */
     public void reportUser(String username , String user_reported){
 
         PreparedStatement statement = null;
@@ -256,7 +288,12 @@ public class ConnectionManager {
 
     }
 
-
+    /**
+     * Count the number of times the user reported was already reported by username
+     * @param username the user who reported
+     * @param user_reported the reported user
+     * @return the count of reports
+     */
     public int verifyReport(String username, String user_reported) {
 
         PreparedStatement statement = null;
@@ -286,8 +323,11 @@ public class ConnectionManager {
         return 0;
     }
 
-
-
+    /**
+     * Get the number of reports of username
+     * @param username to target
+     * @return the number of reports
+     */
     public int verifyUserReported(String username) {
         PreparedStatement statement = null;
         ResultSet resultSet;
@@ -315,6 +355,9 @@ public class ConnectionManager {
         return 0;
     }
 
+    /**
+     * Close the connection to the database
+     */
     public void close() {
 
         try {
