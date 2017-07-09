@@ -101,7 +101,7 @@
 /* dialogs */
 
 .dialog-pane {
-    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, #FF0000 0%, #690504 100%);
+    -fx-background-color: #690504;
 }
 
 /* user name */
@@ -217,7 +217,6 @@
 .text-area .scroll-bar .thumb {
     -fx-background-color: #690504;
 }
-
 
 #inputTextArea .scroll-bar .track {
     -fx-background-color: #D3D3D3;

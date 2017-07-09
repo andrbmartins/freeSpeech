@@ -91,7 +91,7 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        username.setText(SessionContainer.getInstance().getUsername());
+        username.setText(SessionContainer.getInstance().getUsername().toUpperCase());
         chatRoomManager = new ChatRoomManager(this, tabPane);
 
         setDraggableTopBar();
@@ -186,7 +186,7 @@ public class ClientController implements Controller {
     }
 
     /**
-     * @see ClientService#sendPrivateText(String, String, Set)   
+     * @see ClientService#sendPrivateText(String, String, Set)
      */
     public void sendMessage(String text, String tabId, Set<String> usersSet) {
         clientService.sendPrivateText(text, tabId, usersSet);
@@ -354,17 +354,25 @@ public class ClientController implements Controller {
 
     /**
      * Displays a notification to the user.
+     *
      * @param alertType - the notification type.
-     * @param text - the notification text.
+     * @param text      - the notification text.
      * @return the user option
      */
     private Optional<ButtonType> notificationPrompt(Alert.AlertType alertType, String text) {
 
         Alert alert = new Alert(alertType);
+
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.initStyle(StageStyle.UNDECORATED);
+
         alert.getDialogPane().getScene().getStylesheets().clear();
         alert.getDialogPane().getScene().getStylesheets().add(Values.STYLESHEET);
+
+        alert.getDialogPane().lookupButton(ButtonType.OK).setVisible(false);
+        ButtonType okButton = new ButtonType("", ButtonBar.ButtonData.OK_DONE);
+        alert.getDialogPane().getButtonTypes().addAll(okButton);
+        alert.getDialogPane().lookupButton(okButton).setId("okButton");
 
         alert.setHeaderText(null);
         alert.setContentText(text);
