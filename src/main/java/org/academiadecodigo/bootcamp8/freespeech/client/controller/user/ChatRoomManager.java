@@ -5,8 +5,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import org.academiadecodigo.bootcamp8.freespeech.client.controller.user.ClientController;
-import org.academiadecodigo.bootcamp8.freespeech.client.controller.user.Room;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
@@ -45,6 +43,7 @@ public class ChatRoomManager {
 
     /**
      * Adds select user to selected private room.
+     * @param name The name of the user to add to the chat room
      */
     public void addToChat(String name) {
 
@@ -70,23 +69,26 @@ public class ChatRoomManager {
         return list;
     }
 
+    /**
+     * Return to room currently showing on the screen.
+     *
+     * @return The room selected
+     */
     public Room getSelectedRoom() {
         return roomMap.get(getSelectedTab().getId());
     }
 
     /**
-     * Creates a new tab for a private chat with the specified user.
+     * Creates a new room for a private chat with the specified user.
+     * This method is called when the client wants to create a private chat room with the user.
      *
      * @param user - the user name.
      */
-    public void createNewTab(String user) {
+    public void createNewRoom(String user) {
 
         Room room = new Room(randomNames.remove(0), ((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(), user);
-
         addClosingTabHandler(room);
-
         tabPane.getTabs().add(room.getTab());
-
         roomMap.put(room.getId(),room);
     }
 
@@ -119,16 +121,30 @@ public class ChatRoomManager {
         room.getTab().setOnClosed(event);
     }
 
+    /**
+     * Prints the message text on the Room with id tabid and updates the set of users in that room.
+     *
+     * @param tabId Id of the room
+     * @param text Message to print
+     * @param usersSet Set of users in that room
+     */
     public void printPrivateMessage(String tabId, String text, Set<String> usersSet) {
 
         if(!roomMap.containsKey(tabId)){
-            createNewTab(tabId,usersSet);
+            createNewRoom(tabId,usersSet);
         }
 
         roomMap.get(tabId).printPrivateMessage(text,usersSet);
     }
 
-    private void createNewTab(String tabId, Set<String> usersSet) {
+    /**
+     * Creates a new room for a private chat with the specified set of users.
+     * This method is called when the client receives a message from a private chat room that was created by other user.
+     *
+     * @param tabId
+     * @param usersSet
+     */
+    private void createNewRoom(String tabId, Set<String> usersSet) {
 
         Room room = new Room(tabId,randomName(),((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(),usersSet);
         addClosingTabHandler(room);
@@ -136,6 +152,11 @@ public class ChatRoomManager {
         roomMap.put(room.getId(),room);
     }
 
+    /**
+     * return a random room that will appear on the tab of that room
+     *
+     * @return
+     */
     private String randomName() {
 
         if(randomNames.isEmpty()){
@@ -145,6 +166,12 @@ public class ChatRoomManager {
         return randomNames.remove(0);
     }
 
+    /**
+     * Prints the message text in the room with id tabId.
+     *
+     * @param tabId Id of the room.
+     * @param text Message to print.
+     */
     public void printMessage(String tabId, String text) {
         roomMap.get(tabId).appendText(text);
     }

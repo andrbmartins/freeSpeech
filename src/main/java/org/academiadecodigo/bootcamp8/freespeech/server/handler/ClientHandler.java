@@ -17,8 +17,6 @@ import java.net.Socket;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Developed @ <Academia de Código_>
@@ -57,6 +55,9 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * Instantiates the Object Streams
+     */
     private void openStreams() {
 
         try {
@@ -67,17 +68,20 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             Logger.getInstance().eventlogger(TypeEvent.SERVER, e.getMessage());
         }
-
     }
 
+    /**
+     * Execute the exchange of the public keys between server and client.
+     */
     private void exchangeKeys() {
-
         write(crypto.getPublicKey());
         Key key = (Key) Stream.read(objectInputStream);
         crypto.setForeignKey(key);
-
     }
 
+    /**
+     * Execute the authentification of the client
+     */
     private void authenticateClient() {
 
         SealedSendable sealedSendable;
@@ -110,6 +114,10 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * Method responsible for the register of the client
+     * @param sealedSendable Encrypted message that contains the username and the password of the user
+     */
     private void register(SealedSendable sealedSendable) {
 
         Sendable<HashMap<MapKey, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
@@ -123,7 +131,6 @@ public class ClientHandler implements Runnable {
                 Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_REGISTERED + username);
                 responseToClient(sealedSendable.getType(), Values.REGISTER_OK);
                 return;
-
             }
         }
 
@@ -132,6 +139,11 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * Method responsible for the login of the client
+     * @param sealedSendable Encrypted message that contains the username and the password of the user
+     * @return Returns true if the log in was successful and false otherwise
+     */
     private boolean login(SealedSendable sealedSendable) {
 
         Sendable<HashMap<MapKey, String>> sendable = sealedSendable.getContent(crypto.getPrivateKey());
@@ -139,14 +151,11 @@ public class ClientHandler implements Runnable {
         String username = login.get(MapKey.USERNAME);
         String password = login.get(MapKey.PASSWORD);
 
-
-
         if (userService.verifyUserReported(username) > Values.MAX_REPORT_USER) {
             responseToClient(sealedSendable.getType(), Values.REPORTED);
             Logger.getInstance().eventlogger(TypeEvent.CLIENT, LoggerMessages.CLIENT_BLOCKED + username);
             return false;
         }
-
 
         if (server.userLogged(username)) {
             responseToClient(sealedSendable.getType(), Values.ALREADY_LOGGED);
@@ -167,6 +176,11 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * Method responsible for responding to the client if the login or register was successful or not
+     * @param type Type of message: LOGIN or REGISTER
+     * @param message Message to send to the client
+     */
     private void responseToClient(MessageType type, String message) {
 
         Sendable<String> sendable = new Message<>(message);
@@ -176,6 +190,9 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * Sends to the client the symmetric key
+     */
     private void sendSymKey() {
 
         Sendable<Key> sendableKey = new Message<>(crypto.getSymKey());
@@ -185,10 +202,10 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * Method responsible to read the client messages and delegate to the handleMessage what to do with those messages
+     */
     private void readFromClient() {
-
-        //final int MAX_THREADS = 4;
-        //ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS);
 
         SealedSendable msg;
 
@@ -201,8 +218,6 @@ public class ClientHandler implements Runnable {
             }
 
             handleMessage(msg);
-            //pool.submit(new MessageHandler(msg));
-
             connect = 0;
         }
 
@@ -211,7 +226,7 @@ public class ClientHandler implements Runnable {
         Stream.close(clientSocket);
 
     }
-
+    //TODO and this????
     private class MessageHandler implements Runnable {
 
         private final SealedSendable msg;
@@ -226,6 +241,10 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Calls the right method for the received message.
+     * @param msg Message received
+     */
     private void handleMessage(SealedSendable msg) {
 
         MessageType type = msg.getType();
@@ -273,9 +292,10 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
-
-
+    /**
+     * Reports the user indicated in the message msg
+     * @param msg Name of the reported user
+     */
     private void reportUser(SealedSendable msg) {
 
         Sendable<String> message = msg.getContent(crypto.getSymKey());
@@ -295,11 +315,14 @@ public class ClientHandler implements Runnable {
         write(sealedMsg);
     }
 
+    /**
+     * Updates the Biography of the user with the content of the received message
+     * @param msg Message received
+     */
     private void updateBio(SealedSendable msg) {
 
         Sendable<List<String>> message = msg.getContent(crypto.getSymKey());
         List<String> updatedBio = message.getContent();
-
         Sendable<String> userReply;
 
         if (userService.updateBio(updatedBio)) {
@@ -312,6 +335,10 @@ public class ClientHandler implements Runnable {
         write(sealedMsg);
     }
 
+    /**
+     * Sends to the client his biography
+     * @param msg Message containing the biography
+     */
     private void sendUserBio(SealedSendable msg) {
 
         Sendable<String> message = msg.getContent(crypto.getSymKey());
@@ -323,6 +350,11 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * Changes the client password.
+     * @param msg Encrypted message containing the old password and the new one
+     * @param type Message type
+     */
     private void changePass(SealedSendable msg, MessageType type) {
 
         Sendable<HashMap<MapKey, String>> sendable = msg.getContent(crypto.getSymKey());
@@ -343,6 +375,12 @@ public class ClientHandler implements Runnable {
         write(sealedMsg);
     }
 
+    /**
+     * Deletes the client account from the server DB
+     * @param msg Message received with the request to delete the account
+     * @param type Message type
+     * @return Returns if the operation was successfull
+     */
     private boolean deleteAccount(SealedSendable msg, MessageType type) {
 
         Sendable<String> sendable = msg.getContent(crypto.getSymKey());
@@ -365,17 +403,27 @@ public class ClientHandler implements Runnable {
         return deleted;
     }
 
+    /**
+     * Sends a list containing the names of the users currently online
+     * @param userList message containing a list of the users online
+     */
     public void sendUsersList(Sendable userList) {
         SealedSendable sealedSendable = crypto.encrypt(MessageType.USERS_ONLINE, userList);
         write(sealedSendable);
     }
 
+    /**
+     * Sends a message to the client.
+     * @param object Message to send
+     */
     public void write(Object object) {
-
-        System.out.println("Object to write: " + object.getClass().getSimpleName());
         Stream.write(objectOutputStream, object);
     }
 
+    /**
+     * Returns the client name
+     * @return Returns the client name
+     */
     public String getClientName() {
         return clientName;
     }

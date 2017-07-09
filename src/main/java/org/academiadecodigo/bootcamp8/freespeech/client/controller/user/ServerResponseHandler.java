@@ -153,7 +153,6 @@ public class ServerResponseHandler implements Runnable {
      *
      * @param message - the message.
      */
-
     private void processPublicMessage(Sendable message) {
 
         String messageText = (String) message.getContent();

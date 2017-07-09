@@ -10,6 +10,7 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,41 +73,92 @@ public class Room {
 
     }
 
+    /**
+     * Returns the Id of the room. It coincides with the id of the tab.
+     *
+     * @return Returns the id.
+     */
     public String getId(){
         return tab.getId();
     }
 
+    /**
+     * Updates the set of users in the room
+     *
+     * @param newList The new set of users
+     */
     private void updateUsersList(Set<String> newList){
         usersSet = newList;
     }
 
+    /**
+     * Removes the user from the room
+     *
+     * @param user User to remove from the room
+     * @return returns if the operation was successfull
+     */
     public boolean removeUser(String user){
         return usersSet.remove(user);
     }
 
+    /**
+     * Adds user to the room
+     *
+     * @param user User to add to the room
+     * @return returns if the operation was successfull
+     */
     public boolean addUser(String user){
         return usersSet.add(user);
     }
 
+    /**
+     * Prints the message text in the TextArea
+     *
+     * @param text Message to print
+     */
     public void appendText(String text){
         textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
     }
 
+    /**
+     * Return the set of users in the room.
+     *
+     * @return Returns the set of users in the room.
+     */
     public Set<String> getUsersSet() {
-        return usersSet;
+        return Collections.unmodifiableSet(usersSet);
     }
 
+    /**
+     * Verifies if the certain user is on the the room.
+     *
+     * @param name Name of the user
+     * @return Returns true if the user is in the room and false otherwise
+     */
     public boolean hasUser(String name) {
         return usersSet.contains(name);
     }
 
+    /**
+     * Generates an Id for the room.
+     * The ID has the following structure: <clientName>_<userName>_yyyyMMdd_HHmmssSSS
+     *
+     * @param user The name of the user
+     * @return Returns the generated id
+     */
     private String generateId(String user){
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
         Date date = new Date();
 
-        return SessionContainer.getInstance().getUsername() + "_" + user + dateFormat.format(date);
+        return SessionContainer.getInstance().getUsername() + "_" + user + "_" + dateFormat.format(date);
     }
 
+    /**
+     * Prints the message text and updates the set of users in the room.
+     *
+     * @param text Text to print.
+     * @param usersSet Set of users to update
+     */
     public void printPrivateMessage(String text, Set<String> usersSet) {
 
         updateUsersList(usersSet);
@@ -114,10 +166,17 @@ public class Room {
         textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
     }
 
+    /**
+     * Updates the tooltip text
+     */
     private void updateTooltipText() {
         tab.getTooltip().setText(Parser.setToString(usersSet));
     }
 
+    /**
+     * Returns the tab of the room.
+     * @return Returns the tab of the room.
+     */
     public Tab getTab() {
         return tab;
     }

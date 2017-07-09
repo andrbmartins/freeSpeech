@@ -7,7 +7,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -140,7 +139,7 @@ public class ClientController implements Controller {
      */
     @FXML
     void startPrivateChat(ActionEvent event) {
-        chatRoomManager.createNewTab(nameBio.getText());
+        chatRoomManager.createNewRoom(nameBio.getText());
     }
 
     /**
