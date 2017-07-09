@@ -87,7 +87,6 @@
     -fx-background-image: url("icons/file.png");
 }
 
-
 #deleteAccountButton,
 #okButton,
 #changePassButton {
@@ -234,4 +233,23 @@
     -fx-graphic: url("icons/report.png");
 }
 
+.context-menu {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.menu-item .label {
+    -fx-text-fill: black;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: black;
+}
+
+.tooltip {
+
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+
+}
 
