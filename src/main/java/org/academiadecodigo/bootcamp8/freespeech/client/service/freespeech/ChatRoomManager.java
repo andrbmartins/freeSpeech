@@ -1,16 +1,16 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
+import org.academiadecodigo.bootcamp8.freespeech.client.controller.user.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.controller.user.Room;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -24,13 +24,14 @@ public class ChatRoomManager {
     private Map<String, Room> roomMap;
     private TabPane tabPane;
     private List<String> randomNames;
+    private ClientController clientController;
 
-    public ChatRoomManager(TabPane tabPane) {
-        roomMap = new HashMap<>();
+    public ChatRoomManager(ClientController clientController, TabPane tabPane) {
+        this.clientController = clientController;
         this.tabPane = tabPane;
-
-        roomMap.put(getSelectedTab().getId(),new Room(getSelectedTab(),(TextArea)getSelectedTab().getContent()));
-        randomNames = shuffleNames();
+        roomMap = new HashMap<>();
+        roomMap.put(getSelectedTab().getId(), new Room(getSelectedTab(), (TextArea) getSelectedTab().getContent()));
+        randomNames = generateNames();
     }
 
     /**
@@ -58,9 +59,10 @@ public class ChatRoomManager {
 
     /**
      * Shuffles tab names list.
+     *
      * @return - the shuffled list.
      */
-    private List<String> shuffleNames() {
+    private List<String> generateNames() {
 
         List<String> list = Parser.arrayToList(Values.RANDOM_NAMES_ARRAY);
         Collections.shuffle(list);
@@ -77,43 +79,77 @@ public class ChatRoomManager {
      *
      * @param user - the user name.
      */
-    private void createNewTab(String user) {
+    public void createNewTab(String user) {
 
-        Room room = new Room(randomNames.remove(0),((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(), user);
+        Room room = new Room(randomNames.remove(0), ((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(), user);
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
-        Date date = new Date();
+        addClosingTabHandler(room);
 
-        String id = SessionContainer.getInstance().getUsername() +
-                "_" + user + dateFormat.format(date);
+        tabPane.getTabs().add(room.getTab());
 
-        Tab tab = new Tab("label " + id);
-        tab.setId(id);
-        tab.setTooltip(new Tooltip());
-        setTabName(tab);
-        tab.setText(randomNames.remove(0));
+        roomMap.put(room.getId(),room);
+    }
 
-        addClosingTabHandler(tab);
+    /**
+     * Defines closing behavior for the specified tab.
+     *
+     * @param room - the tab.
+     */
+    private void addClosingTabHandler(Room room) {
 
-        TextArea textArea = new TextArea();
-        textArea.appendText("");
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
+        if (roomMap.size() != 1) {
+            room.getTab().setOnClosed(tabPane.getTabs().get(1).getOnClosed());
+            return;
+        }
 
-        tab.setContent(textArea);
+        EventHandler<Event> event = new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                Tab closedTab = (Tab) event.getSource();
+                String leaveText = "< has left the building! >";
 
-        tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
+                Room room1 = roomMap.remove(closedTab.getId());
+                room1.removeUser(SessionContainer.getInstance().getUsername());
 
-        //TODO
-        tabId.put(id, tab);
-        rooms.put(tab, textArea);
+                roomMap.remove(room1);
+                clientController.sendMessage(leaveText, room1.getId(), room1.getUsersSet());
+            }
+        };
 
-        HashSet<String> set = new HashSet<>();
-        set.add(user);
-        set.add(SessionContainer.getInstance().getUsername());
-        tab.getTooltip().setText(Parser.setToString(set));
-        usersPerTab.put(id, set);
+        room.getTab().setOnClosed(event);
+    }
 
-        tabPane.getTabs().add(tab);
+    public void printPrivateMessage(String tabId, String text, Set<String> usersSet) {
+
+        if(!roomMap.containsKey(tabId)){
+            createNewTab(tabId,usersSet);
+        }
+
+        roomMap.get(tabId).printPrivateMessage(text,usersSet);
+    }
+
+    private void createNewTab(String tabId, Set<String> usersSet) {
+
+        Room room = new Room(tabId,randomName(),((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(),usersSet);
+        addClosingTabHandler(room);
+        tabPane.getTabs().add(room.getTab());
+        roomMap.put(room.getId(),room);
+    }
+
+    private String randomName() {
+
+        if(randomNames.isEmpty()){
+            randomNames = generateNames();
+        }
+
+        return randomNames.remove(0);
+    }
+
+    public void printMessage(String tabId, String text) {
+        roomMap.get(tabId).appendText(text);
+    }
+
+    public Room getRoom(String tabId) {
+        return roomMap.get(tabId);
     }
 }

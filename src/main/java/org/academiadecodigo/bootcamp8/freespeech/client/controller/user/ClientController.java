@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.*;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -37,8 +36,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
@@ -86,7 +83,6 @@ public class ClientController implements Controller {
     private ListView<String> originalOnlineUsersList;
     private ChatRoomManager chatRoomManager;
     private double[] stagePosition;
-    private List<String> randomNames;
 
     public ClientController() {
 
@@ -98,19 +94,14 @@ public class ClientController implements Controller {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-
         username.setText(SessionContainer.getInstance().getUsername());
-        chatRoomManager = new ChatRoomManager(tabPane);
+        chatRoomManager = new ChatRoomManager(this, tabPane);
 
         setDraggableTopBar();
         focusUserInput();
 
         new Thread(new ServerResponseHandler(this)).start();
     }
-
-
-
-
 
     /**
      * Puts cursor focus on user's input area.
@@ -152,10 +143,7 @@ public class ClientController implements Controller {
      */
     @FXML
     void startPrivateChat(ActionEvent event) {
-
-        //TODO
         chatRoomManager.createNewTab(nameBio.getText());
-
     }
 
     /**
@@ -163,9 +151,7 @@ public class ClientController implements Controller {
      */
     @FXML
     void addToChat(ActionEvent event) {
-
         chatRoomManager.addToChat(nameBio.getText());
-
     }
 
     /**
@@ -179,8 +165,10 @@ public class ClientController implements Controller {
             inputTextArea.clear();
             return;
         }
+
         Room currentRoom = chatRoomManager.getSelectedRoom();
-        clientService.sendPrivateText(inputTextArea.getText(), currentRoom.getId(), currentRoom.getUsersList() );
+        clientService.sendPrivateText(inputTextArea.getText(), currentRoom.getId(), currentRoom.getUsersSet());
+
         inputTextArea.clear();
     }
 
@@ -199,6 +187,16 @@ public class ClientController implements Controller {
             onSend(null);
             event.consume(); //nullifies enter key effect (new line)
         }
+    }
+
+    /**
+     * sends the message text to the users in the usersSet for their tab with id tabid
+     * @param text
+     * @param tabId
+     * @param usersSet
+     */
+    public void sendMessage(String text, String tabId, Set<String> usersSet) {
+        clientService.sendPrivateText(text, tabId, usersSet);
     }
 
     /**
@@ -249,7 +247,7 @@ public class ClientController implements Controller {
      *
      * @param message - the message.
      */
-    private void processUsersList(Sendable<List<String>> message) {
+    public void processUsersList(Sendable<List<String>> message) {
 
         Platform.runLater(new Runnable() {
             public void run() {
@@ -330,7 +328,7 @@ public class ClientController implements Controller {
      *
      * @param content - the dialog text.
      */
-    private void quitPrompt(String content) {
+    public void quitPrompt(String content) {
 
         Alert.AlertType alertType = Alert.AlertType.INFORMATION;
 
@@ -350,7 +348,7 @@ public class ClientController implements Controller {
      *
      * @param content - the dialog text.
      */
-    private void infoPrompt(String content) {
+    public void infoPrompt(String content) {
 
         Alert.AlertType alertType = Alert.AlertType.INFORMATION;
 
@@ -397,7 +395,7 @@ public class ClientController implements Controller {
      * @param ownBio - the users' profile.
      * @param isUser - true if current user, false otherwise.
      */
-    private void showProfile(Sendable<List<String>> ownBio, boolean isUser) {
+    public void showProfile(Sendable<List<String>> ownBio, boolean isUser) {
 
         toggleBio(isUser);
         List<String> list = ownBio.getContent();
@@ -425,7 +423,6 @@ public class ClientController implements Controller {
      * @param list - the values.
      */
     private void displayProfile(List<String> list) {
-
         nameBio.setText(list.get(0));
         emailBio.setText(list.get(1));
         dateBirthBio.setText(list.get(2));
@@ -469,79 +466,7 @@ public class ClientController implements Controller {
         updatedBio.add(userBio.getText());
 
         clientService.updateBio(updatedBio);
-
     }
-
-
-
-
-    /**
-     * Sets the name for the specified tab.
-     * @param tab - the tab.
-     */
-    private void setTabName(Tab tab) {
-
-        if (randomNames.isEmpty()){
-            randomNames = shuffleNames();
-        }
-        tab.setText(randomNames.remove(0));
-
-    }
-
-
-
-    /**
-     * Creates a new tab when receiving a private message.
-     *
-     * @param users - the users in the room.
-     * @param id    - tab identifier.
-     */
-    private void createReceivedTab(Set<String> users, String id) {
-
-        Tab tab = new Tab("label " + id);
-        tab.setId(id);
-        tab.setTooltip(new Tooltip(Parser.setToString(users)));
-        setTabName(tab);
-
-        TextArea textArea = new TextArea();
-        textArea.appendText("");
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
-        tab.setContent(textArea);
-
-        tab.setOnSelectionChanged(((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged());
-
-        tabId.put(id, tab);
-        rooms.put(tab, textArea);
-        usersPerTab.put(id, users);
-
-        addClosingTabHandler(tab);
-
-        tabPane.getTabs().add(tab);
-
-    }
-
-    /**
-     * Gets room corresponding to the specified id.
-     *
-     * @param tabId - the id.
-     * @return the room.
-     */
-    private TextArea getDestinyRoom(String tabId) {
-        Tab tab = this.tabId.get(tabId);
-        return (tab != null) ? rooms.get(tab) : null;
-    }
-
-    /**
-     * Updates users in the room.
-     *
-     * @param tabId      - the room identifier.
-     * @param destinySet - the users.
-     */
-    private void updateUsersSet(String tabId, Set<String> destinySet) {
-        usersPerTab.replace(tabId, destinySet);
-    }
-
 
     /**
      * Filters online users list by the given input.
@@ -574,7 +499,6 @@ public class ClientController implements Controller {
     void clearSearchBar(ActionEvent event) {
         searchBar.clear();
         onlineUsersList.setItems(originalOnlineUsersList.getItems());
-
     }
 
     /**
@@ -585,17 +509,6 @@ public class ClientController implements Controller {
         onlineUsersList.getSelectionModel().clearSelection();
         bioArea.setVisible(false);
         contactButtons.setVisible(false);
-
-    }
-
-    /**
-     * Updates visual indication of the users in the room.
-     *
-     * @param tabId      - the room identifier.
-     * @param destinySet - the users in the room.
-     */
-    private void updateTooltipText(String tabId, Set<String> destinySet) {
-        this.tabId.get(tabId).getTooltip().setText(Parser.setToString(destinySet));
     }
 
     /**
@@ -639,25 +552,14 @@ public class ClientController implements Controller {
      */
     public void printPrivateChat(String tabId, String destinyString, String text) {
 
-        Runnable runnable = new Runnable() {
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                TextArea textArea;
-                Set<String> destinySet = Parser.stringToSet(destinyString);
+                chatRoomManager.printPrivateMessage(tabId, text, Parser.stringToSet(destinyString));
 
-                if ((textArea = getDestinyRoom(tabId)) != null) {
-                    updateUsersSet(tabId, destinySet);
-                    updateTooltipText(tabId, destinySet);
-
-                } else {
-                    createReceivedTab(destinySet, tabId);
-                    textArea = getDestinyRoom(tabId);
-                }
-                textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
             }
-        };
+        });
 
-        Platform.runLater(runnable);
     }
 
     /**
@@ -666,9 +568,6 @@ public class ClientController implements Controller {
      * @param messageText - the message content.
      */
     public void printToLobby(String messageText) {
-        TextArea textArea = getDestinyRoom("Lobby");
-        Boolean isEmpty = textArea.getText().isEmpty();
-
-        textArea.appendText((isEmpty ? "" : "\n") + messageText);
+        chatRoomManager.printMessage("lobbyTab", messageText);
     }
 }

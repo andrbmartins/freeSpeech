@@ -6,8 +6,12 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
+import org.academiadecodigo.bootcamp8.freespeech.shared.utils.Parser;
 
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -20,39 +24,50 @@ public class Room {
 
     private Tab tab;
     private TextArea textArea;
-    private Set<String> usersList;
+    private Set<String> usersSet;
 
-    public Room(Tab tab, TextArea textArea, Set<String> usersList) {
-        this.tab = tab;
-        this.textArea = textArea;
-        this.usersList = usersList;
-        tab.setContent(this.textArea);
-    }
-
-    public Room(Tab tab, Set<String> usersList) {
-        this.tab = tab;
-        this.usersList = usersList;
-
-
-    }
-
-    public Room(String id, String tabName, Set<String> usersList) {
+    public Room(String id, String tabName, EventHandler<Event> onSelectionChanged, Set<String> usersSet) {
         tab = new Tab(tabName);
         tab.setId(id);
         tab.setTooltip(new Tooltip());
-        this.usersList = usersList;
+        tab.setOnSelectionChanged(onSelectionChanged);
+
+        textArea = new TextArea();
+        textArea.appendText("");
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+
+        tab.setContent(textArea);
+
+        this.usersSet = usersSet;
+        tab.getTooltip().setText(Parser.setToString(usersSet));
+
     }
 
     public Room(Tab selectedTab, TextArea content) {
         tab = selectedTab;
         textArea = content;
-        usersList = null;
+        usersSet = null;
     }
 
     public Room(String name, EventHandler<Event> onSelectionChanged, String user) {
         tab = new Tab(name);
         tab.setId(generateId(user));
         tab.setTooltip(new Tooltip());
+        tab.setOnSelectionChanged(onSelectionChanged);
+
+        textArea = new TextArea();
+        textArea.appendText("");
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+
+        tab.setContent(textArea);
+
+        usersSet = new HashSet<>();
+        usersSet.add(user);
+        usersSet.add(SessionContainer.getInstance().getUsername());
+        tab.getTooltip().setText(Parser.setToString(usersSet));
+
 
 
     }
@@ -66,62 +81,48 @@ public class Room {
     }
 
     public void updateUsersList(Set<String> newList){
-        usersList = newList;
+        usersSet = newList;
     }
 
     public boolean removeUser(String user){
-        return usersList.remove(user);
+        return usersSet.remove(user);
     }
 
     public boolean addUser(String user){
-        return usersList.add(user);
+        return usersSet.add(user);
     }
 
     public void appendText(String text){
-        textArea.appendText(text);
+        textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
     }
 
-    public Set<String> getUsersList() {
-        return usersList;
+    public Set<String> getUsersSet() {
+        return usersSet;
     }
 
     public boolean hasUser(String name) {
-        return usersList.contains(name);
+        return usersSet.contains(name);
     }
 
     private String generateId(String user){
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+        Date date = new Date();
 
-
+        return SessionContainer.getInstance().getUsername() + "_" + user + dateFormat.format(date);
     }
 
-    /**
-     * Defines closing behavior for the specified tab.
-     *
-     * @param tab - the tab.
-     */
-    private void addClosingTabHandler(Tab tab) {
+    public void printPrivateMessage(String text, Set<String> usersSet) {
 
-        if (tabPane.getTabs().size() != 1) {
-            tab.setOnClosed(tabPane.getTabs().get(1).getOnClosed());
-            return;
-        }
+        updateUsersList(usersSet);
+        updateTooltipText();
+        textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
+    }
 
-        EventHandler<Event> event = new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                Tab closedTab = (Tab) event.getSource();
-                String leaveText = "< has left the building! >";
+    private void updateTooltipText() {
+        tab.getTooltip().setText(Parser.setToString(usersSet));
+    }
 
-                Set<String> destinySet = usersPerTab.remove(closedTab.getId());
-                destinySet.remove(SessionContainer.getInstance().getUsername());
-
-                rooms.remove(closedTab);
-                tabId.remove(closedTab.getId());
-
-                clientService.sendPrivateText(leaveText, closedTab.getId(), destinySet);
-            }
-        };
-
-        tab.setOnClosed(event);
+    public Tab getTab() {
+        return tab;
     }
 }
