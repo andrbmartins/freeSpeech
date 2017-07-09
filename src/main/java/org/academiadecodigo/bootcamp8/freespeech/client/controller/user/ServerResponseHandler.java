@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.controller.user;
 
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
@@ -56,8 +56,8 @@ public class ServerResponseHandler implements Runnable {
 
             sendable = sealed.getContent(simKey);
             process(sealed.getType(), sendable);
-
             readingAttempts = 0;
+
         }
         if (readingAttempts == Values.MAX_CONNECT_ATTEMPT) {
             clientController.infoPrompt(DialogText.SERVER_DOWN);

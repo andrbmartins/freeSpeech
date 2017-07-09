@@ -7,6 +7,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -25,8 +26,8 @@ import org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech.Clien
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.*;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.DeleteAccountDialog;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.ChangePassDialog;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.ChangePassDialog;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.Sendable;
@@ -74,9 +75,19 @@ public class ClientController implements Controller {
     @FXML
     private TextField searchBar;
     @FXML
+    private Button clearSearchBar;
+    @FXML
+    private Button addToChatButton;
+    @FXML
     private TextField dateBirthBio;
     @FXML
     private TextArea userBio;
+    @FXML
+    private Button privateChatButton;
+    @FXML
+    private Button updateProfile;
+    @FXML
+    private Button removeAccount;
 
     private Stage stage;
     private ClientService clientService;
@@ -85,7 +96,6 @@ public class ClientController implements Controller {
     private double[] stagePosition;
 
     public ClientController() {
-
         stagePosition = new double[2];
         clientService = RegistryService.getInstance().get(ClientService.class);
         originalOnlineUsersList = new ListView<>();
@@ -168,7 +178,6 @@ public class ClientController implements Controller {
 
         Room currentRoom = chatRoomManager.getSelectedRoom();
         clientService.sendPrivateText(inputTextArea.getText(), currentRoom.getId(), currentRoom.getUsersSet());
-
         inputTextArea.clear();
     }
 
@@ -216,7 +225,7 @@ public class ClientController implements Controller {
         }
 
         if (file.length() > MAX_FILE_SIZE) {
-            notificationPrompt(Alert.AlertType.INFORMATION, DialogText.FILE_TOO_BIG);
+            notificationPrompt(Alert.AlertType.ERROR, DialogText.FILE_TOO_BIG);
             return;
         }
 
@@ -361,12 +370,10 @@ public class ClientController implements Controller {
 
     /**
      * Displays a notification to the user.
-     *
      * @param alertType - the notification type.
-     * @param text      - the notification text.
-     * @return the user option.
+     * @param text - the notification text.
+     * @return the user option
      */
-    //TODO css for dialogs
     private Optional<ButtonType> notificationPrompt(Alert.AlertType alertType, String text) {
 
         Alert alert = new Alert(alertType);
@@ -416,6 +423,15 @@ public class ClientController implements Controller {
         userBio.setWrapText(true);
         dateBirthBio.setEditable(isUser);
     }
+
+  /*  public void showUserBio(Sendable<List<String>> message) {
+
+        toggleBio(false);
+
+        List<String> list = message.getContent();
+
+        displayProfile(list);
+    }*/
 
     /**
      * Sets values for profile fields.

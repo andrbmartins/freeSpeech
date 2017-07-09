@@ -42,7 +42,7 @@ public class ConsoleHandler implements Runnable {
 
         switch (Command.getEnum(cmd)) {
             case RUNTIME:
-                System.out.println(server.runtime());
+                server.runtime();
                 break;
             case USERS:
                 server.printLoggedUsers();
