@@ -27,6 +27,13 @@ public class Room {
     private TextArea textArea;
     private Set<String> usersSet;
 
+    /**
+     * Constructor used when the Client receives a private message for a room that he hasn't got yet
+     * @param id Room ID
+     * @param tabName Name for the Tab
+     * @param onSelectionChanged Event handler for when the client selects the tab
+     * @param usersSet Set of users in that room
+     */
     public Room(String id, String tabName, EventHandler<Event> onSelectionChanged, Set<String> usersSet) {
         tab = new Tab(tabName);
         tab.setId(id);
@@ -45,12 +52,23 @@ public class Room {
 
     }
 
+    /**
+     * Constructor used when creating the Lobby room
+     * @param selectedTab Lobby Tab defined on the fxml
+     * @param content Lobby TextArea defined on the fxml
+     */
     public Room(Tab selectedTab, TextArea content) {
         tab = selectedTab;
         textArea = content;
         usersSet = null;
     }
 
+    /**
+     * Constructor used when the client wants to create a new private chat room with a certain user
+     * @param name Name for the Tab
+     * @param onSelectionChanged Event handler for when the client selects the tab
+     * @param user Name of the user that the client wants to chat
+     */
     public Room(String name, EventHandler<Event> onSelectionChanged, String user) {
         tab = new Tab(name);
         tab.setId(generateId(user));
