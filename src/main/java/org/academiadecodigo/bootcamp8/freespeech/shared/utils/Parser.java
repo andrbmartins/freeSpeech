@@ -66,7 +66,7 @@ public class Parser {
             FileOutputStream stream = new FileOutputStream(file);
             stream.write(byteArray);
             stream.flush();
-            stream.close();
+           // stream.close();
 
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -110,7 +110,7 @@ public class Parser {
         } catch (IOException e) {
             System.err.println("Error on file reading.");
         } finally {
-            Stream.close(fileInputStream);
+           // Stream.close(fileInputStream);
         }
 
         return buffer;

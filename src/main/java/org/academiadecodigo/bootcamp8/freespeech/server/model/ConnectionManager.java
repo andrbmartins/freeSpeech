@@ -26,8 +26,8 @@ public class ConnectionManager {
     public Connection getConnection() {
 
         final String URL = "jdbc:mysql://localhost:3306/freespeech";
-        final String USER = "root";
-        final String PASSWORD = "";
+        final String USER = "root"; // "freeSpeechUser";
+        final String PASSWORD = ""; //"freeSpeechPassword";
 
         try {
             if (connection == null) {

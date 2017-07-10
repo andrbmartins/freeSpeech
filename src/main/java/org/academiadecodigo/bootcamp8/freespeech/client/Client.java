@@ -22,6 +22,11 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 public class Client extends Application {
 
     public static void main(String[] args) {
+
+        if(args.length > 1) {
+            Values.HOST = args[1];
+        }
+
         launch(args);
     }
 
