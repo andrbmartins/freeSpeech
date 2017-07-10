@@ -24,8 +24,6 @@ public class LoginClientService implements LoginService {
 
     /**
      * @see LoginService#sendMessage(MessageType, Map)
-     *      * @param messageType    - the type.
-     * @param messageContent - the content.
      */
     @Override
     public void sendMessage(MessageType messageType, Map<MapKey, String> messageContent) {
@@ -39,7 +37,6 @@ public class LoginClientService implements LoginService {
     }
 
     /**
-     * @return - the massage.
      * @see LoginService#readMessage()
      */
     @Override

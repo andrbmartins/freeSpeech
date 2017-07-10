@@ -5,7 +5,7 @@ package org.academiadecodigo.bootcamp8.freespeech.shared.communication;
  *         Project freeSpeech (07/07/17)
  *         <Academia de Código_>
  */
-public enum  MapKey {
+public enum MapKey {
 
     USERNAME,
     PASSWORD,

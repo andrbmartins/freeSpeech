@@ -1,10 +1,9 @@
-package org.academiadecodigo.bootcamp8.freespeech.dialog;
+package org.academiadecodigo.bootcamp8.freespeech.client.dialog;
+
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -17,7 +16,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO refactor
 
 public class ChangePassDialog extends Dialog<String[]> {
     private PasswordField currPassword;
@@ -33,9 +31,12 @@ public class ChangePassDialog extends Dialog<String[]> {
 
         Label label = new Label("Confirm your current password and enter new one");
 
-        //TODO can we use buttons instead?
-        ButtonType setPass = new ButtonType("Set New Password", ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().addAll(setPass, ButtonType.CANCEL);
+        ButtonType confirmButton = new ButtonType("", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("", ButtonBar.ButtonData.CANCEL_CLOSE);
+        getDialogPane().getButtonTypes().addAll(confirmButton, cancelButton);
+
+        getDialogPane().lookupButton(confirmButton).setId("changePassButton");
+        getDialogPane().lookupButton(cancelButton).setId("cancelPassButton");
 
         currPassword = new PasswordField();
         currPassword.setPromptText("current password_");
@@ -51,7 +52,6 @@ public class ChangePassDialog extends Dialog<String[]> {
         GridPane.setHalignment(currPassword, HPos.CENTER);
         GridPane.setHalignment(newPassword, HPos.CENTER);
         GridPane.setHalignment(confirmPass, HPos.CENTER);
-
 
 
         grid.add(label, 0, 0);
@@ -75,7 +75,7 @@ public class ChangePassDialog extends Dialog<String[]> {
         setResultConverter(new Callback<ButtonType, String[]>() {
             @Override
             public String[] call(ButtonType param) {
-                if (param == setPass) {
+                if (param == confirmButton) {
                     String[] result = {currPassword.getText(), newPassword.getText(), confirmPass.getText()};
                     return result;
                 }

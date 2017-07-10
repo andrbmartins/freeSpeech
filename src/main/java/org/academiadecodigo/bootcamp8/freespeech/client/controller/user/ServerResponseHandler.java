@@ -1,9 +1,7 @@
-package org.academiadecodigo.bootcamp8.freespeech.client.service.freespeech;
+package org.academiadecodigo.bootcamp8.freespeech.client.controller.user;
 
-import javafx.scene.control.TextArea;
-import org.academiadecodigo.bootcamp8.freespeech.client.controller.ClientController;
 import org.academiadecodigo.bootcamp8.freespeech.client.utils.SessionContainer;
-import org.academiadecodigo.bootcamp8.freespeech.dialog.DialogText;
+import org.academiadecodigo.bootcamp8.freespeech.client.dialog.DialogText;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 import org.academiadecodigo.bootcamp8.freespeech.shared.communication.MapKey;
 import org.academiadecodigo.bootcamp8.freespeech.shared.message.MessageType;
@@ -25,7 +23,9 @@ import java.util.regex.Pattern;
  * <Code Cadet> Filipe Santos Sá
  */
 
+
 public class ServerResponseHandler implements Runnable {
+
     private boolean run;
     private ClientController clientController;
 
@@ -38,93 +38,99 @@ public class ServerResponseHandler implements Runnable {
     public void run() {
 
         SessionContainer sessionContainer = SessionContainer.getInstance();
-        ObjectInputStream oin = sessionContainer.getInput();
-        Key symKey = sessionContainer.getCrypto().getSymKey();
-        SealedSendable sealedSendable;
+        ObjectInputStream input = sessionContainer.getInput();
+        Key simKey = sessionContainer.getCrypto().getSymKey();
+        SealedSendable sealed;
         Sendable sendable;
 
+        int readingAttempts = 0;
+        while (run && readingAttempts < Values.MAX_CONNECT_ATTEMPT) {
 
-        int connect = 0;
-        while (run && connect < Values.MAX_CONNECT_ATTEMPT ) {
+            sealed = Stream.readSendable(input);
 
-            sealedSendable = Stream.readSendable(oin);
-
-            if (sealedSendable == null) {
-                connect++;
+            if (sealed == null) {
+                readingAttempts++;
                 continue;
-
             }
 
-            sendable = sealedSendable.getContent(symKey);
-            process(sealedSendable.getType(), sendable);
-            connect = 0;
+            sendable = sealed.getContent(simKey);
+            process(sealed.getType(), sendable);
+            readingAttempts = 0;
 
         }
-        if (connect == Values.MAX_CONNECT_ATTEMPT) {
-            clientController.userPromptExternal(DialogText.SERVER_INFO, DialogText.SERVER_DOWN);
+        if (readingAttempts == Values.MAX_CONNECT_ATTEMPT) {
+            clientController.infoPrompt(DialogText.SERVER_DOWN);
         }
     }
 
-
+    /**
+     * Processes the specified Message instance according to the specified type.
+     *
+     * @param type    - the type.
+     * @param message - the instance.
+     */
     private void process(MessageType type, Sendable message) {
-
-
 
         switch (type) {
             case TEXT:
-                printToRoom(message);
+                processPublicMessage(message);
+                break;
+            case PRIVATE_TEXT:
+                processPrivateMessage(message);
+                break;
+            case DATA:
+                saveFile(message);
                 break;
             case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
-            case DATA:
-                saveReceivedFile(message);
-                break;
-            case PRIVATE_TEXT:
-                printPrivateChat(message);
-                break;
             case PASS_CHANGE:
+            case BIO_UPDATE:
+            case REPORT:
                 notifyUser(message);
+                break;
+            case BIO:
+                clientController.showProfile(message, true);
+                break;
+            case PROFILE:
+                clientController.showProfile(message, false);
                 break;
             case EXIT:
                 run = false;
                 SessionContainer.close();
                 break;
-            case BIO_UPDATE:
-                notifyUser(message);
-                break;
-            case BIO:
-                clientController.showOwnBio(message);
-                break;
-            case PROFILE:
-                clientController.showUserBio(message);
-                break;
             case DELETE_ACCOUNT:
-                accDeleteNotify(message);
-                break;
-            case REPORT:
-                notifyUser(message);
+                deletionNotification(message);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid message type");
+                throw new IllegalArgumentException("Unsupported message type.");
         }
     }
 
-    private void saveReceivedFile(Sendable<HashMap<MapKey, List<Byte>>> message) {
-
+    /**
+     * Processes the specified message and gives the user the chance to save its content.
+     *
+     * @param message - the message.
+     */
+    private void saveFile(Sendable<HashMap<MapKey, List<Byte>>> message) {
 
         HashMap<MapKey, List<Byte>> map = message.getContent();
+
         List<Byte> extensionList = map.get(MapKey.FILE_EXTENSION);
         List<Byte> byteList = map.get(MapKey.MESSAGE);
+
         String fileExtension = new String(Parser.listToByteArray(extensionList));
         String sender = new String(Parser.listToByteArray(map.get(MapKey.SOURCE)));
 
         clientController.saveFile(sender, byteList, fileExtension);
-
-
     }
 
-    private void printPrivateChat(Sendable<HashMap<MapKey, String>> message) {
+    /**
+     * Processes the specified message and prints its content to the corresponding room.
+     *
+     * @param message - the message.
+     */
+    private void processPrivateMessage(Sendable<HashMap<MapKey, String>> message) {
 
         HashMap<MapKey, String> map = message.getContent();
 
@@ -135,15 +141,17 @@ public class ServerResponseHandler implements Runnable {
         clientController.printPrivateChat(tabId, destinyString, text);
     }
 
-    private void printToRoom(Sendable message) {
+    /**
+     * Processes the specified message, removing all the excess whitespaces and printing it to the lobby room.
+     *
+     * @param message - the message.
+     */
+    private void processPublicMessage(Sendable message) {
 
         String messageText = (String) message.getContent();
         messageText = wipeWhiteSpaces(messageText);
-        TextArea textArea = clientController.getDestinyRoom("Lobby");
-        Boolean isEmpty = textArea.getText().isEmpty();
 
-        textArea.appendText((isEmpty ? "" : "\n") + messageText);
-
+        clientController.printToLobby(messageText);
     }
 
     /**
@@ -172,23 +180,32 @@ public class ServerResponseHandler implements Runnable {
         return result;
     }
 
-    private void notifyUser(Sendable<String> msg) {
-        String info = msg.getContent();
+    /**
+     * Displays the specified message content in a notification to the user.
+     *
+     * @param message - the message.
+     */
+    private void notifyUser(Sendable<String> message) {
 
-        clientController.userPromptExternal(DialogText.ACCOUNT_MANAGER, info);
-
+        String info = message.getContent();
+        clientController.infoPrompt(info);
     }
 
-    private void accDeleteNotify(Sendable<String> message) {
+    /**
+     * Notifies the user about the success of the account deletion attempt according to the specified message.
+     *
+     * @param message - the message.
+     */
+    private void deletionNotification(Sendable<String> message) {
+
         String info = message.getContent();
+
         if (info.equals(Values.ACC_DELETED)) {
             run = false;
-            clientController.userPromptQuit(DialogText.ACCOUNT_MANAGER, info);
+            clientController.quitPrompt(info);
             return;
         }
-        clientController.userPromptExternal(DialogText.ACCOUNT_MANAGER, info);
 
-
+        clientController.infoPrompt(info);
     }
-
 }

@@ -20,7 +20,7 @@ import java.util.Map;
  * <Code Cadet> PedroMAlves
  */
 
-public class FreeSpeechClientService implements ClientService {
+public class FreeSpeechService implements ClientService {
 
     /**
      * @see ClientService#sendUserData(File, String, String)

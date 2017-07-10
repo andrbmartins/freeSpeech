@@ -8,8 +8,6 @@
 
 /* buttons */
 
-/* TODO BUTTON CLASSES */
-
 .button {
     -fx-pref-height: 50px;
     -fx-pref-width: 50px;
@@ -31,7 +29,8 @@
 #closeConnection,
 #cancelRemoveButton,
 #closeProfile,
-#clearSearchBar {
+#clearSearchBar,
+#cancelPassButton {
     -fx-background-image: url("icons/exit.png");
     -fx-pref-width: 30px;
     -fx-pref-height: 30px;
@@ -88,11 +87,9 @@
     -fx-background-image: url("icons/file.png");
 }
 
-#buttons {
-    -fx-padding: -10px 40px 0 10px;
-}
-
-#deleteAccountButton {
+#deleteAccountButton,
+#okButton,
+#changePassButton {
     -fx-background-image: url("icons/confirm.png");
     -fx-pref-width: 30px;
     -fx-pref-height: 30px;
@@ -103,19 +100,22 @@
 /* dialogs */
 
 .dialog-pane {
-    -fx-background-color: hotpink;
-}
-
-/* user data */
-
-.text-field {
-    -fx-max-width: 20em;
+    -fx-background-color: #690504;
 }
 
 /* user name */
 
+#username {
+    -fx-text-fill: #000000;
+    -fx-font-size: 20px;
+}
+
 .label {
     -fx-text-fill: #FFFFFF;
+}
+
+#username {
+    -fx-text-fill: #000000;
 }
 
 #topBar {
@@ -126,7 +126,6 @@
 
 .list-view {
     -fx-background-color: #E20000;
-    /* -fx-background-color: linear-gradient(from 50% 0% to 50% 100%, #FF0000 0%, #690504 100%); */
     -fx-font-weight: bold;
 }
 
@@ -161,6 +160,16 @@
     -fx-background-insets: 0 1 0 -1;
 }
 
+/* text field */
+
+.text-field,
+.text-field:focused {
+    -fx-background-radius: 0;
+    -fx-background-color: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
 /* text area */
 
 .text-area,
@@ -168,14 +177,12 @@
     -fx-text-fill: #000000;
     -fx-background-radius: 0;
     -fx-background-color: white;
-    -fx-font-family: monospace;
 }
 
 .text-area .content {
     -fx-background-color: white;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-    -fx-font-family: monospace;
 }
 
 /* input text area */
@@ -198,7 +205,7 @@
 .increment-arrow,
 .decrement-button,
 .decrement-arrow {
-    -fx-pref-height: 0; /*hides button */
+    -fx-pref-height: 0;
     visibility: hidden;
 }
 
@@ -210,15 +217,39 @@
     -fx-background-color: #690504;
 }
 
-
 #inputTextArea .scroll-bar .track {
     -fx-background-color: #D3D3D3;
 }
 
 #inputTextArea .scroll-bar .thumb {
-    -fx-background-color: hotpink;
+    -fx-background-color: #690504;
 }
 
+.alert.information.dialog-pane {
+    -fx-graphic: url("icons/edit-profile.png");
+}
 
+.alert.error.dialog-pane {
+    -fx-graphic: url("icons/report.png");
+}
 
+.context-menu {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.menu-item .label {
+    -fx-text-fill: black;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: black;
+}
+
+.tooltip {
+
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+
+}
 

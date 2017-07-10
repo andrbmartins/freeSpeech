@@ -23,7 +23,7 @@ public class JdbcConnectionManager {
         try {
 
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost/freespeech", "root", "");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/freespeech", "", "babaji");
             }
 
         } catch (SQLException ex) {

@@ -17,6 +17,7 @@ public class Hash {
 
     /**
      * Returns a String resulting from the hash computation of the specified element.
+     *
      * @param string - the specified element.
      * @return the hashed string.
      */

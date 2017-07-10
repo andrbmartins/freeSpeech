@@ -18,7 +18,6 @@ import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO refactor
 
 public class DeleteAccountDialog extends Dialog<String> {
 
@@ -28,14 +27,12 @@ public class DeleteAccountDialog extends Dialog<String> {
 
         styleStage();
 
-        //TODO can we use buttons instead?
         ButtonType deleteButton = new ButtonType("", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButton = new ButtonType("", ButtonBar.ButtonData.CANCEL_CLOSE);
         getDialogPane().getButtonTypes().addAll(deleteButton, cancelButton);
 
         getDialogPane().lookupButton(deleteButton).setId("deleteAccountButton");
         getDialogPane().lookupButton(cancelButton).setId("cancelRemoveButton");
-        getDialogPane().lookup(".button-bar").setId("buttons");
 
         VBox vBox = styleVBox();
         getDialogPane().setContent(vBox);
@@ -71,7 +68,7 @@ public class DeleteAccountDialog extends Dialog<String> {
 
     private VBox styleVBox() {
 
-        final String DELETE = "Enter password in order to delete account\n";
+        final String DELETE = "Enter password in order to delete account";
 
         Label label = new Label(DELETE);
         passwordField = new PasswordField();
