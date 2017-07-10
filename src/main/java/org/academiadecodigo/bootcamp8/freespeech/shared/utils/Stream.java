@@ -32,7 +32,7 @@ public class Stream {
             out.flush();
 
         } catch (IOException e) {
-            System.err.println("Socket abruptly closed!");
+            System.err.println("Socket abruptly closed - write!");
         }
 
     }
@@ -49,11 +49,10 @@ public class Stream {
         Object object = null;
 
         try {
-
             object = in.readObject();
 
         } catch (IOException e) {
-            System.err.println("Socket abruptly closed!");
+            System.err.println("Socket abruptly closed - read!");
         } catch (ClassNotFoundException e) {
             System.err.println("Communication protocol violation!");
         } finally {

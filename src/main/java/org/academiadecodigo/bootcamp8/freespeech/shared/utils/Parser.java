@@ -74,6 +74,7 @@ public class Parser {
 
             try {
                 if (stream != null) {
+                    System.out.println("closing output file");
                     stream.close();
                 }
             } catch (IOException e) {
@@ -119,9 +120,10 @@ public class Parser {
 
         } catch (IOException e) {
             System.err.println("Error on file reading.");
-        } finally {
+        }finally {
             try {
                 if (fileInputStream != null) {
+                    System.out.println("closing input file");
                     fileInputStream.close();
                 }
             } catch (IOException e) {
