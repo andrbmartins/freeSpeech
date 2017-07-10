@@ -23,8 +23,8 @@ public class Client extends Application {
 
     public static void main(String[] args) {
 
-        if(args.length > 1) {
-            Values.HOST = args[1];
+        if(args.length > 0) {
+            Values.HOST = args[0];
         }
 
         launch(args);

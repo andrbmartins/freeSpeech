@@ -61,15 +61,25 @@ public class Parser {
 
     public static void byteListToFile(byte[] byteArray, File file) {
 
+        FileOutputStream stream = null;
         try {
 
-            FileOutputStream stream = new FileOutputStream(file);
+            stream = new FileOutputStream(file);
             stream.write(byteArray);
             stream.flush();
-           // stream.close();
 
         } catch (IOException e) {
             System.err.println(e.getMessage());
+        } finally {
+
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
@@ -110,7 +120,13 @@ public class Parser {
         } catch (IOException e) {
             System.err.println("Error on file reading.");
         } finally {
-           // Stream.close(fileInputStream);
+            try {
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return buffer;
@@ -120,7 +136,7 @@ public class Parser {
 
         LinkedList<String> strings = new LinkedList<>();
 
-        for (String s : randomNamesArray){
+        for (String s : randomNamesArray) {
             strings.add(s);
         }
 
