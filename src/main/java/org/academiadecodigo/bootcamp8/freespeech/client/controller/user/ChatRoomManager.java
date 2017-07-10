@@ -43,6 +43,7 @@ public class ChatRoomManager {
 
     /**
      * Adds select user to selected private room.
+     *
      * @param name The name of the user to add to the chat room
      */
     public void addToChat(String name) {
@@ -89,7 +90,7 @@ public class ChatRoomManager {
         Room room = new Room(randomNames.remove(0), ((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(), user);
         addClosingTabHandler(room);
         tabPane.getTabs().add(room.getTab());
-        roomMap.put(room.getId(),room);
+        roomMap.put(room.getId(), room);
     }
 
     /**
@@ -124,17 +125,17 @@ public class ChatRoomManager {
     /**
      * Prints the message text on the Room with id tabid and updates the set of users in that room.
      *
-     * @param tabId Id of the room
-     * @param text Message to print
+     * @param tabId    Id of the room
+     * @param text     Message to print
      * @param usersSet Set of users in that room
      */
     public void printPrivateMessage(String tabId, String text, Set<String> usersSet) {
 
-        if(!roomMap.containsKey(tabId)){
-            createNewRoom(tabId,usersSet);
+        if (!roomMap.containsKey(tabId)) {
+            createNewRoom(tabId, usersSet);
         }
 
-        roomMap.get(tabId).printPrivateMessage(text,usersSet);
+        roomMap.get(tabId).printPrivateMessage(text, usersSet);
     }
 
     /**
@@ -146,10 +147,10 @@ public class ChatRoomManager {
      */
     private void createNewRoom(String tabId, Set<String> usersSet) {
 
-        Room room = new Room(tabId,randomName(),((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(),usersSet);
+        Room room = new Room(tabId, randomName(), ((Tab) tabPane.getTabs().toArray()[0]).getOnSelectionChanged(), usersSet);
         addClosingTabHandler(room);
         tabPane.getTabs().add(room.getTab());
-        roomMap.put(room.getId(),room);
+        roomMap.put(room.getId(), room);
     }
 
     /**
@@ -159,7 +160,7 @@ public class ChatRoomManager {
      */
     private String randomName() {
 
-        if(randomNames.isEmpty()){
+        if (randomNames.isEmpty()) {
             randomNames = generateNames();
         }
 
@@ -170,7 +171,7 @@ public class ChatRoomManager {
      * Prints the message text in the room with id tabId.
      *
      * @param tabId Id of the room.
-     * @param text Message to print.
+     * @param text  Message to print.
      */
     public void printMessage(String tabId, String text) {
         roomMap.get(tabId).appendText(text);

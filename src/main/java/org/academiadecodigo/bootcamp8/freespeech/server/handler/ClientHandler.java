@@ -116,6 +116,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Method responsible for the register of the client
+     *
      * @param sealedSendable Encrypted message that contains the username and the password of the user
      */
     private void register(SealedSendable sealedSendable) {
@@ -141,6 +142,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Method responsible for the login of the client
+     *
      * @param sealedSendable Encrypted message that contains the username and the password of the user
      * @return Returns true if the log in was successful and false otherwise
      */
@@ -178,7 +180,8 @@ public class ClientHandler implements Runnable {
 
     /**
      * Method responsible for responding to the client if the login or register was successful or not
-     * @param type Type of message: LOGIN or REGISTER
+     *
+     * @param type    Type of message: LOGIN or REGISTER
      * @param message Message to send to the client
      */
     private void responseToClient(MessageType type, String message) {
@@ -229,6 +232,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Calls the right method for the received message.
+     *
      * @param msg Message received
      */
     private void handleMessage(SealedSendable msg) {
@@ -280,6 +284,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Reports the user indicated in the message msg
+     *
      * @param msg Name of the reported user
      */
     private void reportUser(SealedSendable msg) {
@@ -288,12 +293,11 @@ public class ClientHandler implements Runnable {
         String reportedUser = message.getContent();
         Sendable<String> userReply;
 
-        if (userService.verifyReport(clientName, reportedUser) == 0 ){
-            userService.reportUser(clientName,reportedUser);
+        if (userService.verifyReport(clientName, reportedUser) == 0) {
+            userService.reportUser(clientName, reportedUser);
             Logger.getInstance().eventlogger(TypeEvent.CLIENT, reportedUser + LoggerMessages.CLIENT_REPORTED + clientName);
             userReply = new Message<>(Values.REPORT_OK);
-        }
-        else {
+        } else {
             userReply = new Message<>(Values.REPORT_KO);
         }
 
@@ -303,6 +307,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Updates the Biography of the user with the content of the received message
+     *
      * @param msg Message received
      */
     private void updateBio(SealedSendable msg) {
@@ -323,6 +328,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Sends to the client his biography
+     *
      * @param msg Message containing the biography
      */
     private void sendUserBio(SealedSendable msg) {
@@ -338,7 +344,8 @@ public class ClientHandler implements Runnable {
 
     /**
      * Changes the client password.
-     * @param msg Encrypted message containing the old password and the new one
+     *
+     * @param msg  Encrypted message containing the old password and the new one
      * @param type Message type
      */
     private void changePass(SealedSendable msg, MessageType type) {
@@ -363,7 +370,8 @@ public class ClientHandler implements Runnable {
 
     /**
      * Deletes the client account from the server DB
-     * @param msg Message received with the request to delete the account
+     *
+     * @param msg  Message received with the request to delete the account
      * @param type Message type
      * @return Returns if the operation was successfull
      */
@@ -391,6 +399,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Sends a list containing the names of the users currently online
+     *
      * @param userList message containing a list of the users online
      */
     public void sendUsersList(Sendable userList) {
@@ -400,6 +409,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Sends a message to the client.
+     *
      * @param object Message to send
      */
     public void write(Object object) {
@@ -408,6 +418,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Returns the client name
+     *
      * @return Returns the client name
      */
     public String getClientName() {

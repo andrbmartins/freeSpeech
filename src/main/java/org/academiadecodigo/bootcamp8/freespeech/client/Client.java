@@ -36,7 +36,6 @@ public class Client extends Application {
 
     private void defineStyle(Stage stage) {
         String css = getClass().getResource(Values.STYLESHEET).toString();
-        //String css = new File(Values.STYLESHEET).toURI().toString();
         stage.initStyle(StageStyle.UNDECORATED);
         Navigation.getInstance().setCss(css);
     }

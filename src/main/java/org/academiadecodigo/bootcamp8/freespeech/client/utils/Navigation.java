@@ -8,9 +8,6 @@ import org.academiadecodigo.bootcamp8.freespeech.client.controller.Controller;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Values;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * Developed @ <Academia de Código_>

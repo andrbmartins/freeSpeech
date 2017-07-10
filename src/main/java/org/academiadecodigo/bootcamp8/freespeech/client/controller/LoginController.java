@@ -31,8 +31,6 @@ import java.util.ResourceBundle;
  * <Code Cadet> PedroMAlves
  */
 
-//TODO refactor
-
 public class LoginController implements Controller {
 
     @FXML
@@ -225,7 +223,7 @@ public class LoginController implements Controller {
     /**
      * Toggles need to confirm password.
      *
-     * @param show
+     * @param show - true if needed, false otherwise.
      */
     private void passwordConfirmation(boolean show) {
 

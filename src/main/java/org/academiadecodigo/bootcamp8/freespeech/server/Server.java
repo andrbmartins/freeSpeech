@@ -141,11 +141,12 @@ public class Server {
 
     /**
      * Checks if the user trying to login is already logged
+     *
      * @param username of the user currently trying to login
      * @return true if the user with this username is already logged. false if he is not logged
      */
     public boolean userLogged(String username) {
-        for (ClientHandler c: loggedUsers) {
+        for (ClientHandler c : loggedUsers) {
             if (c.getClientName().equals(username)) {
                 return true;
             }
@@ -194,7 +195,6 @@ public class Server {
     }
 
 
-
     /**
      * Sends updated list of users online to every user online
      */
@@ -239,6 +239,7 @@ public class Server {
 
     /**
      * Send a file to the destination user
+     *
      * @param msg - package to send
      */
     public void sendFile(SealedSendable msg) {

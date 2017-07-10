@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.Logger;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.LoggerMessages;
 import org.academiadecodigo.bootcamp8.freespeech.server.utils.logger.TypeEvent;
 import org.academiadecodigo.bootcamp8.freespeech.shared.Queries;
+
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class ConnectionManager {
 
     /**
      * Gets the connection to the DB
+     *
      * @return the connection
      */
     public Connection getConnection() {
@@ -42,6 +44,7 @@ public class ConnectionManager {
 
     /**
      * Inserts a user to the DB
+     *
      * @param username Username of the client
      * @param password Password of the client
      * @return true if the operation was successful
@@ -81,6 +84,7 @@ public class ConnectionManager {
 
     /**
      * Finds the user by his username
+     *
      * @param username User's name
      * @return the User if he exists and null otherwise
      * @throws SQLException if exist an exception occurs when access the database
@@ -106,8 +110,9 @@ public class ConnectionManager {
 
     /**
      * Changes the password of a username
+     *
      * @param username to target password change
-     * @param newPass new password
+     * @param newPass  new password
      * @return true if the actions was successful
      */
     public boolean changePass(String username, String newPass) {
@@ -143,6 +148,7 @@ public class ConnectionManager {
 
     /**
      * Delete the account of a specific username
+     *
      * @param username the username to target
      * @return true if the operation was successful
      */
@@ -179,6 +185,7 @@ public class ConnectionManager {
 
     /**
      * Return the number of user registered on the database
+     *
      * @return the count of users
      * @throws SQLException if exist an exception occurs when access the database
      */
@@ -193,6 +200,7 @@ public class ConnectionManager {
 
     /**
      * Return the biography of a username
+     *
      * @param username to target
      * @return an list with the username biography
      * @throws SQLException if exist an exception occurs when access the database
@@ -202,7 +210,7 @@ public class ConnectionManager {
         PreparedStatement statement = connection.prepareStatement(Queries.SHOW_BIO);
         statement.setString(1, username);
         ResultSet resultSet = statement.executeQuery();
-            List<String> userbio = new LinkedList<String>();
+        List<String> userbio = new LinkedList<String>();
 
         if (resultSet.next()) {
             userbio.add(resultSet.getString("user_name"));
@@ -218,10 +226,11 @@ public class ConnectionManager {
 
     /**
      * Updates the username biography
-     * @param username username to target
-     * @param email new email information
+     *
+     * @param username  username to target
+     * @param email     new email information
      * @param dateBirth new date birth information
-     * @param bio new bio information
+     * @param bio       new bio information
      * @return true if the operation was successful
      */
     public boolean updateBio(String username, String email, String dateBirth, String bio) {
@@ -258,10 +267,11 @@ public class ConnectionManager {
 
     /**
      * Report a specific user
-     * @param username the user who reported
+     *
+     * @param username      the user who reported
      * @param user_reported the reported user
      */
-    public void reportUser(String username , String user_reported){
+    public void reportUser(String username, String user_reported) {
 
         PreparedStatement statement = null;
 
@@ -290,7 +300,8 @@ public class ConnectionManager {
 
     /**
      * Count the number of times the user reported was already reported by username
-     * @param username the user who reported
+     *
+     * @param username      the user who reported
      * @param user_reported the reported user
      * @return the count of reports
      */
@@ -303,7 +314,7 @@ public class ConnectionManager {
             statement = connection.prepareStatement(Queries.REPORTED_USER);
             statement.setString(1, username);
             statement.setString(2, user_reported);
-            resultSet =  statement.executeQuery();
+            resultSet = statement.executeQuery();
             return resultSet.next() ? resultSet.getInt(1) : 0;
 
         } catch (SQLException e) {
@@ -325,6 +336,7 @@ public class ConnectionManager {
 
     /**
      * Get the number of reports of username
+     *
      * @param username to target
      * @return the number of reports
      */
@@ -335,7 +347,7 @@ public class ConnectionManager {
 
             statement = connection.prepareStatement(Queries.COUNT_REPORTED);
             statement.setString(1, username);
-            resultSet =  statement.executeQuery();
+            resultSet = statement.executeQuery();
             return resultSet.next() ? resultSet.getInt(1) : 0;
 
         } catch (SQLException e) {

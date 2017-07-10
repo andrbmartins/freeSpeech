@@ -36,6 +36,7 @@ public class ConsoleHandler implements Runnable {
 
     /**
      * Read the user commands from the terminal
+     *
      * @return Returns the input
      */
     private String readCommand() {
@@ -44,6 +45,7 @@ public class ConsoleHandler implements Runnable {
 
     /**
      * Handles the command given by the user and calls the respective method for that command
+     *
      * @param cmd Command given by the user
      */
     private void processCommand(String cmd) {

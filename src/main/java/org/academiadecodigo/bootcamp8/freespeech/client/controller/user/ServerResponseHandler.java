@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
  * <Code Cadet> Filipe Santos Sá
  */
 
-//TODO remove commented code after testing
 
 public class ServerResponseHandler implements Runnable {
 
@@ -85,9 +84,6 @@ public class ServerResponseHandler implements Runnable {
             case USERS_ONLINE:
                 clientController.processUsersList(message);
                 break;
-           /* case PASS_CHANGE:
-                notifyUser(message);
-                break;*/
             case PASS_CHANGE:
             case BIO_UPDATE:
             case REPORT:
@@ -106,9 +102,6 @@ public class ServerResponseHandler implements Runnable {
             case DELETE_ACCOUNT:
                 deletionNotification(message);
                 break;
-         /*   case REPORT:
-                notifyUser(message);
-                break;*/
             default:
                 throw new IllegalArgumentException("Unsupported message type.");
         }

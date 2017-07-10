@@ -1,4 +1,5 @@
 package org.academiadecodigo.bootcamp8.freespeech.client.dialog;
+
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -51,7 +52,6 @@ public class ChangePassDialog extends Dialog<String[]> {
         GridPane.setHalignment(currPassword, HPos.CENTER);
         GridPane.setHalignment(newPassword, HPos.CENTER);
         GridPane.setHalignment(confirmPass, HPos.CENTER);
-
 
 
         grid.add(label, 0, 0);

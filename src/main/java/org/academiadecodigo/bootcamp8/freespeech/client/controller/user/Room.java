@@ -29,10 +29,11 @@ public class Room {
 
     /**
      * Constructor used when the Client receives a private message for a room that he hasn't got yet
-     * @param id Room ID
-     * @param tabName Name for the Tab
+     *
+     * @param id                 Room ID
+     * @param tabName            Name for the Tab
      * @param onSelectionChanged Event handler for when the client selects the tab
-     * @param usersSet Set of users in that room
+     * @param usersSet           Set of users in that room
      */
     public Room(String id, String tabName, EventHandler<Event> onSelectionChanged, Set<String> usersSet) {
         tab = new Tab(tabName);
@@ -54,8 +55,9 @@ public class Room {
 
     /**
      * Constructor used when creating the Lobby room
+     *
      * @param selectedTab Lobby Tab defined on the fxml
-     * @param content Lobby TextArea defined on the fxml
+     * @param content     Lobby TextArea defined on the fxml
      */
     public Room(Tab selectedTab, TextArea content) {
         tab = selectedTab;
@@ -65,9 +67,10 @@ public class Room {
 
     /**
      * Constructor used when the client wants to create a new private chat room with a certain user
-     * @param name Name for the Tab
+     *
+     * @param name               Name for the Tab
      * @param onSelectionChanged Event handler for when the client selects the tab
-     * @param user Name of the user that the client wants to chat
+     * @param user               Name of the user that the client wants to chat
      */
     public Room(String name, EventHandler<Event> onSelectionChanged, String user) {
         tab = new Tab(name);
@@ -88,7 +91,6 @@ public class Room {
         tab.getTooltip().setText(Parser.setToString(usersSet));
 
 
-
     }
 
     /**
@@ -96,7 +98,7 @@ public class Room {
      *
      * @return Returns the id.
      */
-    public String getId(){
+    public String getId() {
         return tab.getId();
     }
 
@@ -105,7 +107,7 @@ public class Room {
      *
      * @param newList The new set of users
      */
-    private void updateUsersList(Set<String> newList){
+    private void updateUsersList(Set<String> newList) {
         usersSet = newList;
     }
 
@@ -115,7 +117,7 @@ public class Room {
      * @param user User to remove from the room
      * @return returns if the operation was successfull
      */
-    public boolean removeUser(String user){
+    public boolean removeUser(String user) {
         return usersSet.remove(user);
     }
 
@@ -125,7 +127,7 @@ public class Room {
      * @param user User to add to the room
      * @return returns if the operation was successfull
      */
-    public boolean addUser(String user){
+    public boolean addUser(String user) {
         return usersSet.add(user);
     }
 
@@ -134,7 +136,7 @@ public class Room {
      *
      * @param text Message to print
      */
-    public void appendText(String text){
+    public void appendText(String text) {
         textArea.appendText((textArea.getText().isEmpty() ? "" : "\n") + text);
     }
 
@@ -164,7 +166,7 @@ public class Room {
      * @param user The name of the user
      * @return Returns the generated id
      */
-    private String generateId(String user){
+    private String generateId(String user) {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
         Date date = new Date();
 
@@ -174,7 +176,7 @@ public class Room {
     /**
      * Prints the message text and updates the set of users in the room.
      *
-     * @param text Text to print.
+     * @param text     Text to print.
      * @param usersSet Set of users to update
      */
     public void printPrivateMessage(String text, Set<String> usersSet) {
@@ -193,6 +195,7 @@ public class Room {
 
     /**
      * Returns the tab of the room.
+     *
      * @return Returns the tab of the room.
      */
     public Tab getTab() {
